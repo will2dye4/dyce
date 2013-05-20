@@ -1,4 +1,4 @@
-**Dyce: the DYe Chess Engine**
+**dyce: the DYe Chess Engine**
 
 This project is still in its infancy...currently, this GitHub repository exists so that I can easily work on the
 project from both my desktop and laptop. Feel free to browse the code, but don't expect to find a working chess
