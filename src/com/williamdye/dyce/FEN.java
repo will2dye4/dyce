@@ -1,7 +1,10 @@
 package com.williamdye.dyce;
 
+import com.williamdye.dyce.board.Chessboard;
 import com.williamdye.dyce.board.ChessboardImpl;
 import com.williamdye.dyce.board.Square;
+import com.williamdye.dyce.pieces.PieceColor;
+import com.williamdye.dyce.util.StringUtils;
 
 import java.util.regex.Pattern;
 
@@ -10,40 +13,43 @@ import java.util.regex.Pattern;
  */
 public class FEN
 {
-    protected String string;
-    protected Square[] squares;
+    public static final String INITIAL_FEN_STRING = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final int NUM_COMPONENTS = 6;
+
+    protected String fenString;
+    protected Chessboard board;
+    private boolean fromString;
 
     public FEN(String fen)
     {
-        this(fen, null);
+        this(fen, null, true);
     }
 
-    public FEN(Square[] board)
+    public FEN(Chessboard board)
     {
-        this(null, board);
+        this(null, board, false);
     }
 
-    public FEN(String fen, Square[] board)
+    public FEN(String fen, Chessboard chessboard, boolean useString)
     {
-        if ((fen == null) && (board == null))
-            throw new IllegalArgumentException("A string or an array of squares must be provided to instantiate FEN!");
-        if ((board != null) && (board.length != ChessboardImpl.BOARD_SIZE))
-            throw new IllegalArgumentException("Square array must be of size " + ChessboardImpl.BOARD_SIZE + "!");
-        if ((fen != null) && !(isValidFEN(fen)))
-            throw new IllegalArgumentException("Invalid FEN provided!");
-        this.string = fen;
-        this.squares = board;
+        if (useString && (fen == null || !isValidFENString(fen)))
+            throw new IllegalArgumentException("Invalid FEN string provided!");
+        if (!useString && chessboard == null)
+            throw new IllegalArgumentException("Invalid chessboard provided!");
+        this.fenString = fen;
+        this.board = chessboard;
+        this.fromString = useString;
     }
 
     /* See http://chessprogramming.wikispaces.com/Forsyth-Edwards+Notation for a complete description
      * of the format of Forsyth-Edwards Notation.
      */
-    public static boolean isValidFEN(String test)
+    public static boolean isValidFENString(String test)
     {
         String[] components = test.split(" ");  /* split the string into its components, delimited by spaces */
-        if (components.length == 6) {
+        if (components.length == NUM_COMPONENTS) {
             String[] ranks = components[0].split("/");  /* split the position representation into individual ranks */
-            if (ranks.length == 8) {
+            if (ranks.length == ChessboardImpl.NUM_RANKS) {
                 for (String rank : ranks)
                     if (!isValidRankString(rank))
                         return false;   /* invalid rank string makes the whole FEN invalid */
@@ -57,17 +63,44 @@ public class FEN
         return false;   /* invalid number of components or invalid number of ranks */
     }
 
-    public Square[] getSquares()
+    public String getFENString()
     {
-        if (squares == null)
-            computeSquares();
-        return squares;
+        if (!fromString)
+            computeFENString();
+        return fenString;
     }
 
-    private void computeSquares()
+    private void computeFENString()
     {
-        squares = new Square[ChessboardImpl.BOARD_SIZE];
-        /* TODO */
+        Square[] squares = board.getBoard();
+        String[] ranks = new String[ChessboardImpl.NUM_RANKS];
+        StringBuilder builder = new StringBuilder();
+        int j = ranks.length - 1;
+        int consecutiveEmpties = 0;
+        for (int i = 0; i < squares.length; i++) {
+            Square square = squares[i];
+            if (square.isEmpty())
+                consecutiveEmpties++;
+            else {
+                if (consecutiveEmpties > 0) {
+                    builder.append(String.valueOf(consecutiveEmpties));
+                    consecutiveEmpties = 0;
+                }
+                char type = square.getPiece().getPieceType().getSymbol();
+                if (square.getPiece().getColor() == PieceColor.WHITE)
+                    type -= 32; /* uppercase letters are 32 below lowercase in the ASCII table */
+                builder.append(String.valueOf(type));
+            }
+            if (i % 8 == 7) {
+                if (consecutiveEmpties > 0) {
+                    builder.append(String.valueOf(consecutiveEmpties));
+                    consecutiveEmpties = 0;
+                }
+                ranks[j--] = builder.toString();
+                builder.setLength(0);
+            }
+        }
+        fenString = StringUtils.join(ranks, "/");
     }
 
     private static boolean isValidRankString(String rank)
@@ -81,8 +114,7 @@ public class FEN
                 else
                     total += 1; /* rank.charAt(i) represents one valid piece */
             }
-            valid = (total == 8);
-
+            valid = (total == ChessboardImpl.NUM_FILES);
         }
         return valid;
     }

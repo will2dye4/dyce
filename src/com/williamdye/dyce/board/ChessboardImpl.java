@@ -1,5 +1,6 @@
 package com.williamdye.dyce.board;
 
+import com.williamdye.dyce.FEN;
 import com.williamdye.dyce.pieces.Bishop;
 import com.williamdye.dyce.pieces.King;
 import com.williamdye.dyce.pieces.Knight;
@@ -8,10 +9,13 @@ import com.williamdye.dyce.pieces.PieceColor;
 import com.williamdye.dyce.pieces.Queen;
 import com.williamdye.dyce.pieces.Rook;
 
+import java.util.regex.Pattern;
+
 public class ChessboardImpl implements Chessboard
 {
-    public static final String INITIAL_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    public static final int BOARD_SIZE = 64;
+    public static final int NUM_RANKS = 8;
+    public static final int NUM_FILES = 8;
+    public static final int NUM_SQUARES = NUM_RANKS * NUM_FILES;
 
     /* fen is the Forsyth-Edwards Notation of the current position */
     protected String fen;
@@ -25,8 +29,8 @@ public class ChessboardImpl implements Chessboard
 
     public ChessboardImpl()
     {
-        this.fen = INITIAL_FEN;
-        this.squares = new Square[BOARD_SIZE];
+        this.fen = FEN.INITIAL_FEN_STRING;
+        this.squares = new Square[NUM_SQUARES];
         initialize();
     }
 
@@ -87,5 +91,24 @@ public class ChessboardImpl implements Chessboard
     public Square[] getBoard()
     {
         return squares;
+    }
+
+    @Override
+    public Square getSquareByName(String name)
+    {
+        Square square = null;
+        if (Pattern.matches("^(?:[a-h])[1-8]$", name)) {
+            String whichFile = name.substring(0, 1);
+            int whichRank = Integer.parseInt(name.substring(1));
+            int offset = 0;
+            for (File file : File.values()) {
+                if (file.toString().equals(whichFile))
+                    break;
+                offset++;
+            }
+            int i = ((whichRank - 1) * NUM_FILES) + offset;
+            square = squares[i];
+        }
+        return square;
     }
 }

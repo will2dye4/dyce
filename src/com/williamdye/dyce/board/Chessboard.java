@@ -10,4 +10,6 @@ public interface Chessboard
 
     public Square[] getBoard();
 
+    public Square getSquareByName(String name);
+
 }
