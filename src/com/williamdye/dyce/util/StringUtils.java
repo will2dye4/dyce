@@ -7,7 +7,8 @@ public class StringUtils
     {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
-            builder.append(array[i]);
+            if (array[i] != null)
+                builder.append(array[i]);
             if (i != array.length - 1)
                 builder.append(separator);
         }
