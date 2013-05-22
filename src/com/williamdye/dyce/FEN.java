@@ -8,6 +8,9 @@ import com.williamdye.dyce.util.StringUtils;
 
 import java.util.regex.Pattern;
 
+import static com.williamdye.dyce.board.ChessboardImpl.NUM_FILES;
+import static com.williamdye.dyce.board.ChessboardImpl.NUM_RANKS;
+
 /**
  * @author William Dye
  */
@@ -49,7 +52,7 @@ public class FEN
         String[] components = test.split(" ");  /* split the string into its components, delimited by spaces */
         if (components.length == NUM_COMPONENTS) {
             String[] ranks = components[0].split("/");  /* split the position representation into individual ranks */
-            if (ranks.length == ChessboardImpl.NUM_RANKS) {
+            if (ranks.length == NUM_RANKS) {
                 for (String rank : ranks)
                     if (!isValidRankString(rank))
                         return false;   /* invalid rank string makes the whole FEN invalid */
@@ -73,7 +76,7 @@ public class FEN
     private void computeFENString()
     {
         Square[] squares = board.getBoard();
-        String[] ranks = new String[ChessboardImpl.NUM_RANKS];
+        String[] ranks = new String[NUM_RANKS];
         StringBuilder builder = new StringBuilder();
         int j = ranks.length - 1;
         int consecutiveEmpties = 0;
@@ -91,7 +94,7 @@ public class FEN
                     type -= 32; /* uppercase letters are 32 below lowercase in the ASCII table */
                 builder.append(String.valueOf(type));
             }
-            if (i % 8 == 7) {
+            if ((i % NUM_FILES) == (NUM_FILES - 1)) {
                 if (consecutiveEmpties > 0) {
                     builder.append(String.valueOf(consecutiveEmpties));
                     consecutiveEmpties = 0;
@@ -114,7 +117,7 @@ public class FEN
                 else
                     total += 1; /* rank.charAt(i) represents one valid piece */
             }
-            valid = (total == ChessboardImpl.NUM_FILES);
+            valid = (total == NUM_FILES);
         }
         return valid;
     }
