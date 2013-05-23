@@ -5,6 +5,8 @@ import com.williamdye.dyce.board.ChessboardImpl;
 import com.williamdye.dyce.board.Square;
 import com.williamdye.dyce.pieces.Piece;
 
+import java.util.Scanner;
+
 /**
  * @author William Dye
  */
@@ -17,32 +19,79 @@ public class Dyce
         out("#  Welcome to dyce, the Dye chess engine  #");
         out("#  written by William Dye                 #");
         out("###########################################\n");
-        out("Creating a new chessboard...");
-        Chessboard board = new ChessboardImpl();
-        FEN fen = new FEN(board);
-        out("FEN string: " + fen.getFENString());
-        Piece k = board.getSquareByName("b1").getPiece();
-        k.move(board.getSquareByName("c3"));
-        out("After 1. Nc3: " + fen.getFENString());
-        Piece p = board.getSquareByName("d7").getPiece();
-        p.move(board.getSquareByName("d5"));
-        out("After 1...d5: " + fen.getFENString());
-        /*for (Square square : board.getBoard()) {
-            String string = "\t" + square.getName() + ": ";
-            if (square.isEmpty())
-                string += "<empty>";
-            else
-                string += square.getPiece().toString();
-            out(string);
-        }*/
-        /*out("Default FEN valid? " + FEN.isValidFENString(FEN.INITIAL_FEN_STRING));
-        out("Sample FEN valid? " + FEN.isValidFENString("2kr1r2/ppp4Q/2n5/b2pP3/8/2P2NnP/PP2q1P1/RNB1K1R1 b - - 4 18"));*/
+        if (args.length == 0) {
+            out("No option given; assuming '-e'...\n");
+            args = new String[] { "-e" };
+        }
+        parseArgs(args);
         out("Bye for now!");
+    }
+
+    private static void usage()
+    {
+        out("Usage: java Dyce [-ev]");
+    }
+
+    private static void version()
+    {
+        out("dyce version 0.1, built May 2013");
+    }
+
+    private static void parseArgs(String[] args)
+    {
+        if ((args.length > 1) || (args[0].length() < 2) || ('-' != args[0].charAt(0)) || ('-' == args[0].charAt(1))) {
+            usage();
+        } else {
+            switch (args[0].charAt(1)) {
+                case 'e':
+                    explore(new ChessboardImpl());
+                    break;
+                case 'v':
+                    version();
+                    break;
+                default:
+                    usage();
+                    break;
+            }
+        }
+    }
+
+    private static void explore(Chessboard board)
+    {
+        Scanner scan = new Scanner(System.in);
+        out("*========[ Board Explorer ]========================================*");
+        out("| You play both sides. At the prompt, type the next move,          |");
+        out("| with the starting and finishing squares separated by a space.    |");
+        out("| For example, to move a Pawn from e2 to e4, enter \"e2 e4\".        |");
+        out("| To quit, enter \":quit\" or \":q\".                                  |");
+        out("*==================================================================*");
+        out("\nPress Enter to begin...");
+        scan.useDelimiter("");
+        scan.next();
+        scan.useDelimiter("\n");
+        String move = "", lastMove = "";
+        do {
+            if (move.length() > 0) {
+                String[] squares = move.split(" ");
+                board.move(squares[0], squares[1]);
+            }
+            out("\n" + board.prettyPrint());
+            if (lastMove.length() > 0)
+                out("Last move was: " + lastMove);
+            print("Enter a move: ");
+            move = scan.next();
+            lastMove = move;
+        } while (!":quit".equals(move) && !":q".equals(move));
     }
 
     private static void out(String message)
     {
         System.out.println(message);
+    }
+
+    private static void print(String message)
+    {
+        System.out.print(message);
     }
 
 }

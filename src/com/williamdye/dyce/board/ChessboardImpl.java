@@ -1,13 +1,7 @@
 package com.williamdye.dyce.board;
 
 import com.williamdye.dyce.FEN;
-import com.williamdye.dyce.pieces.Bishop;
-import com.williamdye.dyce.pieces.King;
-import com.williamdye.dyce.pieces.Knight;
-import com.williamdye.dyce.pieces.Pawn;
-import com.williamdye.dyce.pieces.PieceColor;
-import com.williamdye.dyce.pieces.Queen;
-import com.williamdye.dyce.pieces.Rook;
+import com.williamdye.dyce.pieces.*;
 
 import java.util.regex.Pattern;
 
@@ -18,7 +12,7 @@ public class ChessboardImpl implements Chessboard
     public static final int NUM_SQUARES = NUM_RANKS * NUM_FILES;
 
     /* fen is the Forsyth-Edwards Notation of the current position */
-    protected String fen;
+    protected FEN fen;
     /* squares is a one-dimensional array of squares representing the chessboard as follows:
      * [a1, b1, c1, d1, e1, f1, g1, h1,
      *  a2, b2, c2, d2, e2, f2, g2, h2,
@@ -29,7 +23,7 @@ public class ChessboardImpl implements Chessboard
 
     public ChessboardImpl()
     {
-        this.fen = FEN.INITIAL_FEN_STRING;
+        this.fen = new FEN(this);
         this.squares = new Square[NUM_SQUARES];
         initialize();
     }
@@ -82,9 +76,39 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public String getFEN()
+    public FEN getFEN()
     {
         return fen;
+    }
+
+    @Override
+    public String prettyPrint()
+    {
+        final String RANK_SEPARATOR =   "  +---+---+---+---+---+---+---+---+\n";
+        final String FILE_LABELS    =   "    a   b   c   d   e   f   g   h  \n";
+        StringBuilder builder = new StringBuilder();
+        builder.append(RANK_SEPARATOR);
+        String[] ranks = getFEN().getFENString().split("/");
+        int i = 8;
+        for (String rank : ranks) {
+            builder.append(i + " |");
+            for (int j = 0; j < rank.length(); j++) {
+                if (Character.isDigit(rank.charAt(j))) {
+                    int k = Integer.parseInt(String.valueOf(rank.charAt(j)));
+                    while (k > 0) {
+                        builder.append("   |");
+                        k--;
+                    }
+                }
+                else {
+                    builder.append(String.format(" %s |", rank.charAt(j)));
+                }
+            }
+            builder.append("\n" + RANK_SEPARATOR);
+            i--;
+        }
+        builder.append(FILE_LABELS);
+        return builder.toString();
     }
 
     @Override
@@ -111,4 +135,17 @@ public class ChessboardImpl implements Chessboard
         }
         return square;
     }
+
+    @Override
+    public void move(Piece piece, Square dest)
+    {
+        piece.move(dest);
+    }
+
+    @Override
+    public void move(String from, String to)
+    {
+        move(getSquareByName(from).getPiece(), getSquareByName(to));
+    }
+
 }
