@@ -34,7 +34,6 @@ public class ChessboardImpl implements Chessboard
         Square square;
         for (Rank rank : Rank.values()) {
             for (File file : File.values()) {
-                square = new SquareImpl(rank, file);
                 switch (rank) {
                     case SECOND_RANK:
                         square = new SquareImpl(rank, file, new Pawn(PieceColor.WHITE));
@@ -64,6 +63,8 @@ public class ChessboardImpl implements Chessboard
                             case E_FILE:
                                 square = new SquareImpl(rank, file, new King(color));
                                 break;
+                            default:
+                                throw new IllegalStateException("File.values() returned a non-File member!");
                         }   /* switch (file) */
                         break;
                     default:
