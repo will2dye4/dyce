@@ -137,6 +137,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
+    /* TODO - validate move */
     public void move(Piece piece, Square dest)
     {
         piece.move(dest);

@@ -2,8 +2,6 @@ package com.williamdye.dyce;
 
 import com.williamdye.dyce.board.Chessboard;
 import com.williamdye.dyce.board.ChessboardImpl;
-import com.williamdye.dyce.board.Square;
-import com.williamdye.dyce.pieces.Piece;
 
 import java.util.Scanner;
 
@@ -62,8 +60,8 @@ public class Dyce
         out("*========[ Board Explorer ]========================================*");
         out("| You play both sides. At the prompt, type the next move,          |");
         out("| with the starting and finishing squares separated by a space.    |");
-        out("| For example, to move a Pawn from e2 to e4, enter \"e2 e4\".        |");
-        out("| To quit, enter \":quit\" or \":q\".                                  |");
+        out("| For example, to move a Pawn from e2 to e4, enter \"e2 e4\".        |");   /* spacing looks off but */
+        out("| To quit, enter \":quit\" or \":q\".                                  |"); /*  it prints correctly  */
         out("*==================================================================*");
         out("\nPress Enter to begin...");
         scan.useDelimiter("");
