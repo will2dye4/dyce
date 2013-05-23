@@ -85,14 +85,14 @@ public class ChessboardImpl implements Chessboard
     @Override
     public String prettyPrint()
     {
-        final String RANK_SEPARATOR =   "  +---+---+---+---+---+---+---+---+\n";
-        final String FILE_LABELS    =   "    a   b   c   d   e   f   g   h  \n";
+        final String RANK_SEPARATOR =   "    +---+---+---+---+---+---+---+---+\n";
+        final String FILE_LABELS    =   "      a   b   c   d   e   f   g   h  \n";
         StringBuilder builder = new StringBuilder();
         builder.append(RANK_SEPARATOR);
         String[] ranks = getFEN().getFENString().split("/");
         int i = 8;
         for (String rank : ranks) {
-            builder.append(i + " |");
+            builder.append("  " + i + " |");
             for (int j = 0; j < rank.length(); j++) {
                 if (Character.isDigit(rank.charAt(j))) {
                     int k = Integer.parseInt(String.valueOf(rank.charAt(j)));
