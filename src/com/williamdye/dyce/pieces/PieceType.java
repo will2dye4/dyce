@@ -5,25 +5,32 @@ package com.williamdye.dyce.pieces;
  */
 public enum PieceType
 {
-    PAWN('p', "pawn"),
-    KNIGHT('n', "knight"),
-    BISHOP('b', "bishop"),
-    ROOK('r', "rook"),
-    QUEEN('q', "queen"),
-    KING('k', "king");
+    PAWN(   'p',   "pawn",  1),
+    KNIGHT( 'n', "knight",  3),
+    BISHOP( 'b', "bishop",  3),
+    ROOK(   'r',   "rook",  5),
+    QUEEN(  'q',  "queen",  9),
+    KING(   'k',   "king",  Integer.MAX_VALUE);
 
     protected char symbol;
     protected String name;
+    protected int materialValue;
 
-    PieceType(char type, String name)
+    PieceType(char type, String name, int value)
     {
         this.symbol = type;
         this.name = name;
+        this.materialValue = value;
     }
 
     public char getSymbol()
     {
         return symbol;
+    }
+
+    public int getMaterialValue()
+    {
+        return materialValue;
     }
 
     @Override

@@ -21,6 +21,12 @@ public abstract class AbstractPiece implements Piece
     }
 
     @Override
+    public int compareTo(Piece other)
+    {
+        return (this.getPieceType().getMaterialValue() - other.getPieceType().getMaterialValue());
+    }
+
+    @Override
     public PieceColor getColor()
     {
         return color;
@@ -53,17 +59,21 @@ public abstract class AbstractPiece implements Piece
     }
 
     @Override
-    public void move(Square dest)
+    public Piece move(Square dest)
     {
+        Piece captured = null;
         /* handle capture (move has already been checked for legality) */
-        if (!dest.isEmpty())
+        if (!dest.isEmpty()) {
+            captured = dest.getPiece();
             dest.getPiece().capture();
+        }
         if (square != null) {
             lastSquare = square;
             lastSquare.setPiece(null);
             dest.setPiece(this);
         }
         square = dest;
+        return captured;
     }
 
     @Override

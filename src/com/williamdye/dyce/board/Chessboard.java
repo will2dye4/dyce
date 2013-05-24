@@ -4,6 +4,8 @@ import com.williamdye.dyce.FEN;
 import com.williamdye.dyce.pieces.Piece;
 import com.williamdye.dyce.pieces.PieceColor;
 
+import java.util.List;
+
 /**
  * @author William Dye
  */
@@ -15,6 +17,14 @@ public interface Chessboard
     public String prettyPrint();
 
     public Square[] getBoard();
+
+    public List<Piece> getActiveWhitePieces();
+
+    public List<Piece> getCapturedWhitePieces();
+
+    public List<Piece> getActiveBlackPieces();
+
+    public List<Piece> getCapturedBlackPieces();
 
     public Square getSquareByName(String name);
 

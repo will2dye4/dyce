@@ -23,6 +23,20 @@ public class SquareImpl implements Square
         setPiece(p);
     }
 
+    public static int getRankDistance(Square start, Square end)
+    {
+        if ((start == null) || (end == null))
+            return -1;
+        return Math.abs(start.getRank().getNumber() - end.getRank().getNumber());
+    }
+
+    public static int getFileDistance(Square start, Square end)
+    {
+        if ((start == null) || (end == null))
+            return -1;
+        return Math.abs(start.getFile().getNumber() - end.getFile().getNumber());
+    }
+
     @Override
     public Rank getRank()
     {

@@ -2,7 +2,10 @@ package com.williamdye.dyce.board;
 
 import com.williamdye.dyce.FEN;
 import com.williamdye.dyce.pieces.*;
+import com.williamdye.dyce.util.StringUtils;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class ChessboardImpl implements Chessboard
@@ -20,8 +23,12 @@ public class ChessboardImpl implements Chessboard
      *  a8, b8, c8, d8, e8, f8, g8, h8]
      */
     protected Square[] squares;
-    protected Square enPassantTarget;
+    protected List<Piece> activeWhitePieces;
+    protected List<Piece> capturedWhitePieces;
+    protected List<Piece> activeBlackPieces;
+    protected List<Piece> capturedBlackPieces;
     protected PieceColor toMove;
+    protected Square enPassantTarget;
     protected String castling;
     protected int moveCount;
     protected int halfMoveTotal;
@@ -31,6 +38,10 @@ public class ChessboardImpl implements Chessboard
     {
         this.fen = new FEN(this);
         this.squares = new Square[NUM_SQUARES];
+        this.activeWhitePieces = new ArrayList<Piece>();
+        this.capturedWhitePieces = new ArrayList<Piece>();
+        this.activeBlackPieces = new ArrayList<Piece>();
+        this.capturedBlackPieces = new ArrayList<Piece>();
         this.enPassantTarget = null;
         this.toMove = PieceColor.WHITE;
         this.castling = "KQkq";
@@ -44,14 +55,19 @@ public class ChessboardImpl implements Chessboard
     {
         int i = 0;
         Square square;
+        Piece piece;
         for (Rank rank : Rank.values()) {
             for (File file : File.values()) {
                 switch (rank) {
                     case SECOND_RANK:
-                        square = new SquareImpl(rank, file, new Pawn(PieceColor.WHITE));
+                        piece = new Pawn(PieceColor.WHITE);
+                        square = new SquareImpl(rank, file, piece);
+                        activeWhitePieces.add(piece);
                         break;
                     case SEVENTH_RANK:
-                        square = new SquareImpl(rank, file, new Pawn(PieceColor.BLACK));
+                        piece = new Pawn(PieceColor.BLACK);
+                        square = new SquareImpl(rank, file, piece);
+                        activeBlackPieces.add(piece);
                         break;
                     case FIRST_RANK:
                     case EIGHTH_RANK:
@@ -59,25 +75,34 @@ public class ChessboardImpl implements Chessboard
                         switch (file) {
                             case A_FILE:
                             case H_FILE:
-                                square = new SquareImpl(rank, file, new Rook(color));
+                                piece = new Rook(color);
+                                square = new SquareImpl(rank, file, piece);
                                 break;
                             case B_FILE:
                             case G_FILE:
-                                square = new SquareImpl(rank, file, new Knight(color));
+                                piece = new Knight(color);
+                                square = new SquareImpl(rank, file, piece);
                                 break;
                             case C_FILE:
                             case F_FILE:
-                                square = new SquareImpl(rank, file, new Bishop(color));
+                                piece = new Bishop(color);
+                                square = new SquareImpl(rank, file, piece);
                                 break;
                             case D_FILE:
-                                square = new SquareImpl(rank, file, new Queen(color));
+                                piece = new Queen(color);
+                                square = new SquareImpl(rank, file, piece);
                                 break;
                             case E_FILE:
-                                square = new SquareImpl(rank, file, new King(color));
+                                piece = new King(color);
+                                square = new SquareImpl(rank, file, piece);
                                 break;
                             default:
                                 throw new IllegalStateException("File.values() returned a non-File member!");
                         }   /* switch (file) */
+                        if (color == PieceColor.WHITE)
+                            activeWhitePieces.add(piece);
+                        else
+                            activeBlackPieces.add(piece);
                         break;
                     default:
                         square = new SquareImpl(rank, file);
@@ -98,6 +123,7 @@ public class ChessboardImpl implements Chessboard
     public String prettyPrint()
     {
         final String SPACING = "  ";
+        final String WIDE_SPACING = "\t\t";
         final String RANK_SEPARATOR =   SPACING + "  +---+---+---+---+---+---+---+---+\n";
         final String FILE_LABELS    =   SPACING + "    a   b   c   d   e   f   g   h  \n";
         StringBuilder builder = new StringBuilder();
@@ -105,7 +131,7 @@ public class ChessboardImpl implements Chessboard
         String[] ranks = getFEN().getFENString().split("/");
         int i = 8;
         for (String rank : ranks) {
-            builder.append(SPACING + i + " |");
+            builder.append(String.format("%s%d |", SPACING, i));
             for (int j = 0; j < rank.length(); j++) {
                 if (Character.isDigit(rank.charAt(j))) {
                     int k = Integer.parseInt(String.valueOf(rank.charAt(j)));
@@ -118,6 +144,12 @@ public class ChessboardImpl implements Chessboard
                     builder.append(String.format(" %s |", rank.charAt(j)));
                 }
             }
+            if ((i == 7) && ((capturedWhitePieces.size() > 0) || (capturedBlackPieces.size() > 0)))
+                builder.append(String.format("%s[[ Captured Pieces ]]", WIDE_SPACING));
+            else if ((i == 6) && (capturedWhitePieces.size() > 0))
+                builder.append(String.format("%sW: %s", WIDE_SPACING, StringUtils.joinPieceList(capturedWhitePieces, " ", true)));
+            else if ((i == 5) && (capturedBlackPieces.size() > 0))
+                builder.append(String.format("%sB: %s", WIDE_SPACING, StringUtils.joinPieceList(capturedBlackPieces, " ", true)));
             builder.append("\n" + RANK_SEPARATOR);
             i--;
         }
@@ -129,6 +161,30 @@ public class ChessboardImpl implements Chessboard
     public Square[] getBoard()
     {
         return squares;
+    }
+
+    @Override
+    public List<Piece> getActiveWhitePieces()
+    {
+        return activeWhitePieces;
+    }
+
+    @Override
+    public List<Piece> getCapturedWhitePieces()
+    {
+        return capturedWhitePieces;
+    }
+
+    @Override
+    public List<Piece> getActiveBlackPieces()
+    {
+        return activeBlackPieces;
+    }
+
+    @Override
+    public List<Piece> getCapturedBlackPieces()
+    {
+        return capturedBlackPieces;
     }
 
     @Override
@@ -196,7 +252,17 @@ public class ChessboardImpl implements Chessboard
      */
     public void move(Piece piece, Square dest)
     {
-        piece.move(dest);
+        /*if (!piece.isLegalSquare(dest)) ... do something */
+        Piece captured = piece.move(dest);
+        if (captured != null) {
+            if (captured.getColor() == PieceColor.WHITE) {
+                activeWhitePieces.remove(captured);
+                capturedWhitePieces.add(captured);
+            } else {
+                activeBlackPieces.remove(captured);
+                capturedBlackPieces.add(captured);
+            }
+        }
         halfMoveTotal++;
         if (toMove == PieceColor.BLACK) {
             moveCount++;

@@ -5,7 +5,7 @@ import com.williamdye.dyce.board.Square;
 /**
  * @author William Dye
  */
-public interface Piece
+public interface Piece extends Comparable<Piece>
 {
 
     public PieceType getPieceType();
@@ -18,10 +18,10 @@ public interface Piece
 
     public boolean isCaptured();
 
-/*    public boolean isLegalSquare(Square square); */
+    public boolean isLegalSquare(Square dest);
 
     public void capture();
 
-    public void move(Square dest);
+    public Piece move(Square dest);
 
 }
