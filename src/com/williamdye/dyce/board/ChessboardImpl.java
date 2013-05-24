@@ -20,11 +20,23 @@ public class ChessboardImpl implements Chessboard
      *  a8, b8, c8, d8, e8, f8, g8, h8]
      */
     protected Square[] squares;
+    protected Square enPassantTarget;
+    protected PieceColor toMove;
+    protected String castling;
+    protected int moveCount;
+    protected int halfMoveTotal;
+    protected int halfMoveClock;
 
     public ChessboardImpl()
     {
         this.fen = new FEN(this);
         this.squares = new Square[NUM_SQUARES];
+        this.enPassantTarget = null;
+        this.toMove = PieceColor.WHITE;
+        this.castling = "KQkq";
+        this.moveCount = 1;
+        this.halfMoveTotal = 0;
+        this.halfMoveClock = 0;
         initialize();
     }
 
@@ -85,14 +97,15 @@ public class ChessboardImpl implements Chessboard
     @Override
     public String prettyPrint()
     {
-        final String RANK_SEPARATOR =   "    +---+---+---+---+---+---+---+---+\n";
-        final String FILE_LABELS    =   "      a   b   c   d   e   f   g   h  \n";
+        final String SPACING = "  ";
+        final String RANK_SEPARATOR =   SPACING + "  +---+---+---+---+---+---+---+---+\n";
+        final String FILE_LABELS    =   SPACING + "    a   b   c   d   e   f   g   h  \n";
         StringBuilder builder = new StringBuilder();
         builder.append(RANK_SEPARATOR);
         String[] ranks = getFEN().getFENString().split("/");
         int i = 8;
         for (String rank : ranks) {
-            builder.append("  " + i + " |");
+            builder.append(SPACING + i + " |");
             for (int j = 0; j < rank.length(); j++) {
                 if (Character.isDigit(rank.charAt(j))) {
                     int k = Integer.parseInt(String.valueOf(rank.charAt(j)));
@@ -125,12 +138,13 @@ public class ChessboardImpl implements Chessboard
         if (Pattern.matches("^(?:[a-h])[1-8]$", name)) {
             String whichFile = name.substring(0, 1);
             int whichRank = Integer.parseInt(name.substring(1));
-            int offset = 0;
+            int offset = File.forName(whichFile).getNumber() - 1;
+            /*int offset = 0;
             for (File file : File.values()) {
                 if (file.toString().equals(whichFile))
                     break;
                 offset++;
-            }
+            }*/
             int i = ((whichRank - 1) * NUM_FILES) + offset;
             square = squares[i];
         }
@@ -138,10 +152,58 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    /* TODO - validate move */
+    public Square getEnPassantTargetSquare()
+    {
+        return enPassantTarget;
+    }
+
+    @Override
+    public PieceColor getActiveColor()
+    {
+        return toMove;
+    }
+
+    @Override
+    public int getMoveCount()
+    {
+        return moveCount;
+    }
+
+    @Override
+    public int getHalfMoveClock()
+    {
+        return halfMoveClock;
+    }
+
+    @Override
+    public int getHalfMoveTotal()
+    {
+        return halfMoveTotal;
+    }
+
+    @Override
+    public String getCastlingAvailability()
+    {
+        return castling;
+    }
+
+    @Override
+    /* TODO:
+     *   - validate move
+     *   - update halfMoveClock
+     *   - update castling
+     *   - update e.p. target
+     */
     public void move(Piece piece, Square dest)
     {
         piece.move(dest);
+        halfMoveTotal++;
+        if (toMove == PieceColor.BLACK) {
+            moveCount++;
+            toMove = PieceColor.WHITE;
+        }
+        else
+            toMove = PieceColor.BLACK;
     }
 
     @Override

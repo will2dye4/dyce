@@ -1,5 +1,7 @@
 package com.williamdye.dyce.pieces;
 
+import com.williamdye.dyce.board.Square;
+
 /**
  * @author William Dye
  */
@@ -16,5 +18,12 @@ public class King extends AbstractPiece
     {
         return PieceType.KING;
     }
+
+    /*@Override
+    public boolean isLegalSquare(Square square)
+    {
+        if (square.getFile() == square.getFile())
+            // ...
+    }*/
 
 }

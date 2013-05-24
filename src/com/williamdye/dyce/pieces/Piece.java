@@ -18,6 +18,8 @@ public interface Piece
 
     public boolean isCaptured();
 
+/*    public boolean isLegalSquare(Square square); */
+
     public void capture();
 
     public void move(Square dest);

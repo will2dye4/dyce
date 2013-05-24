@@ -2,6 +2,7 @@ package com.williamdye.dyce;
 
 import com.williamdye.dyce.board.Chessboard;
 import com.williamdye.dyce.board.ChessboardImpl;
+import com.williamdye.dyce.pieces.PieceColor;
 
 import java.util.Scanner;
 
@@ -56,12 +57,13 @@ public class Dyce
 
     private static void explore(Chessboard board)
     {
+        final String[] TO_QUIT = { ":quit", ":q" };
         Scanner scan = new Scanner(System.in);
         out("*========[ Board Explorer ]========================================*");
         out("| You play both sides. At the prompt, type the next move,          |");
         out("| with the starting and finishing squares separated by a space.    |");
-        out("| For example, to move a Pawn from e2 to e4, enter \"e2 e4\".        |");   /* spacing looks off but */
-        out("| To quit, enter \":quit\" or \":q\".                                  |"); /*  it prints correctly  */
+        out("| For example, to move a Pawn from e2 to e4, enter \"e2 e4\".        |");   /* spacing is not off */
+        out("| To quit, enter \"" + TO_QUIT[0] + "\" or \"" + TO_QUIT[1] + "\".                                  |");
         out("*==================================================================*");
         out("\nPress Enter to begin...");
         scan.useDelimiter("");
@@ -74,12 +76,13 @@ public class Dyce
                 board.move(squares[0], squares[1]);
             }
             out("\n" + board.prettyPrint());
-            if (lastMove.length() > 0)
-                out("Last move was: " + lastMove);
-            print("Enter a move: ");
+            if (board.getHalfMoveTotal() > 0)
+                out("Last move: " + lastMove);
+            print("Enter " + ((board.getActiveColor() == PieceColor.WHITE) ? "white" : "black") + "'s move: ");
             move = scan.next();
-            lastMove = move;
-        } while (!":quit".equals(move) && !":q".equals(move));
+            lastMove = ((board.getActiveColor() == PieceColor.BLACK) ? board.getMoveCount() + "..." :
+                    board.getMoveCount() + ". ") + move;
+        } while (!TO_QUIT[0].equals(move) && !TO_QUIT[1].equals(move));
     }
 
     private static void out(String message)
