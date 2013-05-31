@@ -18,7 +18,11 @@ public interface Piece extends Comparable<Piece>
 
     public boolean isCaptured();
 
+    public boolean isPinned();
+
     public boolean isLegalSquare(Square dest);
+
+    public boolean isAttacking(Square dest);
 
     public void capture();
 

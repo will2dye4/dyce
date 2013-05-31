@@ -20,9 +20,9 @@ public class Rook extends AbstractPiece
     }
 
     @Override
-    public boolean isLegalSquare(Square dest)
+    public final boolean isLegalSquare(Square dest)
     {
-        return ((square.getRank() == dest.getRank()) || (square.getFile() == dest.getFile()));
+        return (super.isLegalSquare(dest) && ((square.getRank() == dest.getRank()) || (square.getFile() == dest.getFile())));
     }
 
 }

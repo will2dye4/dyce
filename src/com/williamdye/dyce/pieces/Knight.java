@@ -1,7 +1,7 @@
 package com.williamdye.dyce.pieces;
 
 import com.williamdye.dyce.board.Square;
-import com.williamdye.dyce.board.SquareImpl;
+import com.williamdye.dyce.board.Paths;
 
 /**
  * @author William Dye
@@ -21,10 +21,11 @@ public class Knight extends AbstractPiece
     }
 
     @Override
-    public boolean isLegalSquare(Square dest)
+    public final boolean isLegalSquare(Square dest)
     {
-        return (((SquareImpl.getRankDistance(square, dest) == 2) && (SquareImpl.getFileDistance(square, dest) == 1)) ||
-                ((SquareImpl.getRankDistance(square, dest) == 1) && (SquareImpl.getFileDistance(square, dest) == 2)));
+        return (super.isLegalSquare(dest) &&
+                (((Paths.getRankDistance(square, dest) == 2) && (Paths.getFileDistance(square, dest) == 1)) ||
+                ((Paths.getRankDistance(square, dest) == 1) && (Paths.getFileDistance(square, dest) == 2))));
     }
 
 }
