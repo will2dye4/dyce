@@ -7,34 +7,28 @@ import com.williamdye.dyce.pieces.Piece;
  */
 public class SquareImpl implements Square
 {
-    protected Rank rank;
-    protected File file;
+    protected final Chessboard board;
+    protected final Rank rank;
+    protected final File file;
     protected Piece piece;
 
-    public SquareImpl(Rank r, File f)
+    public SquareImpl(Chessboard board, Rank rank, File file)
     {
-        this(r, f, null);
+        this(board, rank, file, null);
     }
 
-    public SquareImpl(Rank r, File f, Piece p)
+    public SquareImpl(Chessboard chessboard, Rank r, File f, Piece p)
     {
+        this.board = chessboard;
         this.rank = r;
         this.file = f;
         setPiece(p);
     }
 
-    public static int getRankDistance(Square start, Square end)
+    @Override
+    public Chessboard getBoard()
     {
-        if ((start == null) || (end == null))
-            return -1;
-        return Math.abs(start.getRank().getNumber() - end.getRank().getNumber());
-    }
-
-    public static int getFileDistance(Square start, Square end)
-    {
-        if ((start == null) || (end == null))
-            return -1;
-        return Math.abs(start.getFile().getNumber() - end.getFile().getNumber());
+        return board;
     }
 
     @Override

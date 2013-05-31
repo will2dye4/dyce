@@ -8,6 +8,8 @@ import com.williamdye.dyce.pieces.Piece;
 public interface Square
 {
 
+    public Chessboard getBoard();
+
     public Rank getRank();
 
     public File getFile();

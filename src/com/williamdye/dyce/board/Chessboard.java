@@ -1,8 +1,7 @@
 package com.williamdye.dyce.board;
 
-import com.williamdye.dyce.FEN;
-import com.williamdye.dyce.pieces.Piece;
-import com.williamdye.dyce.pieces.PieceColor;
+import com.williamdye.dyce.notation.FEN;
+import com.williamdye.dyce.pieces.*;
 
 import java.util.List;
 
@@ -20,11 +19,23 @@ public interface Chessboard
 
     public List<Piece> getActiveWhitePieces();
 
+    public List<Piece> getActiveWhitePieces(PieceType type);
+
     public List<Piece> getCapturedWhitePieces();
 
     public List<Piece> getActiveBlackPieces();
 
+    public List<Piece> getActiveBlackPieces(PieceType type);
+
     public List<Piece> getCapturedBlackPieces();
+
+    public King getWhiteKing();
+
+    public Queen getWhiteQueen();
+
+    public King getBlackKing();
+
+    public Queen getBlackQueen();
 
     public Square getSquareByName(String name);
 

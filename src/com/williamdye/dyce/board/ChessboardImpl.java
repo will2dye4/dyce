@@ -1,11 +1,13 @@
 package com.williamdye.dyce.board;
 
-import com.williamdye.dyce.FEN;
+import com.williamdye.dyce.notation.FEN;
 import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ChessboardImpl implements Chessboard
@@ -15,18 +17,20 @@ public class ChessboardImpl implements Chessboard
     public static final int NUM_SQUARES = NUM_RANKS * NUM_FILES;
 
     /* fen is the Forsyth-Edwards Notation of the current position */
-    protected FEN fen;
+    protected final FEN fen;
     /* squares is a one-dimensional array of squares representing the chessboard as follows:
      * [a1, b1, c1, d1, e1, f1, g1, h1,
      *  a2, b2, c2, d2, e2, f2, g2, h2,
      *  ...,
      *  a8, b8, c8, d8, e8, f8, g8, h8]
      */
-    protected Square[] squares;
-    protected List<Piece> activeWhitePieces;
-    protected List<Piece> capturedWhitePieces;
-    protected List<Piece> activeBlackPieces;
-    protected List<Piece> capturedBlackPieces;
+    protected final Square[] squares;
+    protected final Map<PieceType, List<Piece>> whitePieces;
+    protected final List<Piece> activeWhitePieces;
+    protected final List<Piece> capturedWhitePieces;
+    protected final Map<PieceType, List<Piece>> blackPieces;
+    protected final List<Piece> activeBlackPieces;
+    protected final List<Piece> capturedBlackPieces;
     protected PieceColor toMove;
     protected Square enPassantTarget;
     protected String castling;
@@ -38,8 +42,10 @@ public class ChessboardImpl implements Chessboard
     {
         this.fen = new FEN(this);
         this.squares = new Square[NUM_SQUARES];
+        this.whitePieces = new LinkedHashMap<PieceType, List<Piece>>();
         this.activeWhitePieces = new ArrayList<Piece>();
         this.capturedWhitePieces = new ArrayList<Piece>();
+        this.blackPieces = new LinkedHashMap<PieceType, List<Piece>>();
         this.activeBlackPieces = new ArrayList<Piece>();
         this.capturedBlackPieces = new ArrayList<Piece>();
         this.enPassantTarget = null;
@@ -53,6 +59,10 @@ public class ChessboardImpl implements Chessboard
 
     private void initialize()
     {
+        for (PieceType type : PieceType.values()) {
+            whitePieces.put(type, new ArrayList<Piece>());
+            blackPieces.put(type, new ArrayList<Piece>());
+        }
         int i = 0;
         Square square;
         Piece piece;
@@ -61,51 +71,70 @@ public class ChessboardImpl implements Chessboard
                 switch (rank) {
                     case SECOND_RANK:
                         piece = new Pawn(PieceColor.WHITE);
-                        square = new SquareImpl(rank, file, piece);
+                        square = new SquareImpl(this, rank, file, piece);
                         activeWhitePieces.add(piece);
+                        whitePieces.get(PieceType.PAWN).add(piece);
                         break;
                     case SEVENTH_RANK:
                         piece = new Pawn(PieceColor.BLACK);
-                        square = new SquareImpl(rank, file, piece);
+                        square = new SquareImpl(this, rank, file, piece);
                         activeBlackPieces.add(piece);
+                        blackPieces.get(PieceType.PAWN).add(piece);
                         break;
                     case FIRST_RANK:
                     case EIGHTH_RANK:
-                        PieceColor color = ((rank == Rank.FIRST_RANK) ? PieceColor.WHITE : PieceColor.BLACK);
+                        PieceColor color;
+                        List<Piece> list;
+                        Map<PieceType, List<Piece>> map;
+                        if (rank == Rank.FIRST_RANK) {
+                            color = PieceColor.WHITE;
+                            list = activeWhitePieces;
+                            map = whitePieces;
+                        } else {
+                            color = PieceColor.BLACK;
+                            list = activeBlackPieces;
+                            map = blackPieces;
+                        }
                         switch (file) {
                             case A_FILE:
                             case H_FILE:
                                 piece = new Rook(color);
-                                square = new SquareImpl(rank, file, piece);
+                                list.add(piece);
+                                map.get(PieceType.ROOK).add(piece);
+                                square = new SquareImpl(this, rank, file, piece);
                                 break;
                             case B_FILE:
                             case G_FILE:
                                 piece = new Knight(color);
-                                square = new SquareImpl(rank, file, piece);
+                                list.add(piece);
+                                map.get(PieceType.KNIGHT).add(piece);
+                                square = new SquareImpl(this, rank, file, piece);
                                 break;
                             case C_FILE:
                             case F_FILE:
                                 piece = new Bishop(color);
-                                square = new SquareImpl(rank, file, piece);
+                                list.add(piece);
+                                map.get(PieceType.BISHOP).add(piece);
+                                square = new SquareImpl(this, rank, file, piece);
                                 break;
                             case D_FILE:
                                 piece = new Queen(color);
-                                square = new SquareImpl(rank, file, piece);
+                                list.add(piece);
+                                map.get(PieceType.QUEEN).add(piece);
+                                square = new SquareImpl(this, rank, file, piece);
                                 break;
                             case E_FILE:
                                 piece = new King(color);
-                                square = new SquareImpl(rank, file, piece);
+                                list.add(piece);
+                                map.get(PieceType.KING).add(piece);
+                                square = new SquareImpl(this, rank, file, piece);
                                 break;
                             default:
                                 throw new IllegalStateException("File.values() returned a non-File member!");
                         }   /* switch (file) */
-                        if (color == PieceColor.WHITE)
-                            activeWhitePieces.add(piece);
-                        else
-                            activeBlackPieces.add(piece);
                         break;
                     default:
-                        square = new SquareImpl(rank, file);
+                        square = new SquareImpl(this, rank, file);
                         break;
                 }   /* switch (rank) */
                 squares[i++] = square;
@@ -170,6 +199,12 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
+    public List<Piece> getActiveWhitePieces(PieceType type)
+    {
+        return getActivePieces(PieceColor.WHITE, type);
+    }
+
+    @Override
     public List<Piece> getCapturedWhitePieces()
     {
         return capturedWhitePieces;
@@ -182,9 +217,43 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
+    public List<Piece> getActiveBlackPieces(PieceType type)
+    {
+        return getActivePieces(PieceColor.BLACK, type);
+    }
+
+    @Override
     public List<Piece> getCapturedBlackPieces()
     {
         return capturedBlackPieces;
+    }
+
+    @Override
+    public King getWhiteKing()
+    {
+        return (King)(whitePieces.get(PieceType.KING).get(0));
+    }
+
+    @Override
+    public Queen getWhiteQueen()
+    {
+        if (whitePieces.get(PieceType.QUEEN).size() == 0)
+            return null;
+        return (Queen)(whitePieces.get(PieceType.QUEEN).get(0));
+    }
+
+    @Override
+    public King getBlackKing()
+    {
+        return (King)(blackPieces.get(PieceType.KING).get(0));
+    }
+
+    @Override
+    public Queen getBlackQueen()
+    {
+        if (blackPieces.get(PieceType.QUEEN).size() == 0)
+            return null;
+        return (Queen)(blackPieces.get(PieceType.QUEEN).get(0));
     }
 
     @Override
@@ -195,12 +264,6 @@ public class ChessboardImpl implements Chessboard
             String whichFile = name.substring(0, 1);
             int whichRank = Integer.parseInt(name.substring(1));
             int offset = File.forName(whichFile).getNumber() - 1;
-            /*int offset = 0;
-            for (File file : File.values()) {
-                if (file.toString().equals(whichFile))
-                    break;
-                offset++;
-            }*/
             int i = ((whichRank - 1) * NUM_FILES) + offset;
             square = squares[i];
         }
@@ -258,9 +321,11 @@ public class ChessboardImpl implements Chessboard
             if (captured.getColor() == PieceColor.WHITE) {
                 activeWhitePieces.remove(captured);
                 capturedWhitePieces.add(captured);
+                whitePieces.get(captured.getPieceType()).remove(captured);
             } else {
                 activeBlackPieces.remove(captured);
                 capturedBlackPieces.add(captured);
+                blackPieces.get(captured.getPieceType()).remove(captured);
             }
         }
         halfMoveTotal++;
@@ -276,6 +341,17 @@ public class ChessboardImpl implements Chessboard
     public void move(String from, String to)
     {
         move(getSquareByName(from).getPiece(), getSquareByName(to));
+    }
+
+    private List<Piece> getActivePieces(PieceColor color, PieceType type)
+    {
+        if (color == null)
+            return null;
+        if (type == null)
+            return ((color == PieceColor.WHITE) ? getActiveWhitePieces() : getActiveBlackPieces());
+        if ((type == PieceType.KING) || (type == PieceType.QUEEN))
+            throw new IllegalArgumentException("getActivePieces() called with King or Queen type argument");
+        return ((color == PieceColor.WHITE) ? whitePieces.get(type) : blackPieces.get(type));
     }
 
 }
