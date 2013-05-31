@@ -1,4 +1,4 @@
-package com.williamdye.dyce;
+package com.williamdye.dyce.notation;
 
 import com.williamdye.dyce.board.Chessboard;
 import com.williamdye.dyce.board.ChessboardImpl;
