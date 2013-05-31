@@ -6,13 +6,13 @@ import com.williamdye.dyce.pieces.PieceColor;
 import java.util.Collections;
 import java.util.List;
 
-public class StringUtils
+public abstract class StringUtils
 {
 
-    public static String join(String[] array, String separator) throws IllegalArgumentException
+    public static String join(String[] array, String separator)
     {
         if (separator == null)
-            throw new IllegalArgumentException("Separator may not be null!");
+            separator = "";
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
             if (array[i] != null)
