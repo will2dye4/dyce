@@ -25,7 +25,7 @@ public class Queen extends AbstractPiece
     {
         return (super.isLegalSquare(dest) &&
                 ((square.getRank() == dest.getRank()) || (square.getFile() == dest.getFile()) ||
-                (Paths.getRankDistance(square, dest) == Paths.getFileDistance(square, dest))));
+                Paths.isSameDiagonal(square, dest)));
     }
 
 }

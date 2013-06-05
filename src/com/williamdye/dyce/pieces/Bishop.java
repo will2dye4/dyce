@@ -23,8 +23,7 @@ public class Bishop extends AbstractPiece
     @Override
     public final boolean isLegalSquare(Square dest)
     {
-        return (super.isLegalSquare(dest) &&
-                (Paths.getRankDistance(square, dest) == Paths.getFileDistance(square, dest)));
+        return (super.isLegalSquare(dest) && Paths.isSameDiagonal(square, dest));
     }
 
 }
