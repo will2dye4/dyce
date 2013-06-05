@@ -62,15 +62,8 @@ public abstract class AbstractPiece implements Piece
             return false;   /* king can never be pinned */
         boolean pinned = false;
         Chessboard board = square.getBoard();
-        King king;
-        List<Piece> otherPieces;
-        if (color == PieceColor.WHITE) {
-            king = board.getWhiteKing();
-            otherPieces = board.getActiveBlackPieces();
-        } else {
-            king = board.getBlackKing();
-            otherPieces = board.getActiveWhitePieces();
-        }
+        King king = board.getKing(color);
+        List<Piece> otherPieces = board.getActivePieces(PieceColor.oppositeOf(color));
         Square kingSquare = king.getSquare();
         Rank kingRank = kingSquare.getRank();
         File kingFile = kingSquare.getFile();
@@ -121,7 +114,13 @@ public abstract class AbstractPiece implements Piece
     @Override
     public boolean isLegalSquare(Square dest)
     {
-        return ((!captured) && (!isPinned()) && (isPathClear(square, dest)) &&
+        return isLegalSquare(dest, false);
+    }
+
+    @Override
+    public boolean isLegalSquare(Square dest, boolean ignorePins)
+    {
+        return ((!captured) && (ignorePins || !isPinned()) && (isPathClear(square, dest)) &&
                 (dest.isEmpty() || (dest.getPiece().getColor() != color)));
     }
 

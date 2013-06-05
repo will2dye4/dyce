@@ -5,6 +5,25 @@ package com.williamdye.dyce.pieces;
  */
 public enum PieceColor
 {
-    WHITE,
-    BLACK
+    WHITE("w"),
+    BLACK("b");
+
+    private String string;
+
+    PieceColor(String name)
+    {
+        this.string = name;
+    }
+
+    public static PieceColor oppositeOf(PieceColor color)
+    {
+        return ((color == WHITE) ? BLACK : WHITE);
+    }
+
+    @Override
+    public String toString()
+    {
+        return string;
+    }
+
 }
