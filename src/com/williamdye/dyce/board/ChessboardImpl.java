@@ -1,5 +1,7 @@
 package com.williamdye.dyce.board;
 
+import com.williamdye.dyce.game.GameState;
+import com.williamdye.dyce.game.GameStateImpl;
 import com.williamdye.dyce.notation.FEN;
 import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
@@ -31,12 +33,7 @@ public class ChessboardImpl implements Chessboard
     protected final Map<PieceType, List<Piece>> blackPieces;
     protected final List<Piece> activeBlackPieces;
     protected final List<Piece> capturedBlackPieces;
-    protected PieceColor toMove;
-    protected Square enPassantTarget;
-    protected String castling;
-    protected int moveCount;
-    protected int halfMoveTotal;
-    protected int halfMoveClock;
+    protected final GameState state;
 
     public ChessboardImpl()
     {
@@ -48,12 +45,7 @@ public class ChessboardImpl implements Chessboard
         this.blackPieces = new LinkedHashMap<PieceType, List<Piece>>();
         this.activeBlackPieces = new ArrayList<Piece>();
         this.capturedBlackPieces = new ArrayList<Piece>();
-        this.enPassantTarget = null;
-        this.toMove = PieceColor.WHITE;
-        this.castling = "KQkq";
-        this.moveCount = 1;
-        this.halfMoveTotal = 0;
-        this.halfMoveClock = 0;
+        this.state = new GameStateImpl();
         initialize();
     }
 
@@ -193,67 +185,71 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public List<Piece> getActiveWhitePieces()
+    public GameState getGameState()
     {
-        return activeWhitePieces;
+        return state;
     }
 
     @Override
-    public List<Piece> getActiveWhitePieces(PieceType type)
+    public List<Piece> getActivePieces(PieceColor color)
     {
-        return getActivePieces(PieceColor.WHITE, type);
-    }
-
-    @Override
-    public List<Piece> getCapturedWhitePieces()
-    {
-        return capturedWhitePieces;
-    }
-
-    @Override
-    public List<Piece> getActiveBlackPieces()
-    {
-        return activeBlackPieces;
-    }
-
-    @Override
-    public List<Piece> getActiveBlackPieces(PieceType type)
-    {
-        return getActivePieces(PieceColor.BLACK, type);
-    }
-
-    @Override
-    public List<Piece> getCapturedBlackPieces()
-    {
-        return capturedBlackPieces;
-    }
-
-    @Override
-    public King getWhiteKing()
-    {
-        return (King)(whitePieces.get(PieceType.KING).get(0));
-    }
-
-    @Override
-    public Queen getWhiteQueen()
-    {
-        if (whitePieces.get(PieceType.QUEEN).size() == 0)
+        if (color == null)
             return null;
-        return (Queen)(whitePieces.get(PieceType.QUEEN).get(0));
+        return ((color == PieceColor.WHITE) ? activeWhitePieces : activeBlackPieces);
     }
 
     @Override
-    public King getBlackKing()
+    public List<Piece> getActivePieces(PieceColor color, PieceType type)
     {
-        return (King)(blackPieces.get(PieceType.KING).get(0));
-    }
-
-    @Override
-    public Queen getBlackQueen()
-    {
-        if (blackPieces.get(PieceType.QUEEN).size() == 0)
+        if (color == null)
             return null;
-        return (Queen)(blackPieces.get(PieceType.QUEEN).get(0));
+        if (type == null)
+            return getActivePieces(color);
+        if ((type == PieceType.KING) || (type == PieceType.QUEEN))
+            throw new IllegalArgumentException("getActivePieces() called with King or Queen type argument");
+        return ((color == PieceColor.WHITE) ? whitePieces.get(type) : blackPieces.get(type));
+    }
+
+    @Override
+    public List<Piece> getCapturedPieces(PieceColor color)
+    {
+        if (color == null)
+            return null;
+        return ((color == PieceColor.WHITE) ? capturedWhitePieces : capturedBlackPieces);
+    }
+
+    @Override
+    public King getKing(PieceColor color)
+    {
+        if (color == null)
+            return null;
+        King king;
+        if (color == PieceColor.WHITE)
+            king = (King)(whitePieces.get(PieceType.KING).get(0));
+        else
+            king = (King)(blackPieces.get(PieceType.KING).get(0));
+        return king;
+    }
+
+    @Override
+    public Queen getQueen(PieceColor color)
+    {
+        if (color == null)
+            return null;
+        Queen queen;
+        PieceType queenType = PieceType.QUEEN;
+        if (color == PieceColor.WHITE) {
+            if (whitePieces.get(queenType).size() == 0)
+                queen = null;
+            else
+                queen = (Queen)(whitePieces.get(queenType).get(0));
+        } else {
+            if (blackPieces.get(queenType).size() == 0)
+                queen = null;
+            else
+                queen = (Queen)(blackPieces.get(queenType).get(0));
+        }
+        return queen;
     }
 
     @Override
@@ -271,46 +267,10 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public Square getEnPassantTargetSquare()
-    {
-        return enPassantTarget;
-    }
-
-    @Override
-    public PieceColor getActiveColor()
-    {
-        return toMove;
-    }
-
-    @Override
-    public int getMoveCount()
-    {
-        return moveCount;
-    }
-
-    @Override
-    public int getHalfMoveClock()
-    {
-        return halfMoveClock;
-    }
-
-    @Override
-    public int getHalfMoveTotal()
-    {
-        return halfMoveTotal;
-    }
-
-    @Override
-    public String getCastlingAvailability()
-    {
-        return castling;
-    }
-
-    @Override
     /* TODO:
      *   - validate move
      *   - update halfMoveClock
-     *   - update castling
+     *   - update castling (including on a normal king or rook move)
      *   - update e.p. target
      */
     public void move(Piece piece, Square dest)
@@ -318,40 +278,19 @@ public class ChessboardImpl implements Chessboard
         /*if (!piece.isLegalSquare(dest)) ... do something */
         Piece captured = piece.move(dest);
         if (captured != null) {
-            if (captured.getColor() == PieceColor.WHITE) {
-                activeWhitePieces.remove(captured);
-                capturedWhitePieces.add(captured);
-                whitePieces.get(captured.getPieceType()).remove(captured);
-            } else {
-                activeBlackPieces.remove(captured);
-                capturedBlackPieces.add(captured);
-                blackPieces.get(captured.getPieceType()).remove(captured);
-            }
+            PieceColor color = captured.getColor();
+            getActivePieces(color).remove(captured);
+            getCapturedPieces(color).add(captured);
+            getActivePieces(color, captured.getPieceType()).remove(captured);
         }
-        halfMoveTotal++;
-        if (toMove == PieceColor.BLACK) {
-            moveCount++;
-            toMove = PieceColor.WHITE;
-        }
-        else
-            toMove = PieceColor.BLACK;
+        state.incrementHalfMoveTotal();
+        state.toggleActiveColor();
     }
 
     @Override
     public void move(String from, String to)
     {
         move(getSquareByName(from).getPiece(), getSquareByName(to));
-    }
-
-    private List<Piece> getActivePieces(PieceColor color, PieceType type)
-    {
-        if (color == null)
-            return null;
-        if (type == null)
-            return ((color == PieceColor.WHITE) ? getActiveWhitePieces() : getActiveBlackPieces());
-        if ((type == PieceType.KING) || (type == PieceType.QUEEN))
-            throw new IllegalArgumentException("getActivePieces() called with King or Queen type argument");
-        return ((color == PieceColor.WHITE) ? whitePieces.get(type) : blackPieces.get(type));
     }
 
 }

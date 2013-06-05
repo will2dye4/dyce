@@ -1,5 +1,7 @@
 package com.williamdye.dyce.board;
 
+import com.williamdye.dyce.pieces.PieceColor;
+
 /**
  * @author William Dye
  */
@@ -23,6 +25,13 @@ public enum Rank
         this.number = num;
         this.string = num.toString();
         this.initialFEN = fen;
+    }
+
+    public static Rank getStartingRank(PieceColor color)
+    {
+        if (color == null)
+            return null;
+        return ((color == PieceColor.WHITE) ? FIRST_RANK : EIGHTH_RANK);
     }
 
     public int getNumber()
