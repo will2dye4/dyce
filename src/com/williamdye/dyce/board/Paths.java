@@ -13,27 +13,26 @@ public abstract class Paths
 
     public static int getRankDistance(Square start, Square end)
     {
-        if ((start == null) || (end == null))
+        if (isInvalidPair(start, end))
             return -1;
         return Math.abs(start.getRank().getNumber() - end.getRank().getNumber());
     }
 
     public static int getFileDistance(Square start, Square end)
     {
-        if ((start == null) || (end == null))
+        if (isInvalidPair(start, end))
             return -1;
         return Math.abs(start.getFile().getNumber() - end.getFile().getNumber());
     }
 
     public static boolean isSameDiagonal(Square start, Square end)
     {
-        /* TODO */
-        return true;
+        return (!(isInvalidPair(start, end)) && (getFileDistance(start, end) == getRankDistance(start, end)));
     }
 
     public static boolean isPathClear(Square start, Square end)
     {
-        if ((start == null) || (start.getBoard() == null) || (end == null) || (start.getBoard() != end.getBoard()))
+        if (isInvalidPair(start, end))
             return false;
         final Square[] squares = start.getBoard().getBoard();
         final int startIndex = (((start.getRank().getNumber() - 1) * NUM_FILES) + (start.getFile().getNumber() - 1));
@@ -99,6 +98,11 @@ public abstract class Paths
              */
         }
         return clear;
+    }
+
+    private static boolean isInvalidPair(Square a, Square b)
+    {
+        return ((a == null) || (b == null) || (a.getBoard() == null) || !(a.getBoard().equals(b.getBoard())));
     }
 
 }
