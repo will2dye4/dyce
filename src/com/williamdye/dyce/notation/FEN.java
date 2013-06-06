@@ -19,6 +19,11 @@ public class FEN
     public static final String INITIAL_FEN_STRING = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final int NUM_COMPONENTS = 6;
 
+    protected static final Pattern CASTLING_PATTERN = Pattern.compile("^(?:KQkq|KQk|KQq|Kkq|Qkq|KQ|kq|Kk|Kq|Qk|Qq|K|Q|k|q|-)$");
+    protected static final Pattern EN_PASSANT_SQUARE_PATTERN = Pattern.compile("^(?:(?:(?:[a-h])[36])|-)$");
+    protected static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
+    protected static final Pattern RANK_PATTERN = Pattern.compile("^(?:(?:[1-7]?[bknpqrBKNPQR](?:[1-7]?[bknpqrBKNPQR])*[1-7]?)|8)$");
+
     protected String fenString;
     protected Chessboard board;
     private boolean fromString;
@@ -57,9 +62,9 @@ public class FEN
                     if (!isValidRankString(rank))
                         return false;   /* invalid rank string makes the whole FEN invalid */
                 boolean valid = ("b".equals(components[1]) || "w".equals(components[1]));
-                valid &= Pattern.matches("^(?:KQkq|KQk|KQq|Kkq|Qkq|KQ|kq|Kk|Kq|Qk|Qq|K|Q|k|q|-)$", components[2]);
-                valid &= Pattern.matches("^(?:(?:(?:[a-h])[36])|-)$", components[3]);
-                valid &= (Pattern.matches("^[0-9]+$", components[4]) && Pattern.matches("^[0-9]+$", components[5]));
+                valid &= CASTLING_PATTERN.matcher(components[2]).matches();
+                valid &= EN_PASSANT_SQUARE_PATTERN.matcher(components[3]).matches();
+                valid &= (NUMBER_PATTERN.matcher(components[4]).matches() && NUMBER_PATTERN.matcher(components[5]).matches());
                 return valid;   /* position is good; valid represents the validity of the last five components */
             }
         }
@@ -109,7 +114,7 @@ public class FEN
     private static boolean isValidRankString(String rank)
     {
         boolean valid = false;
-        if (Pattern.matches("^(?:(?:[1-7]?[bknpqrBKNPQR](?:[1-7]?[bknpqrBKNPQR])*[1-7]?)|8)$", rank)) {
+        if (RANK_PATTERN.matcher(rank).matches()) {
             int total = 0;  /* count the number of pieces + empty squares on this rank */
             for (int i = 0; i < rank.length(); i++) {
                 if (Character.isDigit(rank.charAt(i)))
