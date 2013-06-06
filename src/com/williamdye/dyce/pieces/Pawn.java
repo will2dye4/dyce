@@ -24,22 +24,37 @@ public class Pawn extends AbstractPiece
     }
 
     @Override
-    public final boolean isLegalSquare(Square dest)
+    public final boolean isLegalSquare(Square dest, boolean ignorePins)
     {
-        if (!super.isLegalSquare(dest) || (getRankDistance(square, dest) > 2) || (getFileDistance(square, dest) > 1))
+        int rankDistance = getRankDistance(square, dest);
+        int fileDistance = getFileDistance(square, dest);
+        if (!super.isLegalSquare(dest, ignorePins) || !isAdvancingSquare(dest) ||
+                (rankDistance > 2) || (rankDistance < 1) || (fileDistance > 1))
             return false;
-        if (getFileDistance(square, dest) == 1) {
-            boolean legal = (dest.equals(square.getBoard().getGameState().getEnPassantTargetSquare()) ||
+        if ((fileDistance == 1) && (rankDistance == 1)) {
+            return (dest.equals(square.getBoard().getGameState().getEnPassantTargetSquare()) ||
                     (!dest.isEmpty() && (dest.getPiece().getColor() == PieceColor.oppositeOf(color))));
-            if (color == PieceColor.WHITE)
-                return (legal && ((dest.getRank().getNumber() - square.getRank().getNumber()) == 1));
-            else
-                return (legal && ((square.getRank().getNumber() - dest.getRank().getNumber()) == 1));
         }
-        if (getRankDistance(square, dest) == 2)
-            return (square.getRank() == ((color == PieceColor.WHITE) ? Rank.SECOND_RANK : Rank.SEVENTH_RANK));
-        /* file distance == 0, rank distance == 1 */
-        return ((dest.getRank().getNumber() - square.getRank().getNumber()) == ((color == PieceColor.WHITE) ? 1 : -1));
+        return ((fileDistance == 0) && ((rankDistance == 1) || (square.getRank() == Rank.getStartingPawnRank(color))));
+    }
+
+    @Override
+    public final boolean isAttacking(Square dest)
+    {
+        /* do we need to return true only if dest is empty or occupied by an opposite color piece,
+         * or should we also return true if dest is occupied by a same color piece? should this method be
+         * renamed "isCovering" or similar, or should we introduce a new method "isDefending" to distinguish
+         * the two situations? decisions, decisions ...
+         */
+        return (!captured && !isPinned() && isAdvancingSquare(dest) && (getFileDistance(square, dest) == 1));
+    }
+
+    private boolean isAdvancingSquare(Square dest)
+    {
+        if (color == PieceColor.WHITE)
+            return (dest.getRank().getNumber() > square.getRank().getNumber());
+        else
+            return (dest.getRank().getNumber() < square.getRank().getNumber());
     }
 
 }

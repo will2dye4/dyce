@@ -21,9 +21,9 @@ public class Bishop extends AbstractPiece
     }
 
     @Override
-    public final boolean isLegalSquare(Square dest)
+    public final boolean isLegalSquare(Square dest, boolean ignorePins)
     {
-        return (super.isLegalSquare(dest) && Paths.isSameDiagonal(square, dest));
+        return (super.isLegalSquare(dest, ignorePins) && Paths.isSameDiagonal(square, dest));
     }
 
 }

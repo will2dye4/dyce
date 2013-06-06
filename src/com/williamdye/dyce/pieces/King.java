@@ -28,9 +28,9 @@ public class King extends AbstractPiece
     }
 
     @Override
-    public final boolean isLegalSquare(Square dest)
+    public final boolean isLegalSquare(Square dest, boolean ignorePins)
     {
-        if (!super.isLegalSquare(dest))
+        if (!super.isLegalSquare(dest, true))   /* ignore pins when checking legality (king can't be pinned) */
             return false;
         List<Piece> otherPieces = square.getBoard().getActivePieces(PieceColor.oppositeOf(color));
         for (Piece piece : otherPieces) {
