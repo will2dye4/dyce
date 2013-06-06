@@ -1,5 +1,6 @@
 package com.williamdye.dyce.board;
 
+import com.williamdye.dyce.exception.IllegalMoveException;
 import com.williamdye.dyce.game.GameState;
 import com.williamdye.dyce.game.GameStateImpl;
 import com.williamdye.dyce.notation.FEN;
@@ -17,6 +18,8 @@ public class ChessboardImpl implements Chessboard
     public static final int NUM_RANKS = 8;
     public static final int NUM_FILES = 8;
     public static final int NUM_SQUARES = NUM_RANKS * NUM_FILES;
+
+    protected static final Pattern SQUARE_NAME_PATTERN = Pattern.compile("^(?:[a-h])[1-8]$");
 
     /* fen is the Forsyth-Edwards Notation of the current position */
     protected final FEN fen;
@@ -256,7 +259,7 @@ public class ChessboardImpl implements Chessboard
     public Square getSquareByName(String name)
     {
         Square square = null;
-        if (Pattern.matches("^(?:[a-h])[1-8]$", name)) {
+        if (SQUARE_NAME_PATTERN.matcher(name).matches()) {
             String whichFile = name.substring(0, 1);
             int whichRank = Integer.parseInt(name.substring(1));
             int offset = File.forName(whichFile).getNumber() - 1;
@@ -268,14 +271,14 @@ public class ChessboardImpl implements Chessboard
 
     @Override
     /* TODO:
-     *   - validate move
      *   - update halfMoveClock
      *   - update castling (including on a normal king or rook move)
      *   - update e.p. target
      */
-    public void move(Piece piece, Square dest)
+    public void move(Piece piece, Square dest) throws IllegalMoveException
     {
-        /*if (!piece.isLegalSquare(dest)) ... do something */
+        if (!piece.isLegalSquare(dest))
+            throw new IllegalMoveException();
         Piece captured = piece.move(dest);
         if (captured != null) {
             PieceColor color = captured.getColor();
@@ -288,7 +291,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public void move(String from, String to)
+    public void move(String from, String to) throws IllegalMoveException
     {
         move(getSquareByName(from).getPiece(), getSquareByName(to));
     }

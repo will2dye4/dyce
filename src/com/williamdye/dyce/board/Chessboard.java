@@ -1,5 +1,6 @@
 package com.williamdye.dyce.board;
 
+import com.williamdye.dyce.exception.IllegalMoveException;
 import com.williamdye.dyce.game.GameState;
 import com.williamdye.dyce.notation.FEN;
 import com.williamdye.dyce.pieces.*;
@@ -32,9 +33,9 @@ public interface Chessboard
 
     public Square getSquareByName(String name);
 
-    public void move(Piece piece, Square dest);
+    public void move(Piece piece, Square dest) throws IllegalMoveException;
 
     /* convenience method for testing ... */
-    public void move(String from, String to);
+    public void move(String from, String to) throws IllegalMoveException;
 
 }
