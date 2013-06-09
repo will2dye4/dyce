@@ -159,7 +159,7 @@ public abstract class AbstractPiece implements Piece
     @Override
     public String toString()
     {
-        return "<" + ((color == PieceColor.WHITE) ? "white" : "black") + " " + getPieceType().toString() + ">";
+        return ((color == PieceColor.WHITE) ? "white" : "black") + " " + getPieceType().toString();
     }
 
 }

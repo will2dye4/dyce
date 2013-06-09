@@ -1,9 +1,10 @@
 package com.williamdye.dyce.board;
 
+import com.williamdye.dyce.exception.AmbiguousMoveException;
 import com.williamdye.dyce.exception.IllegalMoveException;
-import com.williamdye.dyce.game.GameState;
-import com.williamdye.dyce.game.GameStateImpl;
+import com.williamdye.dyce.game.*;
 import com.williamdye.dyce.notation.FEN;
+import com.williamdye.dyce.notation.PGN;
 import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
 
@@ -23,6 +24,7 @@ public class ChessboardImpl implements Chessboard
 
     /* fen is the Forsyth-Edwards Notation of the current position */
     protected final FEN fen;
+    protected final PGN pgn;
     /* squares is a one-dimensional array of squares representing the chessboard as follows:
      * [a1, b1, c1, d1, e1, f1, g1, h1,
      *  a2, b2, c2, d2, e2, f2, g2, h2,
@@ -37,10 +39,12 @@ public class ChessboardImpl implements Chessboard
     protected final List<Piece> activeBlackPieces;
     protected final List<Piece> capturedBlackPieces;
     protected final GameState state;
+    protected final MoveHistory history;
 
     public ChessboardImpl()
     {
         this.fen = new FEN(this);
+        this.pgn = new PGN(this);
         this.squares = new Square[NUM_SQUARES];
         this.whitePieces = new LinkedHashMap<PieceType, List<Piece>>();
         this.activeWhitePieces = new ArrayList<Piece>();
@@ -49,6 +53,7 @@ public class ChessboardImpl implements Chessboard
         this.activeBlackPieces = new ArrayList<Piece>();
         this.capturedBlackPieces = new ArrayList<Piece>();
         this.state = new GameStateImpl();
+        this.history = new MoveHistoryImpl(this);
         initialize();
     }
 
@@ -286,14 +291,16 @@ public class ChessboardImpl implements Chessboard
             getCapturedPieces(color).add(captured);
             getActivePieces(color, captured.getPieceType()).remove(captured);
         }
+        history.add(new MoveImpl(piece, captured, piece.getLastSquare(), dest, null, state.getMoveCount()));
         state.incrementHalfMoveTotal();
         state.toggleActiveColor();
     }
 
     @Override
-    public void move(String from, String to) throws IllegalMoveException
+    public void move(String pgnString) throws AmbiguousMoveException, IllegalMoveException
     {
-        move(getSquareByName(from).getPiece(), getSquareByName(to));
+        PartialMove partial = pgn.parseMove(state.getActiveColor(), pgnString);
+        move(partial.getMovedPiece(), partial.getEndSquare());
     }
 
 }
