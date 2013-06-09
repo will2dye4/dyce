@@ -56,7 +56,7 @@ public abstract class Paths
                 for (i = startIndex + NUM_FILES; i < endIndex; i += NUM_FILES)
                     clear &= squares[i].isEmpty();
             } else {    /* moving 8th rank => 1st rank */
-                for (i = endIndex - NUM_FILES; i > startIndex; i -= NUM_FILES)
+                for (i = startIndex - NUM_FILES; i > endIndex; i -= NUM_FILES)
                     clear &= squares[i].isEmpty();
             }
         } else if (Paths.getRankDistance(start, end) == Paths.getFileDistance(start, end)) { /* diagonal */
