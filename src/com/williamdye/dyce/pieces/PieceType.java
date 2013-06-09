@@ -23,6 +23,17 @@ public enum PieceType
         this.materialValue = value;
     }
 
+    public static PieceType forSymbol(char symbol)
+    {
+        if (Character.isUpperCase(symbol))
+            symbol += 32;
+        for (PieceType type : values()) {
+            if (symbol == type.getSymbol())
+                return type;
+        }
+        return null;
+    }
+
     public char getSymbol()
     {
         return symbol;

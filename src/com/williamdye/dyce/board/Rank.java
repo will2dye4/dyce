@@ -25,6 +25,15 @@ public enum Rank
         this.string = num.toString();
     }
 
+    public static Rank forNumber(int number)
+    {
+        for (Rank rank : values()) {
+            if (number == rank.getNumber())
+                return rank;
+        }
+        return null;
+    }
+
     public static Rank getStartingRank(PieceColor color)
     {
         if (color == null)
