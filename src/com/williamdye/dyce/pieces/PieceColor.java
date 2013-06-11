@@ -20,6 +20,11 @@ public enum PieceColor
         return ((color == WHITE) ? BLACK : WHITE);
     }
 
+    public String getName()
+    {
+        return ("w".equals(string) ? "white" : "black");
+    }
+
     @Override
     public String toString()
     {
