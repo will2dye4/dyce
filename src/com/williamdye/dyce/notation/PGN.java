@@ -16,6 +16,9 @@ import java.util.List;
 
 public class PGN
 {
+    public static final String CASTLING_KINGSIDE = "O-O";
+    public static final String CASTLING_QUEENSIDE = "O-O-O";
+
     protected final Chessboard chessboard;
     protected final List<String> moves;
 
@@ -27,9 +30,11 @@ public class PGN
 
     public PartialMove parseMove(PieceColor toMove, String move) throws IllegalMoveException, AmbiguousMoveException
     {
+        /* TODO : handle castling, split this method into helper methods */
         if (toMove == null || move == null)
             return null;
-        if (move.length() < 2 || move.length() > 9)
+        move = move.replaceAll("[+#]", "").replaceAll("=[BNQR]", "");
+        if (move.length() < 2 || move.length() > 5)
             throw new IllegalMoveException();
         String firstChar = move.substring(0, 1);
         Square dest = null;
@@ -55,9 +60,8 @@ public class PGN
             return new PartialMove(pawn, dest);
         } else {
             /* non-pawn move */
-            if (!"BKNQR".contains(String.valueOf(firstChar)))
+            if (!"BKNQR".contains(firstChar))
                 throw new IllegalMoveException();
-
             Rank rank = null;
             File file = null;
             if ((move.contains("x") && move.length() > 4) || move.length() > 3) {
@@ -74,6 +78,7 @@ public class PGN
                     dest = chessboard.getSquareByName(move.substring(1, 3));
             }
             List<Piece> candidates = new ArrayList<Piece>();
+            /* TODO : can't call getActivePieces when type is king or queen */
             for (Piece piece : chessboard.getActivePieces(toMove, PieceType.forSymbol(move.charAt(0)))) {
                 piece.toString();
                 if (piece.isLegalSquare(dest) &&
