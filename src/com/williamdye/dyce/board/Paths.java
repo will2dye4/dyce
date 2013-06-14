@@ -6,11 +6,20 @@ import com.williamdye.dyce.util.MathUtils;
 import static com.williamdye.dyce.board.ChessboardImpl.NUM_FILES;
 
 /**
+ * An abstract utility class for determining various information about distances and paths between two squares.
  * @author William Dye
  */
 public abstract class Paths
 {
 
+    /**
+     * Returns the absolute distance between two squares with respect to their ranks (horizontal rows).
+     * For example, <code>getRankDistance(a3, d7)</code> would return <code>4</code>.
+     * If the two squares are incompatible (e.g., on different boards), <code>-1</code> is returned.
+     * @param start the first square
+     * @param end the second square
+     * @return the absolute rank distance between <code>start</code> and <code>end</code>
+     */
     public static int getRankDistance(Square start, Square end)
     {
         if (isInvalidPair(start, end))
@@ -18,6 +27,14 @@ public abstract class Paths
         return Math.abs(start.getRank().getNumber() - end.getRank().getNumber());
     }
 
+    /**
+     * Returns the absolute distance between two squares with respect to their files (vertical columns).
+     * For example, <code>getFileDistance(a3, d7)</code> would return <code>3</code>.
+     * If the two squares are incompatible (e.g., on different boards), <code>-1</code> is returned.
+     * @param start the first square
+     * @param end the second square
+     * @return the absolute file distance between <code>start</code> and <code>end</code>
+     */
     public static int getFileDistance(Square start, Square end)
     {
         if (isInvalidPair(start, end))
@@ -25,11 +42,27 @@ public abstract class Paths
         return Math.abs(start.getFile().getNumber() - end.getFile().getNumber());
     }
 
+    /**
+     * Determines whether two squares are on the same diagonal.
+     * For example, <code>isSameDiagonal(a3, d7)</code> would return <code>false</code>,
+     * but <code>isSameDiagonal(a3, d6)</code> would return <code>true</code>.
+     * @param start the first square
+     * @param end the second square
+     * @return <code>true</code> if <code>start</code> and <code>end</code> are diagonal from each other,
+     *          <code>false</code> otherwise
+     */
     public static boolean isSameDiagonal(Square start, Square end)
     {
         return (!(isInvalidPair(start, end)) && (getFileDistance(start, end) == getRankDistance(start, end)));
     }
 
+    /**
+     * Determines whether there is a clear path between two squares. The path may be along a rank, file, or diagonal.
+     * @param start the first square
+     * @param end the second square
+     * @return <code>true</code> if there is a clear path between <code>start</code> and <code>end</code>,
+     *          <code>false</code> otherwise
+     */
     public static boolean isPathClear(Square start, Square end)
     {
         if (isInvalidPair(start, end))
@@ -100,6 +133,7 @@ public abstract class Paths
         return clear;
     }
 
+    /* Helper to check if two squares are incompatible. */
     private static boolean isInvalidPair(Square a, Square b)
     {
         return ((a == null) || (b == null) || (a.getBoard() == null) || !(a.getBoard().equals(b.getBoard())));

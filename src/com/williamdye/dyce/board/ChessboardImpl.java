@@ -14,33 +14,54 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Implementation of the <code>Chessboard</code> interface.
+ * @author William Dye
+ */
 public class ChessboardImpl implements Chessboard
 {
+    /** The number of ranks (horizontal rows) on the chessboard. */
     public static final int NUM_RANKS = 8;
+    /** The number of files (vertical columns) on the chessboard. */
     public static final int NUM_FILES = 8;
+    /** The number of squares on the chessboard (the product of the numbers of files and ranks). */
     public static final int NUM_SQUARES = NUM_RANKS * NUM_FILES;
 
+    /** A <code>Pattern</code> representing the expected format for square names (e.g., "e4"). */
     protected static final Pattern SQUARE_NAME_PATTERN = Pattern.compile("^(?:[a-h])[1-8]$");
 
-    /* fen is the Forsyth-Edwards Notation of the current position */
+    /** The Forsyth-Edwards Notation (FEN) of the current position. */
     protected final FEN fen;
+    /** The Portable Game Notation (PGN) object for this chessboard. */
     protected final PGN pgn;
-    /* squares is a one-dimensional array of squares representing the chessboard as follows:
+    /** A one-dimensional array of squares which comprise the board itself.
+     * The board is represented as follows:
      * [a1, b1, c1, d1, e1, f1, g1, h1,
      *  a2, b2, c2, d2, e2, f2, g2, h2,
      *  ...,
      *  a8, b8, c8, d8, e8, f8, g8, h8]
      */
     protected final Square[] squares;
+    /** A map relating piece types to lists of active white pieces. */
     protected final Map<PieceType, List<Piece>> whitePieces;
+    /** A list of all active white pieces. */
     protected final List<Piece> activeWhitePieces;
+    /** A list of all captured white pieces. */
     protected final List<Piece> capturedWhitePieces;
+    /** A map relating piece types to lists of active black pieces. */
     protected final Map<PieceType, List<Piece>> blackPieces;
+    /** A list of all active black pieces. */
     protected final List<Piece> activeBlackPieces;
+    /** A list of all captured black pieces. */
     protected final List<Piece> capturedBlackPieces;
+    /** The game's current state. */
     protected final GameState state;
+    /** A history of all moves in the game. */
     protected final MoveHistory history;
 
+    /**
+     * Construct a <code>ChessboardImpl</code> with the default (standard) position and no moves in the history.
+     */
     public ChessboardImpl()
     {
         this.fen = new FEN(this);
