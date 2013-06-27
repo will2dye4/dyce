@@ -46,7 +46,7 @@ public class GameStateImpl implements GameState
     }
 
     @Override
-    public void setActiveColor(PieceColor color)
+    public void setActiveColor(final PieceColor color)
     {
         toMove = color;
     }
@@ -58,7 +58,7 @@ public class GameStateImpl implements GameState
     }
 
     @Override
-    public void setEnPassantTargetSquare(Square target)
+    public void setEnPassantTargetSquare(final Square target)
     {
         enPassantTarget = target;
     }
@@ -76,7 +76,7 @@ public class GameStateImpl implements GameState
     }
 
     @Override
-    public void setMoveCount(int count)
+    public void setMoveCount(final int count)
     {
         moveCount = count;
     }
@@ -94,7 +94,7 @@ public class GameStateImpl implements GameState
     }
 
     @Override
-    public void setHalfMoveClock(int clock)
+    public void setHalfMoveClock(final int clock)
     {
         halfMoveClock = clock;
     }
@@ -112,7 +112,7 @@ public class GameStateImpl implements GameState
     }
 
     @Override
-    public void setHalfMoveTotal(int total)
+    public void setHalfMoveTotal(final int total)
     {
         halfMoveTotal = total;
     }

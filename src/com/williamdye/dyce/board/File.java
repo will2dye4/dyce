@@ -44,7 +44,7 @@ public enum File
      * @param name the name of the file to return
      * @return the file with the specified <code>name</code>
      */
-    public static File forName(String name)
+    public static File forName(final String name)
     {
         for (File file : File.values()) {
             if (file.toString().equals(name))

@@ -20,7 +20,7 @@ public class Knight extends AbstractPiece
     }
 
     @Override
-    public final boolean isLegalSquare(Square dest, boolean ignorePins)
+    public final boolean isLegalSquare(final Square dest, final boolean ignorePins)
     {
         return (super.isLegalSquare(dest, ignorePins) &&
                 (((Paths.getRankDistance(square, dest) == 2) && (Paths.getFileDistance(square, dest) == 1)) ||

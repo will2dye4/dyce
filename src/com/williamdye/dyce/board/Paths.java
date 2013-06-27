@@ -20,7 +20,7 @@ public abstract class Paths
      * @param end the second square
      * @return the absolute rank distance between <code>start</code> and <code>end</code>
      */
-    public static int getRankDistance(Square start, Square end)
+    public static int getRankDistance(final Square start, final Square end)
     {
         if (isInvalidPair(start, end))
             return -1;
@@ -35,7 +35,7 @@ public abstract class Paths
      * @param end the second square
      * @return the absolute file distance between <code>start</code> and <code>end</code>
      */
-    public static int getFileDistance(Square start, Square end)
+    public static int getFileDistance(final Square start, final Square end)
     {
         if (isInvalidPair(start, end))
             return -1;
@@ -51,7 +51,7 @@ public abstract class Paths
      * @return <code>true</code> if <code>start</code> and <code>end</code> are diagonal from each other,
      *          <code>false</code> otherwise
      */
-    public static boolean isSameDiagonal(Square start, Square end)
+    public static boolean isSameDiagonal(final Square start, final Square end)
     {
         return (!(isInvalidPair(start, end)) && (getFileDistance(start, end) == getRankDistance(start, end)));
     }
@@ -63,7 +63,7 @@ public abstract class Paths
      * @return <code>true</code> if there is a clear path between <code>start</code> and <code>end</code>,
      *          <code>false</code> otherwise
      */
-    public static boolean isPathClear(Square start, Square end)
+    public static boolean isPathClear(final Square start, final Square end)
     {
         if (isInvalidPair(start, end))
             return false;
@@ -134,7 +134,7 @@ public abstract class Paths
     }
 
     /* Helper to check if two squares are incompatible. */
-    private static boolean isInvalidPair(Square a, Square b)
+    private static boolean isInvalidPair(final Square a, final Square b)
     {
         return ((a == null) || (b == null) || (a.getBoard() == null) || !(a.getBoard().equals(b.getBoard())));
     }

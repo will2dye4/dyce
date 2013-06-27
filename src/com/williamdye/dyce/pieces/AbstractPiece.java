@@ -111,20 +111,20 @@ public abstract class AbstractPiece implements Piece
     }
 
     @Override
-    public boolean isLegalSquare(Square dest)
+    public boolean isLegalSquare(final Square dest)
     {
         return isLegalSquare(dest, false);
     }
 
     @Override
-    public boolean isLegalSquare(Square dest, boolean ignorePins)
+    public boolean isLegalSquare(final Square dest, final boolean ignorePins)
     {
         return ((!captured) && (ignorePins || !isPinned()) && (isPathClear(square, dest)) &&
                 (dest.isEmpty() || (dest.getPiece().getColor() != color)));
     }
 
     @Override
-    public boolean isAttacking(Square dest)
+    public boolean isAttacking(final Square dest)
     {
         return isLegalSquare(dest);
     }
@@ -138,7 +138,7 @@ public abstract class AbstractPiece implements Piece
     }
 
     @Override
-    public Piece move(Square dest)
+    public Piece move(final Square dest)
     {
         Piece captured = null;
         /* handle capture (move has already been checked for legality) */

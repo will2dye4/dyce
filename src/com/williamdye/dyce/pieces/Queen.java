@@ -20,7 +20,7 @@ public class Queen extends AbstractPiece
     }
 
     @Override
-    public final boolean isLegalSquare(Square dest, boolean ignorePins)
+    public final boolean isLegalSquare(final Square dest, final boolean ignorePins)
     {
         return (super.isLegalSquare(dest, ignorePins) &&
                 ((square.getRank() == dest.getRank()) || (square.getFile() == dest.getFile()) ||

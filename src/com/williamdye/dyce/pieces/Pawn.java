@@ -22,7 +22,7 @@ public class Pawn extends AbstractPiece
     }
 
     @Override
-    public final boolean isLegalSquare(Square dest, boolean ignorePins)
+    public final boolean isLegalSquare(final Square dest, final boolean ignorePins)
     {
         int rankDistance = getRankDistance(square, dest);
         int fileDistance = getFileDistance(square, dest);
@@ -37,7 +37,7 @@ public class Pawn extends AbstractPiece
     }
 
     @Override
-    public final boolean isAttacking(Square dest)
+    public final boolean isAttacking(final Square dest)
     {
         /* do we need to return true only if dest is empty or occupied by an opposite color piece,
          * or should we also return true if dest is occupied by a same color piece? should this method be
@@ -47,7 +47,7 @@ public class Pawn extends AbstractPiece
         return (!captured && !isPinned() && isAdvancingSquare(dest) && (getFileDistance(square, dest) == 1));
     }
 
-    private boolean isAdvancingSquare(Square dest)
+    private boolean isAdvancingSquare(final Square dest)
     {
         if (color == PieceColor.WHITE)
             return (dest.getRank().getNumber() > square.getRank().getNumber());

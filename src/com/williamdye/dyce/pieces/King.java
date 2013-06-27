@@ -25,7 +25,7 @@ public class King extends AbstractPiece
     }
 
     @Override
-    public final boolean isLegalSquare(Square dest, boolean ignorePins)
+    public final boolean isLegalSquare(final Square dest, final boolean ignorePins)
     {
         if (!super.isLegalSquare(dest, true))   /* ignore pins when checking legality (king can't be pinned) */
             return false;

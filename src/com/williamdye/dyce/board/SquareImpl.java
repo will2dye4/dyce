@@ -68,7 +68,7 @@ public class SquareImpl implements Square
     }
 
     @Override
-    public void setPiece(Piece target)
+    public void setPiece(final Piece target)
     {
         if ((target != null) && (target.getSquare() == null))
             target.move(this);

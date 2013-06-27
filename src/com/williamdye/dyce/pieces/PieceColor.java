@@ -15,7 +15,7 @@ public enum PieceColor
         this.string = name;
     }
 
-    public static PieceColor oppositeOf(PieceColor color)
+    public static PieceColor oppositeOf(final PieceColor color)
     {
         return ((color == WHITE) ? BLACK : WHITE);
     }

@@ -21,7 +21,7 @@ public class PGN
         this.moves = new ArrayList<String>();
     }
 
-    public PartialMove parseMove(PieceColor toMove, String move) throws IllegalMoveException, AmbiguousMoveException
+    public PartialMove parseMove(final PieceColor toMove, String move) throws IllegalMoveException, AmbiguousMoveException
     {
         /* TODO : handle castling, split this method into helper methods */
         if (toMove == null || move == null)

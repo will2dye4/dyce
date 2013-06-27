@@ -45,7 +45,7 @@ public enum Rank
      * @param number the number of the rank to return
      * @return the rank with the specified number
      */
-    public static Rank forNumber(int number)
+    public static Rank forNumber(final int number)
     {
         for (Rank rank : values()) {
             if (number == rank.getNumber())
@@ -59,7 +59,7 @@ public enum Rank
      * @param color the target color
      * @return the starting rank for the specified <code>color</code>
      */
-    public static Rank getStartingRank(PieceColor color)
+    public static Rank getStartingRank(final PieceColor color)
     {
         if (color == null)
             return null;
@@ -71,7 +71,7 @@ public enum Rank
      * @param color the target color
      * @return the starting rank for the pawns of the specified <code>color</code>
      */
-    public static Rank getStartingPawnRank(PieceColor color)
+    public static Rank getStartingPawnRank(final PieceColor color)
     {
         if (color == null)
             return null;

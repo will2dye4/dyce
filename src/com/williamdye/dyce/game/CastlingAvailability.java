@@ -23,17 +23,17 @@ public class CastlingAvailability
         this.state = (WHITE_CAN_CASTLE | BLACK_CAN_CASTLE);
     }
 
-    public boolean isStatus(int status)
+    public boolean isStatus(final int status)
     {
         return ((state & status) > 0);
     }
 
-    public void setBit(int bit)
+    public void setBit(final int bit)
     {
         this.state |= bit;
     }
 
-    public void clearBit(int bit)
+    public void clearBit(final int bit)
     {
         this.state &= ~bit;
     }

@@ -49,7 +49,7 @@ public class FEN
     /* See http://chessprogramming.wikispaces.com/Forsyth-Edwards+Notation for a complete description
      * of the format of Forsyth-Edwards Notation.
      */
-    public static boolean isValidFENString(String test)
+    public static boolean isValidFENString(final String test)
     {
         String[] components = test.split(" ");  /* split the string into its components, delimited by spaces */
         if (components.length == NUM_COMPONENTS) {
@@ -108,7 +108,7 @@ public class FEN
         fenString = StringUtils.join(ranks, "/");
     }
 
-    private static boolean isValidRankString(String rank)
+    private static boolean isValidRankString(final String rank)
     {
         boolean valid = false;
         if (RANK_PATTERN.matcher(rank).matches()) {

@@ -215,7 +215,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public List<Piece> getActivePieces(PieceColor color)
+    public List<Piece> getActivePieces(final PieceColor color)
     {
         if (color == null)
             return null;
@@ -223,7 +223,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public List<Piece> getActivePieces(PieceColor color, PieceType type)
+    public List<Piece> getActivePieces(final PieceColor color, final PieceType type)
     {
         if (color == null)
             return null;
@@ -235,7 +235,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public List<Piece> getCapturedPieces(PieceColor color)
+    public List<Piece> getCapturedPieces(final PieceColor color)
     {
         if (color == null)
             return null;
@@ -243,7 +243,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public King getKing(PieceColor color)
+    public King getKing(final PieceColor color)
     {
         if (color == null)
             return null;
@@ -256,7 +256,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public Queen getQueen(PieceColor color)
+    public Queen getQueen(final PieceColor color)
     {
         if (color == null)
             return null;
@@ -277,7 +277,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public Square getSquareByName(String name)
+    public Square getSquareByName(final String name)
     {
         Square square = null;
         if (SQUARE_NAME_PATTERN.matcher(name).matches()) {
@@ -296,7 +296,7 @@ public class ChessboardImpl implements Chessboard
      *   - update castling (including on a normal king or rook move)
      *   - update e.p. target
      */
-    public void move(Piece piece, Square dest) throws IllegalMoveException
+    public void move(final Piece piece, final Square dest) throws IllegalMoveException
     {
         if (!piece.isLegalSquare(dest))
             throw new IllegalMoveException();
@@ -313,7 +313,7 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    public void move(String pgnString) throws AmbiguousMoveException, IllegalMoveException
+    public void move(final String pgnString) throws AmbiguousMoveException, IllegalMoveException
     {
         PartialMove partial = pgn.parseMove(state.getActiveColor(), pgnString);
         move(partial.getMovedPiece(), partial.getEndSquare());

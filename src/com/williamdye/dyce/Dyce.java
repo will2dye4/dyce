@@ -37,7 +37,7 @@ public final class Dyce
         out("dyce version 0.1, built June 2013");
     }
 
-    private static void parseArgs(String[] args)
+    private static void parseArgs(final String[] args)
     {
         if ((args.length > 1) || (args[0].length() < 2) || ('-' != args[0].charAt(0)) || ('-' == args[0].charAt(1))) {
             usage();

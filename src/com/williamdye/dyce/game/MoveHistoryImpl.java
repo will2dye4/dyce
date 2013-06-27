@@ -34,7 +34,7 @@ public class MoveHistoryImpl implements MoveHistory
     }
 
     @Override
-    public void setIndex(int newIndex)
+    public void setIndex(final int newIndex)
     {
         index = newIndex;
     }
@@ -96,7 +96,7 @@ public class MoveHistoryImpl implements MoveHistory
     }
 
     @Override
-    public void add(Move move)
+    public void add(final Move move)
     {
         history.add(move);
         index = history.size() - 1;
