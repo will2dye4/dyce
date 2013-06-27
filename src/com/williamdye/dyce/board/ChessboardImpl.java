@@ -1,17 +1,12 @@
 package com.williamdye.dyce.board;
 
-import com.williamdye.dyce.exception.AmbiguousMoveException;
-import com.williamdye.dyce.exception.IllegalMoveException;
+import com.williamdye.dyce.exception.*;
 import com.williamdye.dyce.game.*;
-import com.williamdye.dyce.notation.FEN;
-import com.williamdye.dyce.notation.PGN;
+import com.williamdye.dyce.notation.*;
 import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**

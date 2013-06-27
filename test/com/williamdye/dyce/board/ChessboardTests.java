@@ -1,18 +1,14 @@
 package com.williamdye.dyce.board;
 
-import com.williamdye.dyce.pieces.PieceColor;
-import com.williamdye.dyce.pieces.PieceType;
+import com.williamdye.dyce.pieces.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class ChessboardTests

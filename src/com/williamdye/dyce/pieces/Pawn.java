@@ -1,10 +1,8 @@
 package com.williamdye.dyce.pieces;
 
-import com.williamdye.dyce.board.Rank;
-import com.williamdye.dyce.board.Square;
+import com.williamdye.dyce.board.*;
 
-import static com.williamdye.dyce.board.Paths.getFileDistance;
-import static com.williamdye.dyce.board.Paths.getRankDistance;
+import static com.williamdye.dyce.board.Paths.*;
 
 /**
  * @author William Dye

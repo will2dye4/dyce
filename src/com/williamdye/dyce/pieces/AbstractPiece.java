@@ -4,8 +4,7 @@ import com.williamdye.dyce.board.*;
 
 import java.util.List;
 
-import static com.williamdye.dyce.board.Paths.isPathClear;
-import static com.williamdye.dyce.board.Paths.isSameDiagonal;
+import static com.williamdye.dyce.board.Paths.*;
 
 /**
  * @author William Dye

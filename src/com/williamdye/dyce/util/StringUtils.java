@@ -1,10 +1,8 @@
 package com.williamdye.dyce.util;
 
-import com.williamdye.dyce.pieces.Piece;
-import com.williamdye.dyce.pieces.PieceColor;
+import com.williamdye.dyce.pieces.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public abstract class StringUtils
 {

@@ -1,15 +1,16 @@
 package com.williamdye.dyce;
 
-import com.williamdye.dyce.board.Chessboard;
-import com.williamdye.dyce.board.ChessboardImpl;
-import com.williamdye.dyce.pieces.PieceColor;
+import com.williamdye.dyce.board.*;
+import com.williamdye.dyce.exception.*;
+import com.williamdye.dyce.game.*;
+import com.williamdye.dyce.pieces.*;
 
 import java.util.Scanner;
 
 /**
  * @author William Dye
  */
-public class Dyce
+public final class Dyce
 {
 
     public static void main(String[] args)
@@ -33,7 +34,7 @@ public class Dyce
 
     private static void version()
     {
-        out("dyce version 0.1, built May 2013");
+        out("dyce version 0.1, built June 2013");
     }
 
     private static void parseArgs(String[] args)
@@ -61,27 +62,34 @@ public class Dyce
         Scanner scan = new Scanner(System.in);
         out("*========[ Board Explorer ]========================================*");
         out("| You play both sides. At the prompt, type the next move,          |");
-        out("| with the starting and finishing squares separated by a space.    |");
-        out("| For example, to move a Pawn from e2 to e4, enter \"e2 e4\".        |");   /* spacing is not off */
+        out("| using Portable Game Notation (PGN). For example, to move         |");
+        out("| a Knight from b1 to c3, enter \"Nc3\".                             |");   /* spacing is not off */
         out("| To quit, enter \"" + TO_QUIT[0] + "\" or \"" + TO_QUIT[1] + "\".                                  |");
         out("*==================================================================*");
         out("\nPress Enter to begin...");
         scan.useDelimiter("");
         scan.next();
         scan.useDelimiter("\n");
+        GameState state = board.getGameState();
         String move = "", lastMove = "";
         do {
             if (move.length() > 0) {
-                String[] squares = move.split(" ");
-                board.move(squares[0], squares[1]);
+                try {
+                    board.move(move);
+                } catch (AmbiguousMoveException ame) {
+                    /* TODO - do more than this */
+                    out("Ambiguous move!");
+                } catch (IllegalMoveException ime) {
+                    /* TODO - do more than this */
+                    out("Illegal move!");
+                }
             }
             out("\n" + board.prettyPrint());
-            if (board.getHalfMoveTotal() > 0)
+            if (state.getHalfMoveTotal() > 0)
                 out("Last move: " + lastMove);
-            print("Enter " + ((board.getActiveColor() == PieceColor.WHITE) ? "white" : "black") + "'s move: ");
+            print("Enter " + ((state.getActiveColor() == PieceColor.WHITE) ? "white" : "black") + "'s move: ");
             move = scan.next();
-            lastMove = ((board.getActiveColor() == PieceColor.BLACK) ? board.getMoveCount() + "..." :
-                    board.getMoveCount() + ". ") + move;
+            lastMove = state.getMoveCount() + ((state.getActiveColor() == PieceColor.WHITE) ? ". " : "...") + move;
         } while (!TO_QUIT[0].equals(move) && !TO_QUIT[1].equals(move));
     }
 

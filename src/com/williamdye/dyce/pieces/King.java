@@ -1,9 +1,6 @@
 package com.williamdye.dyce.pieces;
 
-import com.williamdye.dyce.board.File;
-import com.williamdye.dyce.board.Rank;
-import com.williamdye.dyce.board.Square;
-import com.williamdye.dyce.board.Paths;
+import com.williamdye.dyce.board.*;
 import com.williamdye.dyce.game.CastlingAvailability;
 
 import java.util.List;

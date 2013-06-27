@@ -1,15 +1,12 @@
 package com.williamdye.dyce.notation;
 
-import com.williamdye.dyce.board.Chessboard;
-import com.williamdye.dyce.board.ChessboardImpl;
-import com.williamdye.dyce.board.Square;
-import com.williamdye.dyce.pieces.PieceColor;
+import com.williamdye.dyce.board.*;
+import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
 
 import java.util.regex.Pattern;
 
-import static com.williamdye.dyce.board.ChessboardImpl.NUM_FILES;
-import static com.williamdye.dyce.board.ChessboardImpl.NUM_RANKS;
+import static com.williamdye.dyce.board.ChessboardImpl.*;
 
 /**
  * @author William Dye

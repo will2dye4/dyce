@@ -1,7 +1,6 @@
 package com.williamdye.dyce.pieces;
 
-import com.williamdye.dyce.board.Paths;
-import com.williamdye.dyce.board.Square;
+import com.williamdye.dyce.board.*;
 
 /**
  * @author William Dye

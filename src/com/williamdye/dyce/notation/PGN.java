@@ -1,18 +1,11 @@
 package com.williamdye.dyce.notation;
 
-import com.williamdye.dyce.board.Chessboard;
-import com.williamdye.dyce.board.File;
-import com.williamdye.dyce.board.Rank;
-import com.williamdye.dyce.board.Square;
-import com.williamdye.dyce.exception.AmbiguousMoveException;
-import com.williamdye.dyce.exception.IllegalMoveException;
-import com.williamdye.dyce.game.PartialMove;
-import com.williamdye.dyce.pieces.Piece;
-import com.williamdye.dyce.pieces.PieceColor;
-import com.williamdye.dyce.pieces.PieceType;
+import com.williamdye.dyce.board.*;
+import com.williamdye.dyce.exception.*;
+import com.williamdye.dyce.game.*;
+import com.williamdye.dyce.pieces.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PGN
 {

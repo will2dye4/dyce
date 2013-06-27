@@ -2,8 +2,7 @@ package com.williamdye.dyce.game;
 
 import com.williamdye.dyce.board.Chessboard;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author William Dye

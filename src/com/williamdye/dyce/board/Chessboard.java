@@ -1,9 +1,8 @@
 package com.williamdye.dyce.board;
 
-import com.williamdye.dyce.exception.AmbiguousMoveException;
-import com.williamdye.dyce.exception.IllegalMoveException;
-import com.williamdye.dyce.game.GameState;
-import com.williamdye.dyce.notation.FEN;
+import com.williamdye.dyce.exception.*;
+import com.williamdye.dyce.game.*;
+import com.williamdye.dyce.notation.*;
 import com.williamdye.dyce.pieces.*;
 
 import java.util.List;

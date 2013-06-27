@@ -4,19 +4,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class PathsTests
 {
 
     @Test
-    public void getRankDistanceTest_DifferentBoards()
+    public void getRankDistance_DifferentBoards()
     {
         Square a1 = (new ChessboardImpl()).getSquareByName("a1");
         Square h8 = (new ChessboardImpl()).getSquareByName("h8");
@@ -25,7 +22,7 @@ public class PathsTests
     }
 
     @Test
-    public void getRankDistanceTest_SameBoard()
+    public void getRankDistance_SameBoard()
     {
         Chessboard board = new ChessboardImpl();
         Map<String, Square> map = new HashMap<String, Square>();
@@ -41,7 +38,7 @@ public class PathsTests
     }
 
     @Test
-    public void getFileDistanceTest_DifferentBoards()
+    public void getFileDistance_DifferentBoards()
     {
         Square a1 = (new ChessboardImpl()).getSquareByName("a1");
         Square h8 = (new ChessboardImpl()).getSquareByName("h8");
@@ -49,7 +46,7 @@ public class PathsTests
     }
 
     @Test
-    public void getFileDistanceTest_SameBoard()
+    public void getFileDistance_SameBoard()
     {
         Chessboard board = new ChessboardImpl();
         Map<String, Square> map = new HashMap<String, Square>();
@@ -66,7 +63,7 @@ public class PathsTests
     }
 
     @Test
-    public void isSameDiagonalTest_DifferentBoards()
+    public void isSameDiagonal_DifferentBoards()
     {
         Square a1 = (new ChessboardImpl()).getSquareByName("a1");
         Square h8 = (new ChessboardImpl()).getSquareByName("h8");
@@ -74,7 +71,7 @@ public class PathsTests
     }
 
     @Test
-    public void isSameDiagonalTest_SameBoard_True()
+    public void isSameDiagonal_SameBoard_True()
     {
         Chessboard board = new ChessboardImpl();
         Map<String, Square> map = new HashMap<String, Square>();
@@ -100,7 +97,7 @@ public class PathsTests
     }
 
     @Test
-    public void isSameDiagonalTest_SameBoard_False()
+    public void isSameDiagonal_SameBoard_False()
     {
         Chessboard board = new ChessboardImpl();
         Map<String, Square> map = new HashMap<String, Square>();
@@ -117,7 +114,7 @@ public class PathsTests
     }
 
     @Test
-    public void isPathClearTest_DifferentBoards()
+    public void isPathClear_DifferentBoards()
     {
         Square a4 = (new ChessboardImpl()).getSquareByName("a4");
         Square h4 = (new ChessboardImpl()).getSquareByName("h4");
@@ -125,7 +122,7 @@ public class PathsTests
     }
 
     @Test
-    public void isPathClearTest_SameBoard()
+    public void isPathClear_SameBoard()
     {
         /* TODO - exhaustively test this method */
     }
