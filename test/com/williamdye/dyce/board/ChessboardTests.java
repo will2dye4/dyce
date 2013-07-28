@@ -41,7 +41,7 @@ public class ChessboardTests
                         expected, board.getActivePieces(color, type).size());
             }
             assertNotNull("new board has null " + colorName + " king", board.getKing(color));
-            assertNotNull("new board has null " + colorName + " queen", board.getQueen(color));
+            assertNotNull("new board has null " + colorName + " queen", board.getActivePieces(color, PieceType.QUEEN).get(0));
         }
     }
 

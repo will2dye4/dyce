@@ -51,9 +51,8 @@ public interface Chessboard
 
     /**
      * Accessor for a chessboard's active pieces of a certain color and type.
-     * NOTE: This method should not be called with <code>PieceType.KING</code> or <code>PieceType.QUEEN</code>
-     * as its <code>type</code> argument. Instead, use <code>Chessboard.getKing(PieceColor)</code> and
-     * <code>Chessboard.getQueen(PieceColor)</code>, respectively.
+     * NOTE: This method should not be called with <code>PieceType.KING</code>
+     * as its <code>type</code> argument. Instead, use <code>Chessboard.getKing(PieceColor)</code>.
      * @param color the target color for the returned pieces
      * @param type the target type for the returned pieces
      * @return a list of the active pieces of the specified <code>color</code> and <code>type</code>
@@ -73,13 +72,6 @@ public interface Chessboard
      * @return the king of the specified color
      */
     public King getKing(PieceColor color);
-
-    /**
-     * Accessor for a chessboard's queen of a certain color.
-     * @param color the color of the queen to return
-     * @return the queen of the specified color, or <code>null</code> if the queen is captured
-     */
-    public Queen getQueen(PieceColor color);
 
     /**
      * Returns the square corresponding to the specified name. The name is given as the square's file (in lower case)

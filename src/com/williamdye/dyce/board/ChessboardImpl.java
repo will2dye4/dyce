@@ -229,8 +229,8 @@ public class ChessboardImpl implements Chessboard
             return null;
         if (type == null)
             return getActivePieces(color);
-        if ((type == PieceType.KING) || (type == PieceType.QUEEN))
-            throw new IllegalArgumentException("getActivePieces() called with King or Queen type argument");
+        if (type == PieceType.KING)
+            throw new IllegalArgumentException("getActivePieces() called with King type argument");
         return ((color == PieceColor.WHITE) ? whitePieces.get(type) : blackPieces.get(type));
     }
 
@@ -253,27 +253,6 @@ public class ChessboardImpl implements Chessboard
         else
             king = (King)(blackPieces.get(PieceType.KING).get(0));
         return king;
-    }
-
-    @Override
-    public Queen getQueen(final PieceColor color)
-    {
-        if (color == null)
-            return null;
-        Queen queen;
-        PieceType queenType = PieceType.QUEEN;
-        if (color == PieceColor.WHITE) {
-            if (whitePieces.get(queenType).size() == 0)
-                queen = null;
-            else
-                queen = (Queen)(whitePieces.get(queenType).get(0));
-        } else {
-            if (blackPieces.get(queenType).size() == 0)
-                queen = null;
-            else
-                queen = (Queen)(blackPieces.get(queenType).get(0));
-        }
-        return queen;
     }
 
     @Override
