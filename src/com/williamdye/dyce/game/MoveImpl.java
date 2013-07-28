@@ -12,12 +12,18 @@ public class MoveImpl implements Move
     protected final Piece capturedPiece;
     protected final Square startSquare;
     protected final Square endSquare;
+    protected final MoveType moveType;
     protected final String pgnString;
     protected final int moveNumber;
 
     public MoveImpl(Piece moved, Piece captured, Square start, Square end, String pgn, int number)
     {
-        if (moved == null || start == null || end == null || number < 1 || !start.getBoard().equals(end.getBoard()))
+        this(moved, captured, start, end, MoveType.NORMAL, pgn, number);
+    }
+
+    public MoveImpl(Piece moved, Piece captured, Square start, Square end, MoveType type, String pgn, int number)
+    {
+        if (moved == null || start == null || end == null || type == null || number < 1 || !start.getBoard().equals(end.getBoard()))
             throw new IllegalArgumentException();
         this.movedPiece = moved;
         this.capturedPiece = captured;
@@ -25,6 +31,7 @@ public class MoveImpl implements Move
         this.endSquare = end;
         this.pgnString = pgn;
         this.moveNumber = number;
+        this.moveType = type;
     }
 
     @Override
@@ -49,6 +56,12 @@ public class MoveImpl implements Move
     public Square getEndSquare()
     {
         return endSquare;
+    }
+
+    @Override
+    public MoveType getMoveType()
+    {
+        return moveType;
     }
 
     @Override

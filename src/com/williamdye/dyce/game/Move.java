@@ -16,6 +16,8 @@ public interface Move
 
     public Square getEndSquare();
 
+    public MoveType getMoveType();
+
     public String getPGNString();
 
     public int getMoveNumber();

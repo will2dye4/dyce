@@ -7,11 +7,20 @@ public class PartialMove implements Move
 {
     protected final Piece movedPiece;
     protected final Square endSquare;
+    protected final MoveType moveType;
 
     public PartialMove(Piece moved, Square end)
     {
+        this(moved, end, MoveType.NORMAL);
+    }
+
+    public PartialMove(Piece moved, Square end, MoveType type)
+    {
+        if (moved == null || end == null || type == null)
+            throw new IllegalArgumentException();
         this.movedPiece = moved;
         this.endSquare = end;
+        this.moveType = type;
     }
 
     @Override
@@ -36,6 +45,12 @@ public class PartialMove implements Move
     public Square getEndSquare()
     {
         return endSquare;
+    }
+
+    @Override
+    public MoveType getMoveType()
+    {
+        return moveType;
     }
 
     @Override
