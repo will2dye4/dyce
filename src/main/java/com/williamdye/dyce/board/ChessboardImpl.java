@@ -5,6 +5,8 @@ import com.williamdye.dyce.game.*;
 import com.williamdye.dyce.notation.*;
 import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -15,6 +17,8 @@ import java.util.regex.Pattern;
  */
 public class ChessboardImpl implements Chessboard
 {
+    private static final Logger logger = LoggerFactory.getLogger(ChessboardImpl.class);
+
     /** The number of ranks (horizontal rows) on the chessboard. */
     public static final int NUM_RANKS = 8;
     /** The number of files (vertical columns) on the chessboard. */
@@ -279,6 +283,7 @@ public class ChessboardImpl implements Chessboard
     public void move(final String pgnString) throws AmbiguousMoveException, IllegalMoveException
     {
         PartialMove partial = pgn.parseMove(state.getActiveColor(), pgnString);
+        logger.info("{} played {}", state.getActiveColor().getName(), pgnString);
         move(partial.getMovedPiece(), partial.getEndSquare(), partial.getMoveType());
     }
 

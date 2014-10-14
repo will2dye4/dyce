@@ -1,48 +1,67 @@
 package com.williamdye.dyce;
 
+import java.util.Scanner;
+
+import com.williamdye.dyce.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.williamdye.dyce.board.*;
 import com.williamdye.dyce.exception.*;
 import com.williamdye.dyce.game.*;
 import com.williamdye.dyce.pieces.*;
 
-import java.util.Scanner;
-
 /**
- * @author William Dye
+ * Main class for the dyce application.
  */
 public final class Dyce
 {
 
+    private static final Logger logger = LoggerFactory.getLogger(Dyce.class);
+
+    private static final String USAGE = "Usage: java Dyce [-ev]";
+    private static final String VERSION_INFO = "dyce version 0.1, built October 2014";
+
     public static void main(String[] args)
     {
+        logger.info("The application has been started with arguments [{}]", StringUtils.join(args, ", "));
+
         out("###########################################");
         out("#  Welcome to dyce, the Dye chess engine  #");
         out("#  written by William Dye                 #");
         out("###########################################\n");
+
         if (args.length == 0) {
+            logger.debug("No program arguments given; defaulting to explore mode");
             out("No option given; assuming '-e'...\n");
-            args = new String[] { "-e" };
+            args = new String[]{"-e"};
         }
+
         parseArgs(args);
+
+        logger.info("The application is exiting");
         out("Bye for now!");
     }
 
     private static void usage()
     {
-        out("Usage: java Dyce [-ev]");
+        logger.info("Displaying usage message; program arguments were invalid");
+        out(USAGE);
     }
 
     private static void version()
     {
-        out("dyce version 0.1, built June 2013");
+        logger.info("Displaying version information: {}", VERSION_INFO);
+        out(VERSION_INFO);
     }
 
     private static void parseArgs(final String[] args)
     {
-        if ((args.length > 1) || (args[0].length() < 2) || ('-' != args[0].charAt(0)) || ('-' == args[0].charAt(1))) {
+        String command = args[0];
+        if ((args.length > 1) || (command.length() < 2) || ('-' != command.charAt(0))) {
             usage();
         } else {
-            switch (args[0].charAt(1)) {
+            switch (command.charAt(1)) {
                 case 'e':
                     explore(new ChessboardImpl());
                     break;
@@ -58,6 +77,8 @@ public final class Dyce
 
     private static void explore(Chessboard board)
     {
+        logger.info("Entering explore mode...");
+
         final String[] TO_QUIT = { ":quit", ":q" };
         Scanner scan = new Scanner(System.in);
         out("*========[ Board Explorer ]========================================*");

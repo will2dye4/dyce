@@ -132,17 +132,8 @@ public class GameStateImpl implements GameState
     @Override
     public String toString()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append(toMove.toString());
-        builder.append(" ");
-        builder.append(castling.toString());
-        builder.append(" ");
-        builder.append((enPassantTarget == null) ? "-" : enPassantTarget.toString());
-        builder.append(" ");
-        builder.append(halfMoveClock);
-        builder.append(" ");
-        builder.append(moveCount);
-        return builder.toString();
+        String enPassant = (enPassantTarget == null ? "-" : enPassantTarget.toString());
+        return String.format("%s %s %s %s %s", toMove.toString(), castling.toString(), enPassant, halfMoveClock, moveCount);
     }
 
 }
