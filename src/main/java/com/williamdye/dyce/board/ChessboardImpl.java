@@ -62,12 +62,12 @@ public class ChessboardImpl implements Chessboard
         this.fen = new FEN(this);
         this.pgn = new PGN(this);
         this.squares = new Square[NUM_SQUARES];
-        this.whitePieces = new LinkedHashMap<PieceType, List<Piece>>();
-        this.activeWhitePieces = new ArrayList<Piece>();
-        this.capturedWhitePieces = new ArrayList<Piece>();
-        this.blackPieces = new LinkedHashMap<PieceType, List<Piece>>();
-        this.activeBlackPieces = new ArrayList<Piece>();
-        this.capturedBlackPieces = new ArrayList<Piece>();
+        this.whitePieces = new LinkedHashMap<>();
+        this.activeWhitePieces = new ArrayList<>();
+        this.capturedWhitePieces = new ArrayList<>();
+        this.blackPieces = new LinkedHashMap<>();
+        this.activeBlackPieces = new ArrayList<>();
+        this.capturedBlackPieces = new ArrayList<>();
         this.state = new GameStateImpl();
         this.history = new MoveHistoryImpl(this);
         initialize();
@@ -76,8 +76,8 @@ public class ChessboardImpl implements Chessboard
     private void initialize()
     {
         for (PieceType type : PieceType.values()) {
-            whitePieces.put(type, new ArrayList<Piece>());
-            blackPieces.put(type, new ArrayList<Piece>());
+            whitePieces.put(type, new ArrayList<>());
+            blackPieces.put(type, new ArrayList<>());
         }
         int i = 0;
         Square square;
@@ -270,32 +270,44 @@ public class ChessboardImpl implements Chessboard
     }
 
     @Override
-    /* TODO:
-     *   - update halfMoveClock
-     *   - update castling (including on a normal king or rook move)
-     *   - update e.p. target
-     */
     public void move(final Piece piece, final Square dest) throws IllegalMoveException
     {
-        if (!piece.isLegalSquare(dest))
-            throw new IllegalMoveException();
-        Piece captured = piece.move(dest);
-        if (captured != null) {
-            PieceColor color = captured.getColor();
-            getActivePieces(color).remove(captured);
-            getCapturedPieces(color).add(captured);
-            getActivePieces(color, captured.getPieceType()).remove(captured);
-        }
-        history.add(new MoveImpl(piece, captured, piece.getLastSquare(), dest, null, state.getMoveCount()));
-        state.incrementHalfMoveTotal();
-        state.toggleActiveColor();
+        move(piece, dest, null);
     }
 
     @Override
     public void move(final String pgnString) throws AmbiguousMoveException, IllegalMoveException
     {
         PartialMove partial = pgn.parseMove(state.getActiveColor(), pgnString);
-        move(partial.getMovedPiece(), partial.getEndSquare());
+        move(partial.getMovedPiece(), partial.getEndSquare(), partial.getMoveType());
+    }
+
+    /* TODO:
+     *   - do something with moveType
+     *   - update halfMoveClock
+     *   - update castling (including on a normal king or rook move)
+     *   - update e.p. target
+     */
+    private void move(final Piece piece, final Square dest, @SuppressWarnings("unused") MoveType moveType) throws IllegalMoveException
+    {
+        if (!piece.isLegalSquare(dest))
+            throw new IllegalMoveException();
+
+        Piece capturedPiece = piece.move(dest);
+        if (capturedPiece != null)
+            capture(capturedPiece);
+
+        history.add(new MoveImpl(piece, capturedPiece, piece.getLastSquare(), dest, null, state.getMoveCount()));
+        state.incrementHalfMoveTotal();
+        state.toggleActiveColor();
+    }
+
+    private void capture(Piece piece)
+    {
+        PieceColor color = piece.getColor();
+        getActivePieces(color).remove(piece);
+        getCapturedPieces(color).add(piece);
+        getActivePieces(color, piece.getPieceType()).remove(piece);
     }
 
 }

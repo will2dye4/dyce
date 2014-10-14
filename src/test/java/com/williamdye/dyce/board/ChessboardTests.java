@@ -25,7 +25,7 @@ public class ChessboardTests
         Chessboard board = new ChessboardImpl();
         assertNotNull("new board has null FEN", board.getFEN());
         assertNotNull("new board has null state", board.getGameState());
-        Map<PieceType, Integer> map = new HashMap<PieceType, Integer>();
+        Map<PieceType, Integer> map = new HashMap<>();
         map.put(PieceType.BISHOP, NUM_BISHOPS);
         map.put(PieceType.KNIGHT, NUM_KNIGHTS);
         map.put(PieceType.PAWN, NUM_PAWNS);

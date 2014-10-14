@@ -25,7 +25,7 @@ public class PathsTests
     public void getRankDistance_SameBoard()
     {
         Chessboard board = new ChessboardImpl();
-        Map<String, Square> map = new HashMap<String, Square>();
+        Map<String, Square> map = new HashMap<>();
         String[] squares = {"a2", "a7", "d1", "d8", "f2"};
         for (String name : squares)
             map.put(name, board.getSquareByName(name));
@@ -49,7 +49,7 @@ public class PathsTests
     public void getFileDistance_SameBoard()
     {
         Chessboard board = new ChessboardImpl();
-        Map<String, Square> map = new HashMap<String, Square>();
+        Map<String, Square> map = new HashMap<>();
         String[] squares = {"a1", "h1", "b8", "g8", "c1", "f1", "d8", "e8"};
         for (String name : squares)
             map.put(name, board.getSquareByName(name));
@@ -74,7 +74,7 @@ public class PathsTests
     public void isSameDiagonal_SameBoard_True()
     {
         Chessboard board = new ChessboardImpl();
-        Map<String, Square> map = new HashMap<String, Square>();
+        Map<String, Square> map = new HashMap<>();
         String[] darkSquares = {"a1", "h8", "c3", "e1", "h4", "f6"};
         String[] lightSquares = {"c8", "a6", "f1", "h3", "f5", "g6"};
         for (String name : darkSquares)
@@ -100,7 +100,7 @@ public class PathsTests
     public void isSameDiagonal_SameBoard_False()
     {
         Chessboard board = new ChessboardImpl();
-        Map<String, Square> map = new HashMap<String, Square>();
+        Map<String, Square> map = new HashMap<>();
         String[] squares = {"a1", "a8", "h8", "f7", "e4", "c3", "d3"};
         for (String name : squares)
             map.put(name, board.getSquareByName(name));

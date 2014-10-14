@@ -19,7 +19,7 @@ public class PGN
     public PGN(Chessboard board)
     {
         this.chessboard = board;
-        this.moves = new ArrayList<String>();
+        this.moves = new ArrayList<>();
     }
 
     public PartialMove parseMove(final PieceColor toMove, String move) throws IllegalMoveException, AmbiguousMoveException
@@ -103,7 +103,7 @@ public class PGN
             throw new IllegalMoveException();
         }
 
-        List<Piece> candidates = new ArrayList<Piece>();
+        List<Piece> candidates = new ArrayList<>();
         for (Piece piece : chessboard.getActivePieces(toMove, pieceType)) {
             if (piece.isLegalSquare(dest) &&
                     ((rank == null) || (piece.getSquare().getRank() == rank)) &&

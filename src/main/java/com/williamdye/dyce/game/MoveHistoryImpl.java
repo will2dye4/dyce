@@ -17,7 +17,7 @@ public class MoveHistoryImpl implements MoveHistory
     public MoveHistoryImpl(Chessboard board)
     {
         this.chessboard = board;
-        this.history = new ArrayList<Move>();
+        this.history = new ArrayList<>();
         this.index = 0;
     }
 

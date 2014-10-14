@@ -20,6 +20,10 @@ public interface Piece extends Comparable<Piece>
 
     public boolean isPinned();
 
+    /* TODO
+    public boolean isRelativelyPinned(Piece piece);
+     */
+
     public boolean isLegalSquare(Square dest);
 
     public boolean isLegalSquare(Square dest, boolean ignorePins);
