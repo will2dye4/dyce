@@ -94,7 +94,7 @@ public final class Dyce
         GameState state = board.getGameState();
         String move = "", lastMove = "";
         do {
-            if (move.length() > 0) {
+            if (!move.isEmpty()) {
                 try {
                     board.move(move);
                 } catch (AmbiguousMoveException ame) {

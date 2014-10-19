@@ -31,7 +31,7 @@ public class Pawn extends AbstractPiece
             return false;
         if ((fileDistance == 1) && (rankDistance == 1)) {
             return (dest.equals(square.getBoard().getGameState().getEnPassantTargetSquare()) ||
-                    (!dest.isEmpty() && (dest.getPiece().getColor() == PieceColor.oppositeOf(color))));
+                    (!dest.isEmpty() && (dest.getPiece().get().getColor() == PieceColor.oppositeOf(color))));
         }
         return ((fileDistance == 0) && ((rankDistance == 1) || (square.getRank() == Rank.getStartingPawnRank(color))));
     }

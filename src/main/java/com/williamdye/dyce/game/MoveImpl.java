@@ -1,5 +1,7 @@
 package com.williamdye.dyce.game;
 
+import com.google.common.base.Preconditions;
+
 import com.williamdye.dyce.board.Square;
 import com.williamdye.dyce.pieces.Piece;
 
@@ -23,8 +25,13 @@ public class MoveImpl implements Move
 
     public MoveImpl(Piece moved, Piece captured, Square start, Square end, MoveType type, String pgn, int number)
     {
-        if (moved == null || start == null || end == null || type == null || number < 1 || !start.getBoard().equals(end.getBoard()))
-            throw new IllegalArgumentException();
+        Preconditions.checkNotNull(moved, "'moved' may not be null when creating a move");
+        Preconditions.checkNotNull(start, "'start' may not be null when creating a move");
+        Preconditions.checkNotNull(end, "'end' may not be null when creating a move");
+        Preconditions.checkNotNull(type, "'type' may not be null when creating a move");
+        Preconditions.checkArgument(number >= 1, "Invalid move number");
+        Preconditions.checkArgument(start.getBoard().equals(end.getBoard()), "Incompatible squares");
+
         this.movedPiece = moved;
         this.capturedPiece = captured;
         this.startSquare = start;

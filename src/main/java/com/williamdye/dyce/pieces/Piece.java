@@ -1,5 +1,7 @@
 package com.williamdye.dyce.pieces;
 
+import java.util.Optional;
+
 import com.williamdye.dyce.board.Square;
 
 /**
@@ -11,6 +13,8 @@ public interface Piece extends Comparable<Piece>
     public PieceType getPieceType();
 
     public PieceColor getColor();
+
+    public char getBoardRepresentation();
 
     public Square getSquare();
 
@@ -32,6 +36,6 @@ public interface Piece extends Comparable<Piece>
 
     public void capture();
 
-    public Piece move(Square dest);
+    public Optional<Piece> move(Square dest);
 
 }

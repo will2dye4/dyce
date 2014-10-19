@@ -1,12 +1,11 @@
 package com.williamdye.dyce.notation;
 
-import com.williamdye.dyce.board.*;
-import com.williamdye.dyce.pieces.*;
-import com.williamdye.dyce.util.StringUtils;
+import static com.williamdye.dyce.board.ChessboardImpl.*;
 
 import java.util.regex.Pattern;
 
-import static com.williamdye.dyce.board.ChessboardImpl.*;
+import com.williamdye.dyce.board.*;
+import com.williamdye.dyce.util.StringUtils;
 
 /**
  * @author William Dye
@@ -16,10 +15,10 @@ public class FEN
     public static final String INITIAL_FEN_STRING = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final int NUM_COMPONENTS = 6;
 
-    protected static final Pattern CASTLING_PATTERN = Pattern.compile("^(?:KQkq|KQk|KQq|Kkq|Qkq|KQ|kq|Kk|Kq|Qk|Qq|K|Q|k|q|-)$");
-    protected static final Pattern EN_PASSANT_SQUARE_PATTERN = Pattern.compile("^(?:(?:(?:[a-h])[36])|-)$");
+    protected static final Pattern CASTLING_PATTERN = Pattern.compile("^(KQkq|KQk|KQq|Kkq|Qkq|KQ|kq|Kk|Kq|Qk|Qq|K|Q|k|q|-)$");
+    protected static final Pattern EN_PASSANT_SQUARE_PATTERN = Pattern.compile("^([a-h][36]|-)$");
     protected static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
-    protected static final Pattern RANK_PATTERN = Pattern.compile("^(?:(?:[1-7]?[bknpqrBKNPQR](?:[1-7]?[bknpqrBKNPQR])*[1-7]?)|8)$");
+    protected static final Pattern RANK_PATTERN = Pattern.compile("^(([1-7]?[bknpqrBKNPQR]([1-7]?[bknpqrBKNPQR])*[1-7]?)|8)$");
 
     protected String fenString;
     protected Chessboard board;
@@ -91,10 +90,7 @@ public class FEN
                     builder.append(String.valueOf(consecutiveEmpties));
                     consecutiveEmpties = 0;
                 }
-                char type = square.getPiece().getPieceType().getSymbol();
-                if (square.getPiece().getColor() == PieceColor.WHITE)
-                    type -= 32; /* uppercase letters are 32 below lowercase in the ASCII table */
-                builder.append(String.valueOf(type));
+                builder.append(String.valueOf(square.getPiece().get().getBoardRepresentation()));
             }
             if ((i % NUM_FILES) == (NUM_FILES - 1)) {
                 if (consecutiveEmpties > 0) {

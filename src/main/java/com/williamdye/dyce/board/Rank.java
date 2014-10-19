@@ -1,9 +1,12 @@
 package com.williamdye.dyce.board;
 
+import com.google.common.base.Preconditions;
+
 import com.williamdye.dyce.pieces.PieceColor;
 
 /**
  * Enumeration of the ranks (horizontal rows) on the chessboard.
+ *
  * @author William Dye
  */
 public enum Rank
@@ -27,12 +30,14 @@ public enum Rank
 
     /** The rank's number. */
     protected int number;
+
     /** The rank's number as a string. */
     protected String string;
 
     /**
-     * Construct a <code>Rank</code> with the specified number.
-     * @param num the rank's number
+     * Construct a {@code Rank} with the specified number.
+     *
+     * @param num The rank's number
      */
     Rank(Integer num)
     {
@@ -41,46 +46,53 @@ public enum Rank
     }
 
     /**
-     * Find a <code>Rank</code> by number.
-     * @param number the number of the rank to return
-     * @return the rank with the specified number
+     * Find a {@code Rank} by number.
+     *
+     * @param number The number of the rank to return
+     * @return The rank with the specified number
      */
     public static Rank forNumber(final int number)
     {
+        Rank result = null;
         for (Rank rank : values()) {
-            if (number == rank.getNumber())
-                return rank;
+            if (number == rank.getNumber()) {
+                result = rank;
+                break;
+            }
         }
-        return null;
+        return result;
     }
 
     /**
      * Returns the starting rank for the major pieces of a certain color.
-     * @param color the target color
-     * @return the starting rank for the specified <code>color</code>
+     *
+     * @param color The target color
+     * @return The starting rank for the specified color
      */
     public static Rank getStartingRank(final PieceColor color)
     {
-        if (color == null)
-            return null;
+        Preconditions.checkNotNull(color, "'color' may not be null when getting the starting rank");
+
         return ((color == PieceColor.WHITE) ? FIRST_RANK : EIGHTH_RANK);
     }
 
     /**
      * Returns the starting rank for the pawns of a certain color.
-     * @param color the target color
-     * @return the starting rank for the pawns of the specified <code>color</code>
+     *
+     * @param color The target color
+     * @return The starting rank for the pawns of the specified color
      */
     public static Rank getStartingPawnRank(final PieceColor color)
     {
-        if (color == null)
-            return null;
+        Preconditions.checkNotNull(color, "'color' may not be null when getting the starting pawn rank");
+
         return ((color == PieceColor.WHITE) ? SECOND_RANK : SEVENTH_RANK);
     }
 
     /**
      * Accessor for a rank's number.
-     * @return the rank's number
+     *
+     * @return The rank's number
      */
     public int getNumber()
     {
@@ -92,4 +104,5 @@ public enum Rank
     {
         return string;
     }
+
 }

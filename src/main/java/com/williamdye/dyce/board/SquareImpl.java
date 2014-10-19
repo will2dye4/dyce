@@ -1,27 +1,34 @@
 package com.williamdye.dyce.board;
 
+import java.util.Optional;
+
 import com.williamdye.dyce.pieces.Piece;
 
 /**
- * Implementation of the <code>Square</code> interface.
+ * Implementation of the {@link Square} interface.
+ *
  * @author William Dye
  */
 public class SquareImpl implements Square
 {
     /** The chessboard to which this square belongs. */
     protected final Chessboard board;
+
     /** This square's rank. */
     protected final Rank rank;
+
     /** This square's file. */
     protected final File file;
+
     /** The piece currently occupying this square, if there is one. */
     protected Piece piece;
 
     /**
-     * Construct a <code>SquareImpl</code> on a certain board at a certain rank and file.
-     * @param board the board to which the square belongs
-     * @param rank the square's rank (horizontal row)
-     * @param file the square's file (vertical column)
+     * Construct a {@code SquareImpl} on a certain board at a certain rank and file.
+     *
+     * @param board The board to which the square belongs
+     * @param rank The square's rank (horizontal row)
+     * @param file The square's file (vertical column)
      */
     public SquareImpl(Chessboard board, Rank rank, File file)
     {
@@ -29,18 +36,19 @@ public class SquareImpl implements Square
     }
 
     /**
-     * Construct a <code>SquareImpl</code> on a certain board at a certain rank and file, occupied by a certain piece.
+     * Construct a {@code SquareImpl} on a certain board at a certain rank and file, occupied by a certain piece.
+     *
      * @param chessboard the board to which the square belongs
-     * @param r the square's rank (horizontal row)
-     * @param f the square's file (vertical column)
-     * @param p the initial piece for the square
+     * @param rank the square's rank (horizontal row)
+     * @param file the square's file (vertical column)
+     * @param piece the initial piece for the square
      */
-    public SquareImpl(Chessboard chessboard, Rank r, File f, Piece p)
+    public SquareImpl(Chessboard chessboard, Rank rank, File file, Piece piece)
     {
         this.board = chessboard;
-        this.rank = r;
-        this.file = f;
-        setPiece(p);
+        this.rank = rank;
+        this.file = file;
+        setPiece(piece);
     }
 
     @Override
@@ -62,9 +70,9 @@ public class SquareImpl implements Square
     }
 
     @Override
-    public Piece getPiece()
+    public Optional<Piece> getPiece()
     {
-        return piece;
+        return Optional.ofNullable(piece);
     }
 
     @Override
@@ -72,6 +80,7 @@ public class SquareImpl implements Square
     {
         if ((target != null) && (target.getSquare() == null))
             target.move(this);
+
         piece = target;
     }
 

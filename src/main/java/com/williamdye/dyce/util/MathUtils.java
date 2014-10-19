@@ -3,8 +3,10 @@ package com.williamdye.dyce.util;
 /**
  * @author William Dye
  */
-public abstract class MathUtils
+public final class MathUtils
 {
+
+    private MathUtils() { }
 
     public static int signum(int value)
     {

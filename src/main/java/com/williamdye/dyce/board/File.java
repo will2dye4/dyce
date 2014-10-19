@@ -2,6 +2,7 @@ package com.williamdye.dyce.board;
 
 /**
  * An enumeration of the files (vertical columns) on the chessboard.
+ *
  * @author William Dye
  */
 public enum File
@@ -25,13 +26,15 @@ public enum File
 
     /** The file's name (in lower case). */
     protected String name;
+
     /** The file's number, where the A file is #1, B file is #2, etc. */
     protected int num;
 
     /**
-     * Construct a <code>File</code> with the specified name and number.
-     * @param string the name of the file
-     * @param number the file's number
+     * Construct a {@code File} with the specified name and number.
+     *
+     * @param string The name of the file
+     * @param number The file's number
      */
     File(String string, int number)
     {
@@ -40,22 +43,27 @@ public enum File
     }
 
     /**
-     * Find a <code>File</code> by name.
-     * @param name the name of the file to return
-     * @return the file with the specified <code>name</code>
+     * Find a {@code File} by name.
+     *
+     * @param name The name of the file to return
+     * @return The file with the specified name
      */
     public static File forName(final String name)
     {
+        File result = null;
         for (File file : File.values()) {
-            if (file.toString().equals(name))
-                return file;
+            if (file.toString().equals(name)) {
+                result = file;
+                break;
+            }
         }
-        return null;
+        return result;
     }
 
     /**
      * Accessor for a file's number.
-     * @return the number of the file (A = 1, B = 2, C = 3, etc.)
+     *
+     * @return The number of the file (A = 1, B = 2, C = 3, etc.)
      */
     public int getNumber()
     {
@@ -67,4 +75,5 @@ public enum File
     {
         return name;
     }
+
 }

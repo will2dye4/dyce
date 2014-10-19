@@ -1,8 +1,8 @@
 package com.williamdye.dyce.game;
 
-import com.williamdye.dyce.board.Chessboard;
-
 import java.util.*;
+
+import com.williamdye.dyce.board.Chessboard;
 
 /**
  * @author William Dye
@@ -56,6 +56,7 @@ public class MoveHistoryImpl implements MoveHistory
     {
         if (index >= history.size())
             return null;
+
         return history.get(index);
     }
 
@@ -64,6 +65,7 @@ public class MoveHistoryImpl implements MoveHistory
     {
         if (index >= history.size())
             return null;
+
         return history.get(index++);
     }
 
@@ -72,6 +74,7 @@ public class MoveHistoryImpl implements MoveHistory
     {
         if (index == 0)
             return null;
+
         return history.get(index - 1);
     }
 
@@ -80,6 +83,7 @@ public class MoveHistoryImpl implements MoveHistory
     {
         if (index == 0)
             return null;
+
         return history.get(--index);
     }
 
@@ -113,10 +117,7 @@ public class MoveHistoryImpl implements MoveHistory
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        for (Move move : history) {
-            builder.append(move.toString());
-            builder.append("\n");
-        }
+        history.stream().forEach(move -> builder.append(move.toString()).append("\n"));
         return builder.toString();
     }
 

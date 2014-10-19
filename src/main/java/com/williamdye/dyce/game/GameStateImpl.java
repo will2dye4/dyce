@@ -133,7 +133,7 @@ public class GameStateImpl implements GameState
     public String toString()
     {
         String enPassant = (enPassantTarget == null ? "-" : enPassantTarget.toString());
-        return String.format("%s %s %s %s %s", toMove.toString(), castling.toString(), enPassant, halfMoveClock, moveCount);
+        return String.format("%s %s %s %d %d", toMove.toString(), castling.toString(), enPassant, halfMoveClock, moveCount);
     }
 
 }

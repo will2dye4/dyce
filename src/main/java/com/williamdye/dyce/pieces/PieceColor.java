@@ -22,7 +22,7 @@ public enum PieceColor
 
     public String getName()
     {
-        return ("w".equals(string) ? "white" : "black");
+        return (this == WHITE ? "white" : "black");
     }
 
     @Override

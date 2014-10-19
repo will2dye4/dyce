@@ -27,7 +27,7 @@ public class PieceTests
     @Test
     public void isLegalSquare_True()
     {
-        Piece knight = board.getSquareByName("b8").getPiece();
+        Piece knight = board.getSquareByName("b8").getPiece().get();
         assertTrue("Nc6 is illegal?", knight.isLegalSquare(board.getSquareByName("c6")));
         assertTrue("Na6 is illegal?", knight.isLegalSquare(board.getSquareByName("a6")));
 
@@ -58,23 +58,23 @@ public class PieceTests
     {
         /* TODO: add more test cases */
 
-        Piece king = board.getSquareByName("e1").getPiece();
+        Piece king = board.getSquareByName("e1").getPiece().get();
         assertFalse("Ke5 is legal?", king.isLegalSquare(board.getSquareByName("e5")));
         assertFalse("Kh8 is legal?", king.isLegalSquare(board.getSquareByName("h8")));
 
-        Piece knight = board.getSquareByName("b8").getPiece();
+        Piece knight = board.getSquareByName("b8").getPiece().get();
         assertFalse("Na1 is legal?", knight.isLegalSquare(board.getSquareByName("a1")));
         assertFalse("Nd3 is legal?", knight.isLegalSquare(board.getSquareByName("d3")));
 
-        Piece bishop = board.getSquareByName("c1").getPiece();
+        Piece bishop = board.getSquareByName("c1").getPiece().get();
         assertFalse("Bf5 is legal?", bishop.isLegalSquare(board.getSquareByName("f5")));
         assertFalse("Bb1 is legal?", bishop.isLegalSquare(board.getSquareByName("b1")));
 
-        Piece queen = board.getSquareByName("d8").getPiece();
+        Piece queen = board.getSquareByName("d8").getPiece().get();
         assertFalse("Qh1 is legal?", queen.isLegalSquare(board.getSquareByName("h1")));
         assertFalse("Qe2 is legal?", queen.isLegalSquare(board.getSquareByName("e2")));
 
-        Piece pawn = board.getSquareByName("e2").getPiece();
+        Piece pawn = board.getSquareByName("e2").getPiece().get();
         assertFalse("e1 is legal?", pawn.isLegalSquare(board.getSquareByName("e1")));
         assertFalse("e->f2 is legal?", pawn.isLegalSquare(board.getSquareByName("f2")));
     }

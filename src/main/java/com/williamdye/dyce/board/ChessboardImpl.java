@@ -1,38 +1,46 @@
 package com.williamdye.dyce.board;
 
+import java.util.*;
+import java.util.regex.Pattern;
+
+import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.williamdye.dyce.exception.*;
 import com.williamdye.dyce.game.*;
 import com.williamdye.dyce.notation.*;
 import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Implementation of the <code>Chessboard</code> interface.
+ *
  * @author William Dye
  */
 public class ChessboardImpl implements Chessboard
 {
+    /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(ChessboardImpl.class);
 
     /** The number of ranks (horizontal rows) on the chessboard. */
     public static final int NUM_RANKS = 8;
+
     /** The number of files (vertical columns) on the chessboard. */
     public static final int NUM_FILES = 8;
+
     /** The number of squares on the chessboard (the product of the numbers of files and ranks). */
     public static final int NUM_SQUARES = NUM_RANKS * NUM_FILES;
 
     /** A <code>Pattern</code> representing the expected format for square names (e.g., "e4"). */
-    protected static final Pattern SQUARE_NAME_PATTERN = Pattern.compile("^(?:[a-h])[1-8]$");
+    protected static final Pattern SQUARE_NAME_PATTERN = Pattern.compile("^[a-h][1-8]$");
 
     /** The Forsyth-Edwards Notation (FEN) of the current position. */
     protected final FEN fen;
+
     /** The Portable Game Notation (PGN) object for this chessboard. */
     protected final PGN pgn;
+
     /** A one-dimensional array of squares which comprise the board itself.
      * The board is represented as follows:
      * [a1, b1, c1, d1, e1, f1, g1, h1,
@@ -41,20 +49,28 @@ public class ChessboardImpl implements Chessboard
      *  a8, b8, c8, d8, e8, f8, g8, h8]
      */
     protected final Square[] squares;
+
     /** A map relating piece types to lists of active white pieces. */
     protected final Map<PieceType, List<Piece>> whitePieces;
+
     /** A list of all active white pieces. */
     protected final List<Piece> activeWhitePieces;
+
     /** A list of all captured white pieces. */
     protected final List<Piece> capturedWhitePieces;
+
     /** A map relating piece types to lists of active black pieces. */
     protected final Map<PieceType, List<Piece>> blackPieces;
+
     /** A list of all active black pieces. */
     protected final List<Piece> activeBlackPieces;
+
     /** A list of all captured black pieces. */
     protected final List<Piece> capturedBlackPieces;
+
     /** The game's current state. */
     protected final GameState state;
+
     /** A history of all moves in the game. */
     protected final MoveHistory history;
 
@@ -221,56 +237,48 @@ public class ChessboardImpl implements Chessboard
     @Override
     public List<Piece> getActivePieces(final PieceColor color)
     {
-        if (color == null)
-            return null;
+        Preconditions.checkNotNull(color, "'color' may not be null when getting active pieces");
+
         return ((color == PieceColor.WHITE) ? activeWhitePieces : activeBlackPieces);
     }
 
     @Override
     public List<Piece> getActivePieces(final PieceColor color, final PieceType type)
     {
-        if (color == null)
-            return null;
-        if (type == null)
-            return getActivePieces(color);
-        if (type == PieceType.KING)
-            throw new IllegalArgumentException("getActivePieces() called with King type argument");
+        Preconditions.checkNotNull(color, "'color' may not be null when getting active pieces");
+        Preconditions.checkNotNull(type, "Use ChessboardImpl#getActivePieces(PieceColor) instead");
+        Preconditions.checkArgument(type != PieceType.KING, "Use ChessboardImpl#getKing(PieceColor) instead");
+
         return ((color == PieceColor.WHITE) ? whitePieces.get(type) : blackPieces.get(type));
     }
 
     @Override
     public List<Piece> getCapturedPieces(final PieceColor color)
     {
-        if (color == null)
-            return null;
+        Preconditions.checkNotNull(color, "'color' may not be null when getting captured pieces");
+
         return ((color == PieceColor.WHITE) ? capturedWhitePieces : capturedBlackPieces);
     }
 
     @Override
     public King getKing(final PieceColor color)
     {
-        if (color == null)
-            return null;
-        King king;
-        if (color == PieceColor.WHITE)
-            king = (King)(whitePieces.get(PieceType.KING).get(0));
-        else
-            king = (King)(blackPieces.get(PieceType.KING).get(0));
-        return king;
+        Preconditions.checkNotNull(color, "'color' may not be null when getting the king");
+
+        Map<PieceType, List<Piece>> map = (color == PieceColor.WHITE ? whitePieces : blackPieces);
+        return (King)(map.get(PieceType.KING).get(0));
     }
 
     @Override
     public Square getSquareByName(final String name)
     {
-        Square square = null;
-        if (SQUARE_NAME_PATTERN.matcher(name).matches()) {
-            String whichFile = name.substring(0, 1);
-            int whichRank = Integer.parseInt(name.substring(1));
-            int offset = File.forName(whichFile).getNumber() - 1;
-            int i = ((whichRank - 1) * NUM_FILES) + offset;
-            square = squares[i];
-        }
-        return square;
+        Preconditions.checkArgument(SQUARE_NAME_PATTERN.matcher(name).matches(), "Invalid square name");
+
+        String whichFile = name.substring(0, 1);
+        int whichRank = Integer.parseInt(name.substring(1));
+        int offset = File.forName(whichFile).getNumber() - 1;
+        int i = ((whichRank - 1) * NUM_FILES) + offset;
+        return squares[i];
     }
 
     @Override
@@ -295,20 +303,25 @@ public class ChessboardImpl implements Chessboard
      */
     private void move(final Piece piece, final Square dest, @SuppressWarnings("unused") MoveType moveType) throws IllegalMoveException
     {
+        Preconditions.checkNotNull(piece, "'piece' may not be null when making a move");
+        Preconditions.checkNotNull(dest, "'dest' may not be null when making a move");
+
         if (!piece.isLegalSquare(dest))
             throw new IllegalMoveException();
 
-        Piece capturedPiece = piece.move(dest);
-        if (capturedPiece != null)
-            capture(capturedPiece);
+        Optional<Piece> capturedPiece = piece.move(dest);
+        if (capturedPiece.isPresent())
+            capture(capturedPiece.get());
 
-        history.add(new MoveImpl(piece, capturedPiece, piece.getLastSquare(), dest, null, state.getMoveCount()));
+        history.add(new MoveImpl(piece, capturedPiece.orElse(null), piece.getLastSquare(), dest, null, state.getMoveCount()));
         state.incrementHalfMoveTotal();
         state.toggleActiveColor();
     }
 
     private void capture(Piece piece)
     {
+        Preconditions.checkNotNull(piece, "'piece' may not be null when capturing");
+
         PieceColor color = piece.getColor();
         getActivePieces(color).remove(piece);
         getCapturedPieces(color).add(piece);

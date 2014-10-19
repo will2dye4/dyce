@@ -3,6 +3,7 @@ package com.williamdye.dyce.pieces;
 import com.williamdye.dyce.board.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.williamdye.dyce.board.Paths.*;
 
@@ -34,6 +35,14 @@ public abstract class AbstractPiece implements Piece
     public PieceColor getColor()
     {
         return color;
+    }
+
+    @Override
+    public char getBoardRepresentation() {
+        char representation = getPieceType().getSymbol();
+        if (PieceColor.WHITE == color)
+            representation -= 32;   /* uppercase letters are 32 below lowercase in the ASCII table */
+        return representation;
     }
 
     @Override
@@ -94,19 +103,6 @@ public abstract class AbstractPiece implements Piece
                 }
             }
         }
-        /*
-         * +---+---+---+---+---+
-         * | r | p |   |   |   |
-         * +---+---+---+---+---+
-         * | P |   |   |   |   |  white Pawn is pinned by the Rook
-         * +---+---+---+---+---+
-         * | K |   | Q |   | r |  white Queen is pinned by the Rook
-         * +---+---+---+---+---+
-         * |   |   |   | n |   |  black Knight is pinned by the Queen
-         * +---+---+---+---+---+
-         * |   | B |   |   | k |
-         * +---+---+---+---+---+
-         */
         return pinned;
     }
 
@@ -120,7 +116,7 @@ public abstract class AbstractPiece implements Piece
     public boolean isLegalSquare(final Square dest, final boolean ignorePins)
     {
         return ((!captured) && (ignorePins || !isPinned()) && (isPathClear(square, dest)) &&
-                (dest.isEmpty() || (dest.getPiece().getColor() != color)));
+                (dest.isEmpty() || (dest.getPiece().get().getColor() != color)));
     }
 
     @Override
@@ -138,13 +134,13 @@ public abstract class AbstractPiece implements Piece
     }
 
     @Override
-    public Piece move(final Square dest)
+    public Optional<Piece> move(final Square dest)
     {
         Piece captured = null;
         /* handle capture (move has already been checked for legality) */
         if (!dest.isEmpty()) {
-            captured = dest.getPiece();
-            dest.getPiece().capture();
+            captured = dest.getPiece().get();
+            captured.capture();
         }
         if (square != null) {
             lastSquare = square;
@@ -152,7 +148,7 @@ public abstract class AbstractPiece implements Piece
             dest.setPiece(this);
         }
         square = dest;
-        return captured;
+        return Optional.ofNullable(captured);
     }
 
     @Override

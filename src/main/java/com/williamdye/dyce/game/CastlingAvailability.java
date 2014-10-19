@@ -1,5 +1,7 @@
 package com.williamdye.dyce.game;
 
+import com.google.common.base.Preconditions;
+
 import com.williamdye.dyce.pieces.PieceColor;
 
 public class CastlingAvailability
@@ -42,8 +44,8 @@ public class CastlingAvailability
 
     public boolean canCastle(final PieceColor color, final boolean kingside)
     {
-        if (color == null)
-            return false;
+        Preconditions.checkNotNull(color, "'color' may not be null when checking castling availability");
+
         if (PieceColor.WHITE == color)
             return (kingside ? isStatus(WHITE_CAN_CASTLE_KINGSIDE) : isStatus(WHITE_CAN_CASTLE_QUEENSIDE));
         return (kingside ? isStatus(BLACK_CAN_CASTLE_KINGSIDE) : isStatus(BLACK_CAN_CASTLE_QUEENSIDE));
@@ -51,13 +53,15 @@ public class CastlingAvailability
 
     public boolean castled(final PieceColor color)
     {
-        return (color != null) && (PieceColor.WHITE == color ? isStatus(WHITE_CASTLED) : isStatus(BLACK_CASTLED));
+        Preconditions.checkNotNull(color, "'color' may not be null when checking for castling");
+
+        return (PieceColor.WHITE == color ? isStatus(WHITE_CASTLED) : isStatus(BLACK_CASTLED));
     }
 
     public void castle(final PieceColor color, final boolean kingside)
     {
-        if (color == null)
-            return;
+        Preconditions.checkNotNull(color, "'color' may not be null when castling");
+
         if (PieceColor.WHITE == color) {
             clearBit(WHITE_CAN_CASTLE);
             setBit(kingside ? WHITE_CASTLED_KINGSIDE : WHITE_CASTLED_QUEENSIDE);
