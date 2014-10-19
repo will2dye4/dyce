@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.*;
 
@@ -59,8 +60,18 @@ public class ChessboardTests
     {
         Chessboard board = new ChessboardImpl();
         String[] fakeSquares = {"a0", "h9", "5c", "i1", "2a", "d9", "22", "k3", "foo", "alpha won", "bb"};
-        for (String square : fakeSquares)
-            assertNull("board has a square called " + square + "?", board.getSquareByName(square));
+        for (String square : fakeSquares) {
+            boolean thrown = false;
+            try {
+                board.getSquareByName(square);
+            } catch (Exception e) {
+                assertTrue(e instanceof IllegalArgumentException);
+                thrown = true;
+            }
+            if (!thrown) {
+                fail("Exception not thrown for illegal square name");
+            }
+        }
     }
 
     /* TODO : test ChessboardImpl::move(Piece, Square) */

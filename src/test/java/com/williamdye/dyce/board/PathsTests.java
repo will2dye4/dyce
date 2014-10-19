@@ -12,13 +12,12 @@ import static org.junit.Assert.*;
 public class PathsTests
 {
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void getRankDistance_DifferentBoards()
     {
         Square a1 = (new ChessboardImpl()).getSquareByName("a1");
         Square h8 = (new ChessboardImpl()).getSquareByName("h8");
-        assertEquals("squares on different boards != -1", -1, Paths.getRankDistance(a1, h8));
-        assertEquals("null square != -1", -1, Paths.getRankDistance(null, a1));
+        Paths.getRankDistance(a1, h8);
     }
 
     @Test
@@ -37,12 +36,12 @@ public class PathsTests
         assertEquals("d8.getRankDistance(d8) != 0", 0, Paths.getRankDistance(map.get("d8"), map.get("d8")));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void getFileDistance_DifferentBoards()
     {
         Square a1 = (new ChessboardImpl()).getSquareByName("a1");
         Square h8 = (new ChessboardImpl()).getSquareByName("h8");
-        assertEquals("squares on different boards != -1", -1, Paths.getFileDistance(a1, h8));
+        Paths.getFileDistance(a1, h8);
     }
 
     @Test
@@ -62,12 +61,12 @@ public class PathsTests
         assertEquals("c1.getFileDistance(c1) != 0", 0, Paths.getFileDistance(map.get("c1"), map.get("c1")));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void isSameDiagonal_DifferentBoards()
     {
         Square a1 = (new ChessboardImpl()).getSquareByName("a1");
         Square h8 = (new ChessboardImpl()).getSquareByName("h8");
-        assertFalse("squares on different boards != false", Paths.isSameDiagonal(a1, h8));
+        Paths.isSameDiagonal(a1, h8);
     }
 
     @Test
@@ -113,12 +112,12 @@ public class PathsTests
         assertFalse("c3 and d3 are diagonal", Paths.isSameDiagonal(map.get("c3"), map.get("d3")));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void isPathClear_DifferentBoards()
     {
         Square a4 = (new ChessboardImpl()).getSquareByName("a4");
         Square h4 = (new ChessboardImpl()).getSquareByName("h4");
-        assertFalse("squares on different boards != false", Paths.isPathClear(a4, h4));
+        Paths.isPathClear(a4, h4);
     }
 
     @Test
