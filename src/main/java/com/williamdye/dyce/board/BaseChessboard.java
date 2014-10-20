@@ -4,17 +4,16 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
+import com.williamdye.dyce.board.formatter.*;
 import com.williamdye.dyce.exception.*;
 import com.williamdye.dyce.game.*;
 import com.williamdye.dyce.notation.*;
 import com.williamdye.dyce.pieces.*;
-import com.williamdye.dyce.util.StringUtils;
 
 /**
- * Implementation of the <code>Chessboard</code> interface.
+ * Abstract implementation of the {@link Chessboard} interface.
  *
  * @author William Dye
  */
@@ -74,10 +73,13 @@ public abstract class BaseChessboard implements Chessboard
     /** A history of all moves in the game. */
     protected final MoveHistory history;
 
+    /** A string formatter for implementing the {@link #prettyPrint} method. */
+    protected final ChessboardFormatter<String> printer;
+
     /**
      * Construct a {@code BaseChessboard} with no pieces.
      */
-    public BaseChessboard()
+    protected BaseChessboard()
     {
         this.fen = new FEN(this);
         this.pgn = new PGN(this);
@@ -90,6 +92,7 @@ public abstract class BaseChessboard implements Chessboard
         this.capturedBlackPieces = new ArrayList<>();
         this.state = new GameStateImpl();
         this.history = new MoveHistoryImpl(this);
+        this.printer = new DefaultChessboardFormatter();
         initializePieceMaps();
         createSquares();
     }
@@ -119,39 +122,7 @@ public abstract class BaseChessboard implements Chessboard
     @Override
     public String prettyPrint()
     {
-        final String SPACING = "  ";
-        final String WIDE_SPACING = "\t\t";
-        final String RANK_SEPARATOR =   SPACING + "  +---+---+---+---+---+---+---+---+\n";
-        final String FILE_LABELS    =   SPACING + "    a   b   c   d   e   f   g   h  \n";
-        StringBuilder builder = new StringBuilder();
-        builder.append(RANK_SEPARATOR);
-        String[] ranks = getFEN().getFENString().split("/");
-        int i = 8;
-        for (String rank : ranks) {
-            builder.append(String.format("%s%d |", SPACING, i));
-            for (int j = 0; j < rank.length(); j++) {
-                if (Character.isDigit(rank.charAt(j))) {
-                    int k = Integer.parseInt(String.valueOf(rank.charAt(j)));
-                    while (k > 0) {
-                        builder.append("   |");
-                        k--;
-                    }
-                }
-                else {
-                    builder.append(String.format(" %s |", rank.charAt(j)));
-                }
-            }
-            if ((i == 7) && ((capturedWhitePieces.size() > 0) || (capturedBlackPieces.size() > 0)))
-                builder.append(String.format("%s[[ Captured Pieces ]]", WIDE_SPACING));
-            else if ((i == 6) && (capturedWhitePieces.size() > 0))
-                builder.append(String.format("%sW: %s", WIDE_SPACING, StringUtils.joinPieceList(capturedWhitePieces, " ", true)));
-            else if ((i == 5) && (capturedBlackPieces.size() > 0))
-                builder.append(String.format("%sB: %s", WIDE_SPACING, StringUtils.joinPieceList(capturedBlackPieces, " ", true)));
-            builder.append("\n" + RANK_SEPARATOR);
-            i--;
-        }
-        builder.append(FILE_LABELS);
-        return builder.toString();
+        return printer.format(this);
     }
 
     @Override
