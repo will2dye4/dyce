@@ -6,23 +6,60 @@ import com.williamdye.dyce.board.Square;
 import com.williamdye.dyce.pieces.Piece;
 
 /**
+ * Implementation of the {@link Move} interface.
+ *
  * @author William Dye
  */
 public class MoveImpl implements Move
 {
+
+    /** The piece that was moved. */
     protected final Piece movedPiece;
+
+    /** The piece that was captured, if any. */
     protected final Piece capturedPiece;
+
+    /** The move's starting square. */
     protected final Square startSquare;
+
+    /** The move's ending square. */
     protected final Square endSquare;
+
+    /** The move's type. */
     protected final MoveType moveType;
+
+    /** A string representing the move in PGN. */
     protected final String pgnString;
+
+    /** The move's number in the game. */
     protected final int moveNumber;
 
+    /**
+     * Construct a {@code MoveImpl} with the specified values and defaulting to {@code MoveType.NORMAL}.
+     *
+     * @param moved The piece that was moved
+     * @param captured The piece that was captured, if any
+     * @param start The square the moved piece was on prior to the move
+     * @param end The square the moved piece ended on as a result of the move
+     * @param pgn The move's representation in PGN
+     * @param number The move's number
+     */
     public MoveImpl(Piece moved, Piece captured, Square start, Square end, String pgn, int number)
     {
         this(moved, captured, start, end, MoveType.NORMAL, pgn, number);
     }
 
+    /**
+     * Construct a {@code MoveImpl} with the specified values.
+     *
+     * @param moved The piece that was moved
+     * @param captured The piece that was captured, if any
+     * @param start The square the moved piece was on prior to the move
+     * @param end The square the moved piece ended on as a result of the move
+     * @param type The type of move that was made
+     * @param pgn The move's representation in PGN
+     * @param number The move's number
+     */
     public MoveImpl(Piece moved, Piece captured, Square start, Square end, MoveType type, String pgn, int number)
     {
         Preconditions.checkNotNull(moved, "'moved' may not be null when creating a move");

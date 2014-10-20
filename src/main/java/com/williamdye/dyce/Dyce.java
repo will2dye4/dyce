@@ -2,14 +2,13 @@ package com.williamdye.dyce;
 
 import java.util.Scanner;
 
-import com.williamdye.dyce.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 import com.williamdye.dyce.board.*;
 import com.williamdye.dyce.exception.*;
 import com.williamdye.dyce.game.*;
 import com.williamdye.dyce.pieces.*;
+import com.williamdye.dyce.util.StringUtils;
 
 /**
  * Main class for the dyce application.
@@ -17,11 +16,20 @@ import com.williamdye.dyce.pieces.*;
 public final class Dyce
 {
 
+    /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(Dyce.class);
 
+    /** Usage message (printed on invalid invocation) */
     private static final String USAGE = "Usage: java Dyce [-ev]";
+
+    /** Version message */
     private static final String VERSION_INFO = "dyce version 0.1, built October 2014";
 
+    /**
+     * Entry point for the dyce application.
+     *
+     * @param args Program arguments specifying what the application should do
+     */
     public static void main(String[] args)
     {
         logger.info("The application has been started with arguments [{}]", StringUtils.join(args, ", "));
@@ -43,29 +51,19 @@ public final class Dyce
         out("Bye for now!");
     }
 
-    private static void usage()
-    {
-        logger.info("Displaying usage message; program arguments were invalid");
-        out(USAGE);
-    }
-
-    private static void version()
-    {
-        logger.info("Displaying version information: {}", VERSION_INFO);
-        out(VERSION_INFO);
-    }
-
+    /** Helper to parse the program arguments and respond accordingly. */
     private static void parseArgs(final String[] args)
     {
-        String command = args[0];
-        if ((args.length > 1) || (command.length() < 2) || ('-' != command.charAt(0))) {
+        if (args.length > 1)
             usage();
-        } else {
-            switch (command.charAt(1)) {
-                case 'e':
+        else {
+            switch (args[0]) {
+                case "-e":
+                case "--explore":
                     explore(new DefaultChessboard());
                     break;
-                case 'v':
+                case "-v":
+                case "--version":
                     version();
                     break;
                 default:
@@ -75,6 +73,21 @@ public final class Dyce
         }
     }
 
+    /** Helper to print the usage message. */
+    private static void usage()
+    {
+        logger.info("Displaying usage message; program arguments were invalid");
+        out(USAGE);
+    }
+
+    /** Helper to print the version message. */
+    private static void version()
+    {
+        logger.info("Displaying version information: {}", VERSION_INFO);
+        out(VERSION_INFO);
+    }
+
+    /** Explore mode - currently exists for testing purposes to interact with a chessboard. */
     private static void explore(Chessboard board)
     {
         logger.info("Entering explore mode...");
@@ -114,11 +127,13 @@ public final class Dyce
         } while (!TO_QUIT[0].equals(move) && !TO_QUIT[1].equals(move));
     }
 
+    /** Convenience method that calls System.out#println. */
     private static void out(String message)
     {
         System.out.println(message);
     }
 
+    /** Convenience method that calls System.out#print. */
     private static void print(String message)
     {
         System.out.print(message);

@@ -9,7 +9,7 @@ import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
 
 /**
- * Default string-based implementation of the {@link com.williamdye.dyce.board.formatter.ChessboardFormatter} interface.
+ * Default string-based implementation of the {@link ChessboardFormatter} interface.
  * The formatted string is an ASCII-based depiction of the chessboard intended for displaying to users.
  *
  * @author William Dye
@@ -31,6 +31,12 @@ public class DefaultChessboardFormatter implements ChessboardFormatter<String> {
     /** A string splitter that splits on the forward slash (/) character. */
     protected final Splitter rankSplitter = Splitter.on('/');
 
+    /**
+     * Given a chessboard, return a string containing an ASCII-based representation of the board.
+     *
+     * @param chessboard The chessboard to format
+     * @return The formatted chessboard (as a string)
+     */
     @Override
     public String format(Chessboard chessboard)
     {
@@ -50,6 +56,7 @@ public class DefaultChessboardFormatter implements ChessboardFormatter<String> {
         return builder.append(FILE_LABELS).toString();
     }
 
+    /** Helper to format one rank from a FEN string. */
     private void formatRank(final String rank, final StringBuilder builder)
     {
         for (char c : rank.toCharArray()) {
@@ -61,6 +68,7 @@ public class DefaultChessboardFormatter implements ChessboardFormatter<String> {
         }
     }
 
+    /** Helper to append some number of spaces to the string builder. */
     private void appendBlankSpaces(final char count, final StringBuilder builder)
     {
         int i = Integer.parseInt(String.valueOf(count));
@@ -70,6 +78,7 @@ public class DefaultChessboardFormatter implements ChessboardFormatter<String> {
         }
     }
 
+    /** Helper to append status information to the string builder based on the rank. */
     private void formatStatusInfo(final int rank, final List<Piece> capturedWhitePieces,
                                   final List<Piece> capturedBlackPieces, final StringBuilder builder)
     {

@@ -5,11 +5,18 @@ import com.williamdye.dyce.board.*;
 import static com.williamdye.dyce.board.Paths.*;
 
 /**
+ * Represents a pawn on a chessboard.
+ *
  * @author William Dye
  */
 public class Pawn extends AbstractPiece
 {
 
+    /**
+     * Construct a {@code Pawn} of the specified color.
+     *
+     * @param color The pawn's color
+     */
     public Pawn(PieceColor color)
     {
         super(color);
@@ -47,6 +54,7 @@ public class Pawn extends AbstractPiece
         return (!captured && !isPinned() && isAdvancingSquare(dest) && (getFileDistance(square, dest) == 1));
     }
 
+    /** Helper to check if the specified square is advancing for this pawn. */
     private boolean isAdvancingSquare(final Square dest)
     {
         if (color == PieceColor.WHITE)

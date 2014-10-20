@@ -5,8 +5,7 @@ import static com.williamdye.dyce.board.DefaultChessboard.NUM_FILES;
 import com.google.common.base.Preconditions;
 
 import com.williamdye.dyce.pieces.PieceType;
-import com.williamdye.dyce.util.ChessboardUtils;
-import com.williamdye.dyce.util.MathUtils;
+import com.williamdye.dyce.util.*;
 
 /**
  * A utility class for determining various information about distances and paths between two squares.

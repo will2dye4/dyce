@@ -2,20 +2,36 @@ package com.williamdye.dyce.game;
 
 import java.util.*;
 
+import com.google.common.base.Preconditions;
+
 import com.williamdye.dyce.board.Chessboard;
 
 /**
+ * Implementation of the {@link MoveHistory} interface.
+ *
  * @author William Dye
  */
 public class MoveHistoryImpl implements MoveHistory
 {
 
+    /** The history itself (a list of moves). */
     protected final List<Move> history;
+
+    /** The chessboard to which the moves belong. */
     protected final Chessboard chessboard;
+
+    /** The current index into the history. */
     protected int index;
 
+    /**
+     * Construct an empty {@code MoveHistoryImpl} for the specified chessboard.
+     *
+     * @param board The chessboard to which the history's moves will belong
+     */
     public MoveHistoryImpl(Chessboard board)
     {
+        Preconditions.checkNotNull(board, "'board' may not be null when creating move history");
+
         this.chessboard = board;
         this.history = new ArrayList<>();
         this.index = 0;
@@ -54,8 +70,7 @@ public class MoveHistoryImpl implements MoveHistory
     @Override
     public Move peekNext()
     {
-        if (index >= history.size())
-            return null;
+        Preconditions.checkState(this.hasNext(), "'peekNext' called when 'hasNext' is false");
 
         return history.get(index);
     }
@@ -63,8 +78,7 @@ public class MoveHistoryImpl implements MoveHistory
     @Override
     public Move getNext()
     {
-        if (index >= history.size())
-            return null;
+        Preconditions.checkState(this.hasNext(), "'getNext' called when 'hasNext' is false");
 
         return history.get(index++);
     }
@@ -72,8 +86,7 @@ public class MoveHistoryImpl implements MoveHistory
     @Override
     public Move peekPrevious()
     {
-        if (index == 0)
-            return null;
+        Preconditions.checkState(this.hasPrevious(), "'peekPrevious' called when 'hasPrevious' is false");
 
         return history.get(index - 1);
     }
@@ -81,8 +94,7 @@ public class MoveHistoryImpl implements MoveHistory
     @Override
     public Move getPrevious()
     {
-        if (index == 0)
-            return null;
+        Preconditions.checkState(this.hasPrevious(), "'getPrevious' called when 'hasPrevious' is false");
 
         return history.get(--index);
     }

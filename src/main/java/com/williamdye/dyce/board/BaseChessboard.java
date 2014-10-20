@@ -20,6 +20,7 @@ import com.williamdye.dyce.pieces.*;
  */
 public abstract class BaseChessboard implements Chessboard
 {
+
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(BaseChessboard.class);
 

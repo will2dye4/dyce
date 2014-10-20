@@ -8,18 +8,33 @@ import java.util.Optional;
 import static com.williamdye.dyce.board.Paths.*;
 
 /**
+ * Abstract implementation of the {@link Piece} interface.
+ *
  * @author William Dye
  */
 public abstract class AbstractPiece implements Piece
 {
+
+    /** The piece's color. */
     protected final PieceColor color;
+
+    /** The piece's current square (if not captured). */
     protected Square square;
+
+    /** The piece's previous square. */
     protected Square lastSquare;
+
+    /** Whether the piece has been captured. */
     protected boolean captured;
 
-    protected AbstractPiece(PieceColor colour)
+    /**
+     * Construct an {@code AbstractPiece} of the specified color.
+     *
+     * @param color The piece's color
+     */
+    protected AbstractPiece(PieceColor color)
     {
-        this.color = colour;
+        this.color = color;
         this.square = null;
         this.lastSquare = null;
         this.captured = false;

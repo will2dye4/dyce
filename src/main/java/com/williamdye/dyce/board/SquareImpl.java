@@ -2,6 +2,8 @@ package com.williamdye.dyce.board;
 
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
+
 import com.williamdye.dyce.pieces.Piece;
 
 /**
@@ -45,6 +47,10 @@ public class SquareImpl implements Square
      */
     public SquareImpl(Chessboard chessboard, Rank rank, File file, Piece piece)
     {
+        Preconditions.checkNotNull(chessboard, "'chessboard' may not be null when creating a square");
+        Preconditions.checkNotNull(rank, "'rank' may not be null when creating a square");
+        Preconditions.checkNotNull(file, "'file' may not be null when creating a square");
+
         this.board = chessboard;
         this.rank = rank;
         this.file = file;

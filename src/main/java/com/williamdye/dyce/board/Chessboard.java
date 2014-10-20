@@ -11,6 +11,7 @@ import com.williamdye.dyce.pieces.*;
  * This is dyce's representation of a chessboard. It acts as a container for the board's squares and pieces,
  * along with the game's state and its representation in Forsyth-Edwards Notation (FEN). The {@code Chessboard}
  * interface also provides the mechanism for moving pieces via the {@link #move} method.
+ *
  * @author William Dye
  */
 public interface Chessboard

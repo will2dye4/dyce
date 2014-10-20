@@ -8,11 +8,18 @@ import java.util.List;
 import static com.williamdye.dyce.game.CastlingAvailability.*;
 
 /**
+ * Represents a king on a chessboard.
+ *
  * @author William Dye
  */
 public class King extends AbstractPiece
 {
 
+    /**
+     * Construct a {@code King} of the specified color.
+     *
+     * @param color The king's color
+     */
     public King(PieceColor color)
     {
         super(color);

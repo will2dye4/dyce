@@ -8,7 +8,7 @@ import com.google.common.base.Joiner;
 import com.williamdye.dyce.pieces.*;
 
 /**
- * Utility class for joining lists of strings and {@code  Piece}s.
+ * Utility class for joining lists of strings and {@code Piece}s.
  */
 public final class StringUtils
 {

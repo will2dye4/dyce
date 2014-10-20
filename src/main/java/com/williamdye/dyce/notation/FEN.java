@@ -8,33 +8,68 @@ import com.williamdye.dyce.board.*;
 import com.williamdye.dyce.util.StringUtils;
 
 /**
+ * The {@code FEN} class is capable of producing a Forsyth-Edwards Notation (FEN) string from a {@link Chessboard} instance.
+ *
  * @author William Dye
  */
 public class FEN
 {
+
+    /** The FEN string for the standard chess starting position. */
     public static final String INITIAL_FEN_STRING = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+    /** The number of components in a well-formed FEN string. */
     public static final int NUM_COMPONENTS = 6;
 
+    /** A pattern for matching the castling component of a FEN string. */
     protected static final Pattern CASTLING_PATTERN = Pattern.compile("^(KQkq|KQk|KQq|Kkq|Qkq|KQ|kq|Kk|Kq|Qk|Qq|K|Q|k|q|-)$");
+
+    /** A pattern for matching the en passant component of a FEN string. */
     protected static final Pattern EN_PASSANT_SQUARE_PATTERN = Pattern.compile("^([a-h][36]|-)$");
+
+    /** A pattern for matching arbitrary integer values. */
     protected static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
+
+    /** A pattern for matching the FEN representation of a single rank on a chessboard. */
     protected static final Pattern RANK_PATTERN = Pattern.compile("^(([1-7]?[bknpqrBKNPQR]([1-7]?[bknpqrBKNPQR])*[1-7]?)|8)$");
 
+    /** The FEN string that this object represents. */
     protected String fenString;
+
+    /** The chessboard that this object represents. */
     protected Chessboard board;
+
+    /** Whether or not this object was created from a FEN string. */
     private boolean fromString;
 
+    /**
+     * Construct a {@code FEN} from the specified valid FEN string.
+     *
+     * @param fen The FEN string
+     */
     public FEN(String fen)
     {
         this(fen, null, true);
     }
 
-    public FEN(Chessboard board)
+    /**
+     * Construct a {@code FEN} from the specified chessboard.
+     *
+     * @param chessboard The chessboard to represent in FEN
+     */
+    public FEN(Chessboard chessboard)
     {
-        this(null, board, false);
+        this(null, chessboard, false);
     }
 
-    public FEN(String fen, Chessboard chessboard, boolean useString)
+    /**
+     * Helper constructor for the monad constructors above.
+     *
+     * @param fen The FEN string
+     * @param chessboard The chessboard to represent in FEN
+     * @param useString Whether to use the FEN string or the chessboard
+     */
+    protected FEN(String fen, Chessboard chessboard, boolean useString)
     {
         if (useString && (fen == null || !isValidFENString(fen)))
             throw new IllegalArgumentException("Invalid FEN string provided!");
@@ -45,8 +80,12 @@ public class FEN
         this.fromString = useString;
     }
 
-    /* See http://chessprogramming.wikispaces.com/Forsyth-Edwards+Notation for a complete description
-     * of the format of Forsyth-Edwards Notation.
+    /**
+     * Check whether the specified string is valid Forsyth-Edwards Notation.
+     *
+     * @param test The string to validate
+     * @return {@code true} if the string is valid, {@code false} otherwise
+     * @see <a href="http://chessprogramming.wikispaces.com/Forsyth-Edwards+Notation">Forsyth-Edwards Notation</a>
      */
     public static boolean isValidFENString(final String test)
     {
@@ -67,6 +106,11 @@ public class FEN
         return false;   /* invalid number of components or invalid number of ranks */
     }
 
+    /**
+     * Accessor for the FEN string itself.
+     *
+     * @return The FEN string
+     */
     public String getFENString()
     {
         if (!fromString)
@@ -74,6 +118,7 @@ public class FEN
         return fenString;
     }
 
+    /** Helper to create the FEN string if this instance was created from a chessboard. */
     private void computeFENString()
     {
         Square[] squares = board.getBoard();
@@ -104,6 +149,7 @@ public class FEN
         fenString = StringUtils.join(ranks, "/");
     }
 
+    /** Helper to validate a single rank from a FEN string. */
     private static boolean isValidRankString(final String rank)
     {
         boolean valid = false;

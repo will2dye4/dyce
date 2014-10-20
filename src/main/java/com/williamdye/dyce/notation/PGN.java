@@ -2,6 +2,7 @@ package com.williamdye.dyce.notation;
 
 import java.util.*;
 
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,27 +11,54 @@ import com.williamdye.dyce.exception.*;
 import com.williamdye.dyce.game.*;
 import com.williamdye.dyce.pieces.*;
 
+/**
+ * The {@code PGN} class is capable of parsing moves in Portable Game Notation (PGN).
+ *
+ * @author William Dye
+ */
 public class PGN
 {
-    /* These are uppercase letter 'O's, not zeros. */
+    /** The PGN representation of castling kingside; those are uppercase letter 'O's, not zeros. */
     public static final String CASTLING_KINGSIDE = "O-O";
+
+    /** The PGN representation of castling queenside. */
     public static final String CASTLING_QUEENSIDE = "O-O-O";
 
+    /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(PGN.class);
 
+    /** The chessboard that we will be parsing PGN for. */
     protected final Chessboard chessboard;
+
+    /** A list of parsed moves. */
     protected final List<String> moves;
 
+    /**
+     * Construct a {@code PGN} that will parse for the specified chessboard.
+     *
+     * @param board The chessboard that we will be parsing PGN for
+     */
     public PGN(Chessboard board)
     {
+        Preconditions.checkNotNull(board, "'board' may not be null when creating PGN");
+
         this.chessboard = board;
         this.moves = new ArrayList<>();
     }
 
+    /**
+     * Try to parse a PGN string into a {@link PartialMove}.
+     *
+     * @param toMove The currently active color
+     * @param move The PGN string to parse
+     * @return A {@link PartialMove} representing the PGN string (if the string is valid)
+     * @throws IllegalMoveException If the PGN string represents an illegal move
+     * @throws AmbiguousMoveException If the PGN string represents an ambiguous move
+     */
     public PartialMove parseMove(final PieceColor toMove, String move) throws IllegalMoveException, AmbiguousMoveException
     {
-        if (toMove == null || move == null)
-            throw new IllegalArgumentException();
+        Preconditions.checkNotNull(toMove, "'toMove' may not be null when parsing a PGN string");
+        Preconditions.checkNotNull(move, "'move' may not be null when parsing a PGN string");
 
         logger.debug("Attempting to parse move '{}' for {}", move, toMove.getName());
 
@@ -52,6 +80,7 @@ public class PGN
         return (Character.isLowerCase(move.charAt(0)) ? parsePawnMove(toMove, move, dest) : parsePieceMove(toMove, move, dest));
     }
 
+    /** Helper to parse a PGN string as a castling move. */
     private PartialMove parseCastlingMove(final PieceColor toMove, final String move) throws IllegalMoveException
     {
         CastlingAvailability castling = chessboard.getGameState().getCastlingAvailability();
@@ -64,6 +93,7 @@ public class PGN
         throw new IllegalMoveException();
     }
 
+    /** Helper to parse a PGN string as a pawn move. */
     private PartialMove parsePawnMove(final PieceColor toMove, final String move, final Square dest) throws IllegalMoveException
     {
         String fileString = move.substring(0, 1);
@@ -80,6 +110,7 @@ public class PGN
         return new PartialMove(pawn.get(), dest);
     }
 
+    /** Helper to parse a PGN string as a major piece (i.e., non-pawn) move. */
     private PartialMove parsePieceMove(final PieceColor toMove, final String move, Square dest) throws
             IllegalMoveException, AmbiguousMoveException
     {

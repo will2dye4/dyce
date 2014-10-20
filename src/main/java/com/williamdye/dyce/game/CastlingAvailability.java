@@ -4,8 +4,14 @@ import com.google.common.base.Preconditions;
 
 import com.williamdye.dyce.pieces.PieceColor;
 
+/**
+ * Represents the ability to castle of both players in a chess game.
+ *
+ * @author William Dye
+ */
 public class CastlingAvailability
 {
+
     public static final int WHITE_CAN_CASTLE_KINGSIDE  =   0x01;
     public static final int WHITE_CAN_CASTLE_QUEENSIDE =   0x02;
     public static final int WHITE_CASTLED_KINGSIDE     =   0x04;
@@ -20,28 +26,55 @@ public class CastlingAvailability
     public static final int BLACK_CAN_CASTLE = (BLACK_CAN_CASTLE_KINGSIDE | BLACK_CAN_CASTLE_QUEENSIDE);
     public static final int BLACK_CASTLED = (BLACK_CASTLED_KINGSIDE | BLACK_CASTLED_QUEENSIDE);
 
+    /** A bitmask representing the current castling state. */
     protected int state;
 
+    /**
+     * Construct a {@code CastlingAvailability} in which both players may castle kingside or queenside.
+     */
     public CastlingAvailability()
     {
         this.state = (WHITE_CAN_CASTLE | BLACK_CAN_CASTLE);
     }
 
+    /**
+     * Check if the castling status matches the specified status bit(s).
+     *
+     * @param status The status to check
+     * @return {@code true} if the current status has at least one bit in common with the argument, {@code false} otherwise
+     */
     public boolean isStatus(final int status)
     {
         return ((state & status) > 0);
     }
 
+    /**
+     * Update the castling status with the specified status bit(s).
+     *
+     * @param bit The bit(s) to set
+     */
     public void setBit(final int bit)
     {
         this.state |= bit;
     }
 
+    /**
+     * Update the castling status by removing the specified status bit(s).
+     *
+     * @param bit The bit(s) to clear
+     */
     public void clearBit(final int bit)
     {
         this.state &= ~bit;
     }
 
+    /**
+     * Check if the player of a certain color may castle on a certain side of the board.
+     *
+     * @param color The color to check
+     * @param kingside Whether to check for castling kingside or queenside
+     * @return {@code true} if the player of the specified color may castle on the specified side, {@code false} otherwise
+     */
     public boolean canCastle(final PieceColor color, final boolean kingside)
     {
         Preconditions.checkNotNull(color, "'color' may not be null when checking castling availability");
@@ -51,6 +84,12 @@ public class CastlingAvailability
         return (kingside ? isStatus(BLACK_CAN_CASTLE_KINGSIDE) : isStatus(BLACK_CAN_CASTLE_QUEENSIDE));
     }
 
+    /**
+     * Check if the player of a certain color has already castled.
+     *
+     * @param color The color to check
+     * @return {@code true} if the player of the specified color already castled, {@code false} otherwise
+     */
     public boolean castled(final PieceColor color)
     {
         Preconditions.checkNotNull(color, "'color' may not be null when checking for castling");
@@ -58,6 +97,13 @@ public class CastlingAvailability
         return (PieceColor.WHITE == color ? isStatus(WHITE_CASTLED) : isStatus(BLACK_CASTLED));
     }
 
+    /**
+     * Update the castling status for the specified color indicating that the player of that color has castled
+     * on the specified side of the board.
+     *
+     * @param color The color of the player who castled
+     * @param kingside Whether the player castled kingside
+     */
     public void castle(final PieceColor color, final boolean kingside)
     {
         Preconditions.checkNotNull(color, "'color' may not be null when castling");
@@ -89,4 +135,5 @@ public class CastlingAvailability
         }
         return result;
     }
+
 }

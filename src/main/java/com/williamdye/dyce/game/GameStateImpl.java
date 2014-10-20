@@ -4,23 +4,48 @@ import com.williamdye.dyce.board.Square;
 import com.williamdye.dyce.pieces.PieceColor;
 
 /**
+ * Implementation of the {@link GameState} interface.
+ *
  * @author William Dye
  */
 public class GameStateImpl implements GameState
 {
 
+    /** The currently active color. */
     protected PieceColor toMove;
+
+    /** The current en passant target square, if there is one. */
     protected Square enPassantTarget;
+
+    /** The current castling status. */
     protected CastlingAvailability castling;
+
+    /** The current move count. */
     protected int moveCount;
+
+    /** The current half move clock. */
     protected int halfMoveClock;
+
+    /** The current half move total. */
     protected int halfMoveTotal;
 
+    /**
+     * Construct a {@code GameStateImpl} with the default initial values.
+     */
     public GameStateImpl()
     {
         this(PieceColor.WHITE, null, new CastlingAvailability(), 1, 0);
     }
 
+    /**
+     * Construct a {@code GameStateImpl} with custom initial values.
+     *
+     * @param color The active color (i.e., player to move)
+     * @param epTarget The current en passant target, or {@code null} if there isn't one
+     * @param castle The game's castling state
+     * @param moves The game's initial move count
+     * @param halfMoves The game's current half move clock
+     */
     public GameStateImpl(PieceColor color, Square epTarget, CastlingAvailability castle, int moves, int halfMoves)
     {
         this.toMove = color;
