@@ -5,6 +5,7 @@ import static com.williamdye.dyce.board.DefaultChessboard.NUM_FILES;
 import com.google.common.base.Preconditions;
 
 import com.williamdye.dyce.pieces.PieceType;
+import com.williamdye.dyce.util.ChessboardUtils;
 import com.williamdye.dyce.util.MathUtils;
 
 /**
@@ -28,7 +29,7 @@ public final class Paths
      */
     public static int getRankDistance(final Square start, final Square end)
     {
-        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares");
+        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares supplied to getRankDistance");
 
         return Math.abs(start.getRank().getNumber() - end.getRank().getNumber());
     }
@@ -43,7 +44,7 @@ public final class Paths
      */
     public static int getFileDistance(final Square start, final Square end)
     {
-        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares");
+        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares supplied to getFileDistance");
 
         return Math.abs(start.getFile().getNumber() - end.getFile().getNumber());
     }
@@ -58,7 +59,7 @@ public final class Paths
      */
     public static boolean isSameDiagonal(final Square start, final Square end)
     {
-        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares");
+        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares supplied to isSameDiagonal");
 
         return (getFileDistance(start, end) == getRankDistance(start, end));
     }
@@ -72,56 +73,87 @@ public final class Paths
      */
     public static boolean isPathClear(final Square start, final Square end)
     {
-        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares");
+        Preconditions.checkArgument(isValidPair(start, end), "Invalid squares supplied to isPathClear");
 
+        final int startRank = start.getRank().getNumber();
+        final int endRank = end.getRank().getNumber();
+        final int startFile = start.getFile().getNumber();
+        final int endFile = end.getFile().getNumber();
+
+        final int startIndex = ChessboardUtils.getBoardIndex(startRank, startFile);
+        final int endIndex = ChessboardUtils.getBoardIndex(endRank, endFile);
         final Square[] squares = start.getBoard().getBoard();
-        final int startIndex = (((start.getRank().getNumber() - 1) * NUM_FILES) + (start.getFile().getNumber() - 1));
-        final int endIndex = (((end.getRank().getNumber() - 1) * NUM_FILES) + (end.getFile().getNumber() - 1));
-        int i;
+
         boolean clear = false;
-        if (start.equals(end) || ((start.getPiece().isPresent()) && (PieceType.KNIGHT == start.getPiece().get().getPieceType())))
+        if (isSameSquareOrKnightMove(start, end))
             clear = true;   /* path is always clear for knights since they can jump over any other piece */
-        else if (start.getRank() == end.getRank()) {    /* strictly horizontal (e.g., a4 => d4) */
-            clear = true;
-            if (start.getFile().getNumber() < end.getFile().getNumber()) {
-                for (i = startIndex + 1; i < endIndex; i++)
+        else if (startRank == endRank)      /* strictly horizontal (e.g., a4 => d4) */
+            clear = isPathClearSameRank((startFile < endFile), startIndex, endIndex, squares);
+        else if (startFile == endFile)      /* strictly vertical (e.g., c7 => c3) */
+            clear = isPathClearSameFile((startRank < endRank), startIndex, endIndex, squares);
+        else if (isSameDiagonal(start, end))      /* diagonal */
+            clear = isPathClearSameDiagonal((endRank - startRank), (endFile - startFile), startIndex, endIndex, squares);
+
+        return clear;
+    }
+
+    /** Helper to check if the two squares are actually the same square or if there is a knight on the start square. */
+    private static boolean isSameSquareOrKnightMove(final Square start, final Square end)
+    {
+        return (start.equals(end) || (start.getPiece().isPresent() && (PieceType.KNIGHT == start.getPiece().get().getPieceType())));
+    }
+
+    /** Helper to check if all the squares between the starting and ending indices (along the same rank) are empty. */
+    private static boolean isPathClearSameRank(final boolean towardKingside, final int startIndex, final int endIndex, final Square[] squares)
+    {
+        boolean clear = true;
+        if (towardKingside) {
+            for (int i = startIndex + 1; i < endIndex; i++)
+                clear &= squares[i].isEmpty();
+        } else {    /* moving kingside => queenside */
+            for (int i = endIndex - 1; i > startIndex; i--)
+                clear &= squares[i].isEmpty();
+        }
+        return clear;
+    }
+
+    /** Helper to check if all the squares between the starting and ending indices (along the same file) are empty. */
+    private static boolean isPathClearSameFile(final boolean towardEighthRank, final int startIndex, final int endIndex, final Square[] squares)
+    {
+        boolean clear = true;
+        if (towardEighthRank) {
+            for (int i = startIndex + NUM_FILES; i < endIndex; i += NUM_FILES)
+                clear &= squares[i].isEmpty();
+        } else {    /* moving 8th rank => 1st rank */
+            for (int i = startIndex - NUM_FILES; i > endIndex; i -= NUM_FILES)
+                clear &= squares[i].isEmpty();
+        }
+        return clear;
+    }
+
+    /** Helper to check if all the squares between the starting and ending indices (along the same diagonal) are empty. */
+    private static boolean isPathClearSameDiagonal(final int rankDistance, final int fileDistance, final int startIndex,
+                                                   final int endIndex, final Square[] squares)
+    {
+        boolean clear = true;
+        int increment;
+        if (MathUtils.signum(rankDistance) == MathUtils.signum(fileDistance)) {
+            increment = NUM_FILES + 1;
+            if (rankDistance > 0) {
+                for (int i = startIndex + increment; i < endIndex; i += increment)
                     clear &= squares[i].isEmpty();
-            } else {    /* moving kingside => queenside */
-                for (i = endIndex - 1; i > startIndex; i--)
-                    clear &= squares[i].isEmpty();
-            }
-        } else if (start.getFile() == end.getFile()) {  /* strictly vertical (e.g., c7 => c3) */
-            clear = true;
-            if (start.getRank().getNumber() < end.getRank().getNumber()) {
-                for (i = startIndex + NUM_FILES; i < endIndex; i += NUM_FILES)
-                    clear &= squares[i].isEmpty();
-            } else {    /* moving 8th rank => 1st rank */
-                for (i = startIndex - NUM_FILES; i > endIndex; i -= NUM_FILES)
-                    clear &= squares[i].isEmpty();
-            }
-        } else if (Paths.getRankDistance(start, end) == Paths.getFileDistance(start, end)) { /* diagonal */
-            clear = true;
-            int rankDistance = end.getRank().getNumber() - start.getRank().getNumber();
-            int fileDistance = end.getFile().getNumber() - start.getFile().getNumber();
-            int increment;
-            if (MathUtils.signum(rankDistance) == MathUtils.signum(fileDistance)) {
-                increment = NUM_FILES + 1;
-                if (rankDistance > 0) {
-                    for (i = startIndex + increment; i < endIndex; i += increment)
-                        clear &= squares[i].isEmpty();
-                } else {
-                    for (i = endIndex - increment; i > startIndex; i -= increment)
-                        clear &= squares[i].isEmpty();
-                }
             } else {
-                increment = NUM_FILES - 1;
-                if (rankDistance > 0) {
-                    for (i = startIndex + increment; i < endIndex; i += increment)
-                        clear &= squares[i].isEmpty();
-                } else {
-                    for (i = endIndex - increment; i > startIndex; i -= increment)
-                        clear &= squares[i].isEmpty();
-                }
+                for (int i = endIndex - increment; i > startIndex; i -= increment)
+                    clear &= squares[i].isEmpty();
+            }
+        } else {
+            increment = NUM_FILES - 1;
+            if (rankDistance > 0) {
+                for (int i = startIndex + increment; i < endIndex; i += increment)
+                    clear &= squares[i].isEmpty();
+            } else {
+                for (int i = endIndex - increment; i > startIndex; i -= increment)
+                    clear &= squares[i].isEmpty();
             }
         }
         return clear;

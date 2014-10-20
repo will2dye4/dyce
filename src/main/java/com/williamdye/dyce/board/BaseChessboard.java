@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
+import com.williamdye.dyce.util.ChessboardUtils;
 import org.slf4j.*;
 
 import com.williamdye.dyce.board.formatter.*;
@@ -31,7 +32,7 @@ public abstract class BaseChessboard implements Chessboard
     /** The number of squares on the chessboard (the product of the numbers of files and ranks). */
     public static final int NUM_SQUARES = NUM_RANKS * NUM_FILES;
 
-    /** A <code>Pattern</code> representing the expected format for square names (e.g., "e4"). */
+    /** A {@code Pattern} representing the expected format for square names (e.g., "e4"). */
     protected static final Pattern SQUARE_NAME_PATTERN = Pattern.compile("^[a-h][1-8]$");
 
     /** The Forsyth-Edwards Notation (FEN) of the current position. */
@@ -184,8 +185,7 @@ public abstract class BaseChessboard implements Chessboard
 
         String whichFile = name.substring(0, 1);
         int whichRank = Integer.parseInt(name.substring(1));
-        int offset = File.forName(whichFile).getNumber() - 1;
-        int i = ((whichRank - 1) * NUM_FILES) + offset;
+        int i = ChessboardUtils.getBoardIndex(whichRank, File.forName(whichFile).getNumber());
         return squares[i];
     }
 
