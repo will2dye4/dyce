@@ -15,15 +15,15 @@ public class PathsTests
     @Test(expected = IllegalArgumentException.class)
     public void getRankDistance_DifferentBoards()
     {
-        Square a1 = (new ChessboardImpl()).getSquareByName("a1");
-        Square h8 = (new ChessboardImpl()).getSquareByName("h8");
+        Square a1 = (new DefaultChessboard()).getSquareByName("a1");
+        Square h8 = (new DefaultChessboard()).getSquareByName("h8");
         Paths.getRankDistance(a1, h8);
     }
 
     @Test
     public void getRankDistance_SameBoard()
     {
-        Chessboard board = new ChessboardImpl();
+        Chessboard board = new DefaultChessboard();
         Map<String, Square> map = new HashMap<>();
         String[] squares = {"a2", "a7", "d1", "d8", "f2"};
         for (String name : squares)
@@ -39,15 +39,15 @@ public class PathsTests
     @Test(expected = IllegalArgumentException.class)
     public void getFileDistance_DifferentBoards()
     {
-        Square a1 = (new ChessboardImpl()).getSquareByName("a1");
-        Square h8 = (new ChessboardImpl()).getSquareByName("h8");
+        Square a1 = (new DefaultChessboard()).getSquareByName("a1");
+        Square h8 = (new DefaultChessboard()).getSquareByName("h8");
         Paths.getFileDistance(a1, h8);
     }
 
     @Test
     public void getFileDistance_SameBoard()
     {
-        Chessboard board = new ChessboardImpl();
+        Chessboard board = new DefaultChessboard();
         Map<String, Square> map = new HashMap<>();
         String[] squares = {"a1", "h1", "b8", "g8", "c1", "f1", "d8", "e8"};
         for (String name : squares)
@@ -64,15 +64,15 @@ public class PathsTests
     @Test(expected = IllegalArgumentException.class)
     public void isSameDiagonal_DifferentBoards()
     {
-        Square a1 = (new ChessboardImpl()).getSquareByName("a1");
-        Square h8 = (new ChessboardImpl()).getSquareByName("h8");
+        Square a1 = (new DefaultChessboard()).getSquareByName("a1");
+        Square h8 = (new DefaultChessboard()).getSquareByName("h8");
         Paths.isSameDiagonal(a1, h8);
     }
 
     @Test
     public void isSameDiagonal_SameBoard_True()
     {
-        Chessboard board = new ChessboardImpl();
+        Chessboard board = new DefaultChessboard();
         Map<String, Square> map = new HashMap<>();
         String[] darkSquares = {"a1", "h8", "c3", "e1", "h4", "f6"};
         String[] lightSquares = {"c8", "a6", "f1", "h3", "f5", "g6"};
@@ -98,7 +98,7 @@ public class PathsTests
     @Test
     public void isSameDiagonal_SameBoard_False()
     {
-        Chessboard board = new ChessboardImpl();
+        Chessboard board = new DefaultChessboard();
         Map<String, Square> map = new HashMap<>();
         String[] squares = {"a1", "a8", "h8", "f7", "e4", "c3", "d3"};
         for (String name : squares)
@@ -115,8 +115,8 @@ public class PathsTests
     @Test(expected = IllegalArgumentException.class)
     public void isPathClear_DifferentBoards()
     {
-        Square a4 = (new ChessboardImpl()).getSquareByName("a4");
-        Square h4 = (new ChessboardImpl()).getSquareByName("h4");
+        Square a4 = (new DefaultChessboard()).getSquareByName("a4");
+        Square h4 = (new DefaultChessboard()).getSquareByName("h4");
         Paths.isPathClear(a4, h4);
     }
 

@@ -21,7 +21,7 @@ public class PieceTests
     @Before
     public void setUp()
     {
-        board = new ChessboardImpl();
+        board = new DefaultChessboard();
     }
 
     @Test

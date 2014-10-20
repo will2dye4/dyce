@@ -1,6 +1,6 @@
 package com.williamdye.dyce.board;
 
-import static com.williamdye.dyce.board.ChessboardImpl.NUM_FILES;
+import static com.williamdye.dyce.board.DefaultChessboard.NUM_FILES;
 
 import com.google.common.base.Preconditions;
 

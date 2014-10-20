@@ -1,15 +1,14 @@
 package com.williamdye.dyce.board;
 
-import com.williamdye.dyce.pieces.*;
+import static org.junit.Assert.*;
+
+import java.util.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.Assert.*;
+import com.williamdye.dyce.pieces.*;
 
 @RunWith(JUnit4.class)
 public class ChessboardTests
@@ -23,7 +22,7 @@ public class ChessboardTests
     @Test
     public void createChessboardTest()
     {
-        Chessboard board = new ChessboardImpl();
+        Chessboard board = new DefaultChessboard();
         assertNotNull("new board has null FEN", board.getFEN());
         assertNotNull("new board has null state", board.getGameState());
         Map<PieceType, Integer> map = new HashMap<>();
@@ -49,7 +48,7 @@ public class ChessboardTests
     @Test
     public void getSquareByNameTest_RealSquares()
     {
-        Chessboard board = new ChessboardImpl();
+        Chessboard board = new DefaultChessboard();
         String[] realSquares = {"a1", "a8", "h1", "h8", "e4", "c5", "d6", "f2", "h4", "g7", "b3"};
         for (String square : realSquares)
             assertNotNull("board does not have " + square + " square", board.getSquareByName(square));
@@ -58,7 +57,7 @@ public class ChessboardTests
     @Test
     public void getSquareByNameTest_FakeSquares()
     {
-        Chessboard board = new ChessboardImpl();
+        Chessboard board = new DefaultChessboard();
         String[] fakeSquares = {"a0", "h9", "5c", "i1", "2a", "d9", "22", "k3", "foo", "alpha won", "bb"};
         for (String square : fakeSquares) {
             boolean thrown = false;
@@ -74,6 +73,6 @@ public class ChessboardTests
         }
     }
 
-    /* TODO : test ChessboardImpl::move(Piece, Square) */
+    /* TODO : test BaseChessboard::move(Piece, Square) */
 
 }

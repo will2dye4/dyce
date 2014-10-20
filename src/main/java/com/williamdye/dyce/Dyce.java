@@ -63,7 +63,7 @@ public final class Dyce
         } else {
             switch (command.charAt(1)) {
                 case 'e':
-                    explore(new ChessboardImpl());
+                    explore(new DefaultChessboard());
                     break;
                 case 'v':
                     version();

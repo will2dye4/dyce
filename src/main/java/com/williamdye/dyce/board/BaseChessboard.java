@@ -18,10 +18,10 @@ import com.williamdye.dyce.util.StringUtils;
  *
  * @author William Dye
  */
-public class ChessboardImpl implements Chessboard
+public abstract class BaseChessboard implements Chessboard
 {
     /** Logger */
-    private static final Logger logger = LoggerFactory.getLogger(ChessboardImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseChessboard.class);
 
     /** The number of ranks (horizontal rows) on the chessboard. */
     public static final int NUM_RANKS = 8;
@@ -75,9 +75,9 @@ public class ChessboardImpl implements Chessboard
     protected final MoveHistory history;
 
     /**
-     * Construct a <code>ChessboardImpl</code> with the default (standard) position and no moves in the history.
+     * Construct a {@code BaseChessboard} with no pieces.
      */
-    public ChessboardImpl()
+    public BaseChessboard()
     {
         this.fen = new FEN(this);
         this.pgn = new PGN(this);
@@ -90,92 +90,24 @@ public class ChessboardImpl implements Chessboard
         this.capturedBlackPieces = new ArrayList<>();
         this.state = new GameStateImpl();
         this.history = new MoveHistoryImpl(this);
-        initialize();
+        initializePieceMaps();
+        createSquares();
     }
 
-    private void initialize()
-    {
-        for (PieceType type : PieceType.values()) {
-            whitePieces.put(type, new ArrayList<>());
-            blackPieces.put(type, new ArrayList<>());
+    private void initializePieceMaps() {
+        for (PieceType pieceType : PieceType.values()) {
+            whitePieces.put(pieceType, new ArrayList<>());
+            blackPieces.put(pieceType, new ArrayList<>());
         }
+    }
+
+    private void createSquares() {
         int i = 0;
-        Square square;
-        Piece piece;
         for (Rank rank : Rank.values()) {
             for (File file : File.values()) {
-                switch (rank) {
-                    case SECOND_RANK:
-                        piece = new Pawn(PieceColor.WHITE);
-                        square = new SquareImpl(this, rank, file, piece);
-                        activeWhitePieces.add(piece);
-                        whitePieces.get(PieceType.PAWN).add(piece);
-                        break;
-                    case SEVENTH_RANK:
-                        piece = new Pawn(PieceColor.BLACK);
-                        square = new SquareImpl(this, rank, file, piece);
-                        activeBlackPieces.add(piece);
-                        blackPieces.get(PieceType.PAWN).add(piece);
-                        break;
-                    case FIRST_RANK:
-                    case EIGHTH_RANK:
-                        PieceColor color;
-                        List<Piece> list;
-                        Map<PieceType, List<Piece>> map;
-                        if (rank == Rank.FIRST_RANK) {
-                            color = PieceColor.WHITE;
-                            list = activeWhitePieces;
-                            map = whitePieces;
-                        } else {
-                            color = PieceColor.BLACK;
-                            list = activeBlackPieces;
-                            map = blackPieces;
-                        }
-                        switch (file) {
-                            case A_FILE:
-                            case H_FILE:
-                                piece = new Rook(color);
-                                list.add(piece);
-                                map.get(PieceType.ROOK).add(piece);
-                                square = new SquareImpl(this, rank, file, piece);
-                                break;
-                            case B_FILE:
-                            case G_FILE:
-                                piece = new Knight(color);
-                                list.add(piece);
-                                map.get(PieceType.KNIGHT).add(piece);
-                                square = new SquareImpl(this, rank, file, piece);
-                                break;
-                            case C_FILE:
-                            case F_FILE:
-                                piece = new Bishop(color);
-                                list.add(piece);
-                                map.get(PieceType.BISHOP).add(piece);
-                                square = new SquareImpl(this, rank, file, piece);
-                                break;
-                            case D_FILE:
-                                piece = new Queen(color);
-                                list.add(piece);
-                                map.get(PieceType.QUEEN).add(piece);
-                                square = new SquareImpl(this, rank, file, piece);
-                                break;
-                            case E_FILE:
-                                piece = new King(color);
-                                list.add(piece);
-                                map.get(PieceType.KING).add(piece);
-                                square = new SquareImpl(this, rank, file, piece);
-                                break;
-                            default:
-                                throw new IllegalStateException("File.values() returned a non-File member!");
-                        }   /* switch (file) */
-                        break;
-                    default:
-                        square = new SquareImpl(this, rank, file);
-                        break;
-                }   /* switch (rank) */
-                squares[i++] = square;
-            }   /* for each file */
-        }   /* for each rank */
+                squares[i++] = new SquareImpl(this, rank, file);
+            }
+        }
     }
 
     @Override
@@ -246,8 +178,8 @@ public class ChessboardImpl implements Chessboard
     public List<Piece> getActivePieces(final PieceColor color, final PieceType type)
     {
         Preconditions.checkNotNull(color, "'color' may not be null when getting active pieces");
-        Preconditions.checkNotNull(type, "Use ChessboardImpl#getActivePieces(PieceColor) instead");
-        Preconditions.checkArgument(type != PieceType.KING, "Use ChessboardImpl#getKing(PieceColor) instead");
+        Preconditions.checkNotNull(type, "Use BaseChessboard#getActivePieces(PieceColor) instead");
+        Preconditions.checkArgument(type != PieceType.KING, "Use BaseChessboard#getKing(PieceColor) instead");
 
         return ((color == PieceColor.WHITE) ? whitePieces.get(type) : blackPieces.get(type));
     }
@@ -267,6 +199,11 @@ public class ChessboardImpl implements Chessboard
 
         Map<PieceType, List<Piece>> map = (color == PieceColor.WHITE ? whitePieces : blackPieces);
         return (King)(map.get(PieceType.KING).get(0));
+    }
+
+    @Override
+    public Square getSquare(final File file, final Rank rank) {
+        return getSquareByName(String.format("%s%d", file.toString(), rank.getNumber()));
     }
 
     @Override

@@ -83,6 +83,15 @@ public interface Chessboard
     public King getKing(PieceColor color);
 
     /**
+     * Returns the square corresponding to the specified rank and file.
+     *
+     * @param file The file of the square to return
+     * @param rank The rank of the square to return
+     * @return The square at the specified rank and file
+     */
+    public Square getSquare(File file, Rank rank);
+
+    /**
      * Returns the square corresponding to the specified name. The name is given as the square's file (in lower case)
      * followed by its rank, with no space or separator in between. For example, to access the square in the bottom
      * left of the board (when viewed from white's perspective), the appropriate name would be {@code "a1"}.

@@ -1,6 +1,6 @@
 package com.williamdye.dyce.notation;
 
-import static com.williamdye.dyce.board.ChessboardImpl.*;
+import static com.williamdye.dyce.board.DefaultChessboard.*;
 
 import java.util.regex.Pattern;
 
