@@ -14,22 +14,39 @@ import com.williamdye.dyce.util.StringUtils;
  *
  * @author William Dye
  */
-public class DefaultChessboardFormatter implements ChessboardFormatter<String> {
+public final class DefaultChessboardFormatter implements ChessboardFormatter<String>
+{
 
     /** The spacing we use from the left margin. */
-    protected final String SPACING = "  ";
+    protected static final String SPACING = "  ";
 
     /** The spacing we use between the board and the status information on the right. */
-    protected final String WIDE_SPACING = "\t\t";
+    protected static final String WIDE_SPACING = "\t\t";
 
     /** The horizontal "lines" in the chessboard table. */
-    protected final String RANK_SEPARATOR = SPACING + "  +---+---+---+---+---+---+---+---+\n";
+    protected static final String RANK_SEPARATOR = SPACING + "  +---+---+---+---+---+---+---+---+\n";
 
     /** The labels for the files along the bottom of the chessboard. */
-    protected final String FILE_LABELS = SPACING + "    a   b   c   d   e   f   g   h  \n";
+    protected static final String FILE_LABELS = SPACING + "    a   b   c   d   e   f   g   h  \n";
 
     /** A string splitter that splits on the forward slash (/) character. */
-    protected final Splitter rankSplitter = Splitter.on('/');
+    protected static final Splitter RANK_SPLITTER = Splitter.on('/');
+
+    /** Singleton implementation. */
+    private static final DefaultChessboardFormatter formatter = new DefaultChessboardFormatter();
+
+    /**
+     * Returns a singleton instance of the {@code DefaultChessboardFormatter} class.
+     *
+     * @return The {@code DefaultChessboardFormatter} singleton
+     */
+    public static DefaultChessboardFormatter getInstance()
+    {
+        return formatter;
+    }
+
+    /** Prevent instantiation. */
+    private DefaultChessboardFormatter() { }
 
     /**
      * Given a chessboard, return a string containing an ASCII-based representation of the board.
@@ -45,7 +62,7 @@ public class DefaultChessboardFormatter implements ChessboardFormatter<String> {
         final StringBuilder builder = new StringBuilder(RANK_SEPARATOR);
 
         int i = 8;
-        for (String rank : rankSplitter.split(chessboard.getFEN().getFENString())) {
+        for (String rank : RANK_SPLITTER.split(chessboard.getFEN().getFENString())) {
             builder.append(String.format("%s%d |", SPACING, i));
             formatRank(rank, builder);
             formatStatusInfo(i, capturedWhitePieces, capturedBlackPieces, builder);

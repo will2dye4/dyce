@@ -75,9 +75,6 @@ public abstract class BaseChessboard implements Chessboard
     /** A history of all moves in the game. */
     protected final MoveHistory history;
 
-    /** A string formatter for implementing the {@link #prettyPrint} method. */
-    protected final ChessboardFormatter<String> printer;
-
     /**
      * Construct a {@code BaseChessboard} with no pieces.
      */
@@ -94,7 +91,6 @@ public abstract class BaseChessboard implements Chessboard
         this.capturedBlackPieces = new ArrayList<>();
         this.state = new GameStateImpl();
         this.history = new MoveHistoryImpl(this);
-        this.printer = new DefaultChessboardFormatter();
         initializePieceMaps();
         createSquares();
     }
@@ -124,7 +120,7 @@ public abstract class BaseChessboard implements Chessboard
     @Override
     public String prettyPrint()
     {
-        return printer.format(this);
+        return DefaultChessboardFormatter.getInstance().format(this);
     }
 
     @Override
@@ -175,7 +171,8 @@ public abstract class BaseChessboard implements Chessboard
     }
 
     @Override
-    public Square getSquare(final File file, final Rank rank) {
+    public Square getSquare(final File file, final Rank rank)
+    {
         return getSquareByName(String.format("%s%d", file.toString(), rank.getNumber()));
     }
 
