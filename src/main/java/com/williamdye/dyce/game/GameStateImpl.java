@@ -119,6 +119,12 @@ public class GameStateImpl implements GameState
     }
 
     @Override
+    public void resetHalfMoveClock()
+    {
+        halfMoveClock = 0;
+    }
+
+    @Override
     public void setHalfMoveClock(final int clock)
     {
         halfMoveClock = clock;

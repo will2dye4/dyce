@@ -70,6 +70,11 @@ public enum File
         return num;
     }
 
+    public boolean isKingside()
+    {
+        return (num > 4);
+    }
+
     @Override
     public String toString()
     {

@@ -202,12 +202,10 @@ public abstract class BaseChessboard implements Chessboard
     }
 
     /* TODO:
-     *   - do something with moveType
-     *   - update halfMoveClock
-     *   - update castling (including on a normal king or rook move)
-     *   - update e.p. target
+     *   - check moveType for checkmate
+     *   - check halfMoveClock
      */
-    private void move(final Piece piece, final Square dest, @SuppressWarnings("unused") MoveType moveType) throws IllegalMoveException
+    private void move(final Piece piece, final Square dest, MoveType moveType) throws IllegalMoveException
     {
         Preconditions.checkNotNull(piece, "'piece' may not be null when making a move");
         Preconditions.checkNotNull(dest, "'dest' may not be null when making a move");
@@ -215,13 +213,63 @@ public abstract class BaseChessboard implements Chessboard
         if (!piece.isLegalSquare(dest))
             throw new IllegalMoveException();
 
+        handleCastling(piece, dest, moveType);
+        handleEnPassant(piece, dest, moveType);
+
         Optional<Piece> capturedPiece = piece.move(dest);
         if (capturedPiece.isPresent())
             capture(capturedPiece.get());
 
+        if (capturedPiece.isPresent() || piece.getPieceType() == PieceType.PAWN)
+            state.resetHalfMoveClock();
+        else
+            state.incrementHalfMoveClock();
+
         history.add(new MoveImpl(piece, capturedPiece.orElse(null), piece.getLastSquare(), dest, null, state.getMoveCount()));
         state.incrementHalfMoveTotal();
         state.toggleActiveColor();
+    }
+
+    /* TODO: cannot castle into, out of, or through check */
+    private void handleCastling(final Piece piece, final Square dest, final MoveType moveType) throws IllegalMoveException
+    {
+        final CastlingAvailability castling = state.getCastlingAvailability();
+        final PieceColor color = piece.getColor();
+        boolean castlingKingside = dest.getFile().isKingside();
+
+        if (MoveType.CASTLING == moveType) {
+            if (castling.canCastle(color, castlingKingside)) {
+                castling.castle(color, castlingKingside);
+                final Rank startingRank = Rank.getStartingRank(color);
+                final Piece rook = getSquare((castlingKingside ? File.H_FILE : File.A_FILE), startingRank).getPiece().get();
+                rook.move(getSquare((castlingKingside ? File.F_FILE : File.D_FILE), startingRank));
+            } else
+                throw new IllegalMoveException();
+        } else if (piece.getLastSquare() == null) {
+            if (PieceType.KING == piece.getPieceType())
+                castling.revokeCastlingRights(color);
+            else if (PieceType.ROOK == piece.getPieceType() && castling.canCastle(color, piece.getSquare().getFile().isKingside()))
+                castling.revokeCastlingRights(color, piece.getSquare().getFile().isKingside());
+        }
+    }
+
+    private void handleEnPassant(final Piece piece, final Square dest, final MoveType moveType)
+    {
+        final int offset = (piece.getColor() == PieceColor.WHITE ? -1 : 1);
+        Square newEnPassantTarget = null;
+
+        if (PieceType.PAWN == piece.getPieceType() && piece.getLastSquare() == null && Paths.getRankDistance(piece.getSquare(), dest) == 2) {
+            newEnPassantTarget = getSquare(dest.getFile(), Rank.forNumber(dest.getRank().getNumber() + offset));
+            logger.info("Updating en passant target square to {}", newEnPassantTarget.getName());
+        } else if (MoveType.EN_PASSANT == moveType) {
+            Square captureSquare = getSquare(dest.getFile(), Rank.forNumber(dest.getRank().getNumber() + offset));
+            Piece pawn = captureSquare.getPiece().get();
+            pawn.capture();
+            capture(pawn);
+            captureSquare.setPiece(null);
+        }
+
+        state.setEnPassantTargetSquare(newEnPassantTarget);
     }
 
     private void capture(Piece piece)

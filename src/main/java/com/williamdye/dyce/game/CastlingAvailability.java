@@ -117,6 +117,36 @@ public class CastlingAvailability
         }
     }
 
+    /**
+     * Update the castling status for the specified color indicating that the player of that color may NOT
+     * castle at all. Useful when the King makes its first move (and doesn't castle).
+     *
+     * @param color The color of the player who may no longer castle
+     */
+    public void revokeCastlingRights(final PieceColor color)
+    {
+        Preconditions.checkNotNull(color, "'color' may not be null when revoking castling rights");
+
+        clearBit(PieceColor.WHITE == color ? WHITE_CAN_CASTLE : BLACK_CAN_CASTLE);
+    }
+
+    /**
+     * Update the castling status for the specified color indicating that the player of that color may NOT castle
+     * on the specified side of the board. Useful when a Rook makes its first move (and isn't castling).
+     *
+     * @param color The color of the player who may no longer castle
+     * @param kingside The side of te board on which the player may not castle
+     */
+    public void revokeCastlingRights(final PieceColor color, final boolean kingside)
+    {
+        Preconditions.checkNotNull(color, "'color' may not be null when revoking castling rights");
+
+        if (PieceColor.WHITE == color)
+            clearBit(kingside ? WHITE_CAN_CASTLE_KINGSIDE : WHITE_CAN_CASTLE_QUEENSIDE);
+        else
+            clearBit(kingside ? BLACK_CAN_CASTLE_KINGSIDE : BLACK_CAN_CASTLE_QUEENSIDE);
+    }
+
     @Override
     public String toString()
     {

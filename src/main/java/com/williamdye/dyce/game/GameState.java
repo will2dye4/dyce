@@ -90,6 +90,11 @@ public interface GameState
     public void incrementHalfMoveClock();
 
     /**
+     * Reset the game's half move clock back to zero (0).
+     */
+    public void resetHalfMoveClock();
+
+    /**
      * Mutator for the game's half move clock.
      *
      * @param clock The new half move clock

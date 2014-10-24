@@ -106,8 +106,9 @@ public class PGN
         if (!pawn.isPresent())
             throw new IllegalMoveException();
 
-        logger.debug("Move '{}' parsed as pawn move [destination={}]", move, dest.getName());
-        return new PartialMove(pawn.get(), dest);
+        MoveType type = (dest.equals(chessboard.getGameState().getEnPassantTargetSquare()) ? MoveType.EN_PASSANT : MoveType.NORMAL);
+        logger.debug("Move '{}' parsed as pawn move [destination={}, type={}]", move, dest.getName(), type.toString());
+        return new PartialMove(pawn.get(), dest, type);
     }
 
     /** Helper to parse a PGN string as a major piece (i.e., non-pawn) move. */
