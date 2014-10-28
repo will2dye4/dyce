@@ -75,6 +75,9 @@ public abstract class BaseChessboard implements Chessboard
     /** A history of all moves in the game. */
     protected final MoveHistory history;
 
+    /** A piece factory (for creating the board's pieces). */
+    protected final PieceFactory pieceFactory;
+
     /**
      * Construct a {@code BaseChessboard} with no pieces.
      */
@@ -91,10 +94,12 @@ public abstract class BaseChessboard implements Chessboard
         this.capturedBlackPieces = new ArrayList<>();
         this.state = new GameStateImpl();
         this.history = new MoveHistoryImpl(this);
+        this.pieceFactory = new PieceFactoryImpl();
         initializePieceMaps();
         createSquares();
     }
 
+    /** Initialize the data structures used internally to keep track of active and captured pieces. */
     private void initializePieceMaps() {
         for (PieceType pieceType : PieceType.values()) {
             whitePieces.put(pieceType, new ArrayList<>());
@@ -102,12 +107,25 @@ public abstract class BaseChessboard implements Chessboard
         }
     }
 
+    /** Initialize the internal array of squares. */
     private void createSquares() {
         int i = 0;
         for (Rank rank : Rank.values()) {
             for (File file : File.values()) {
                 squares[i++] = new SquareImpl(this, rank, file);
             }
+        }
+    }
+
+    /** Update the appropriate list and map of pieces with a newly created piece. */
+    protected void updatePieceLists(final Piece piece)
+    {
+        if (piece.getColor() == PieceColor.WHITE) {
+            activeWhitePieces.add(piece);
+            whitePieces.get(piece.getPieceType()).add(piece);
+        } else {
+            activeBlackPieces.add(piece);
+            blackPieces.get(piece.getPieceType()).add(piece);
         }
     }
 
@@ -272,7 +290,8 @@ public abstract class BaseChessboard implements Chessboard
         state.setEnPassantTargetSquare(newEnPassantTarget);
     }
 
-    private void capture(Piece piece)
+    /** Capture the specified piece, updating the internal data structures appropriately. */
+    protected void capture(Piece piece)
     {
         Preconditions.checkNotNull(piece, "'piece' may not be null when capturing");
 

@@ -1,7 +1,8 @@
 package com.williamdye.dyce;
 
-import java.util.Scanner;
+import java.util.*;
 
+import com.google.common.base.Splitter;
 import org.slf4j.*;
 
 import com.williamdye.dyce.board.*;
@@ -20,7 +21,7 @@ public final class Dyce
     private static final Logger logger = LoggerFactory.getLogger(Dyce.class);
 
     /** Usage message (printed on invalid invocation) */
-    private static final String USAGE = "Usage: java Dyce [-ev]";
+    private static final String USAGE = "Usage: java Dyce [-aev]";
 
     /** Version message */
     private static final String VERSION_INFO = "dyce version 0.1, built October 2014";
@@ -58,6 +59,10 @@ public final class Dyce
             usage();
         else {
             switch (args[0]) {
+                case "-a":
+                case "--adventure":
+                    adventure(new BuildableChessboardImpl());
+                    break;
                 case "-e":
                 case "--explore":
                     explore(new DefaultChessboard());
@@ -87,24 +92,82 @@ public final class Dyce
         out(VERSION_INFO);
     }
 
+    /** Adventure mode - currently exists for testing purposes. */
+    private static void adventure(BuildableChessboard board)
+    {
+        logger.info("Entering adventure mode...");
+
+        final List<String> TO_QUIT = Arrays.asList("quit", ":q");
+        final Scanner scan = new Scanner(System.in);
+
+        out("*========[ Adventure Mode ]========================================*");
+        out("| You may place pieces on any blank square and remove pieces       |");
+        out("| already on the board. To place a new piece, enter \"place\"        |"); /* spacing is not off */
+        out("| followed by the piece color (w/b), the piece type (b/k/n/p/q/r), |");
+        out("| and the square to place the piece on (e.g., \"place w q e3\").     |");
+        out("| To remove a piece from the board, enter \"remove\" followed by     |");
+        out("| the square to remove the piece from (e.g., \"remove c7\").         |");
+        out("| To quit, enter \"" + TO_QUIT.get(0) + "\" or \"" + TO_QUIT.get(1) + "\".                                   |");
+        out("*==================================================================*");
+
+        out("Press Enter to begin...");
+        scan.useDelimiter("");
+        scan.next();
+        scan.useDelimiter("\n");
+
+        String command = "";
+        do {
+            if (!command.isEmpty()) {
+                List<String> parts = Splitter.on(" ").splitToList(command);
+                switch (parts.get(0)) {
+                    case ":p":
+                    case "place":
+                        if (parts.size() != 4)
+                            out("You must specify the piece color, type, and square!");
+                        else {
+                            PieceColor color = ("w".equalsIgnoreCase(parts.get(1)) ? PieceColor.WHITE : PieceColor.BLACK);
+                            PieceType type = PieceType.forSymbol(parts.get(2).charAt(0));
+                            board.placePiece(color, type, parts.get(3));
+                        }
+                        break;
+                    case ":r":
+                    case "remove":
+                        if (parts.size() != 2)
+                            out("You must specify the square to remove a piece from!");
+                        else
+                            board.removePiece(parts.get(1));
+                        break;
+                    default:
+                        out("Invalid command!");
+                }
+            }
+            out("\n" + board.prettyPrint());
+            print("> ");
+            command = scan.next();
+        } while (!TO_QUIT.contains(command));
+    }
+
     /** Explore mode - currently exists for testing purposes to interact with a chessboard. */
     private static void explore(Chessboard board)
     {
         logger.info("Entering explore mode...");
 
-        final String[] TO_QUIT = { ":quit", ":q" };
-        Scanner scan = new Scanner(System.in);
+        final List<String> TO_QUIT = Arrays.asList(":quit", ":q");
+        final GameState state = board.getGameState();
+        final Scanner scan = new Scanner(System.in);
+
         out("*========[ Board Explorer ]========================================*");
         out("| You play both sides. At the prompt, type the next move,          |");
         out("| using Portable Game Notation (PGN). For example, to move         |");
         out("| a Knight from b1 to c3, enter \"Nc3\".                             |");   /* spacing is not off */
-        out("| To quit, enter \"" + TO_QUIT[0] + "\" or \"" + TO_QUIT[1] + "\".                                  |");
+        out("| To quit, enter \"" + TO_QUIT.get(0) + "\" or \"" + TO_QUIT.get(1) + "\".                                  |");
         out("*==================================================================*");
+
         out("\nPress Enter to begin...");
         scan.useDelimiter("");
         scan.next();
         scan.useDelimiter("\n");
-        GameState state = board.getGameState();
+
         String move = "", lastMove = "";
         do {
             if (!move.isEmpty()) {
@@ -124,7 +187,7 @@ public final class Dyce
             print("Enter " + ((state.getActiveColor() == PieceColor.WHITE) ? "white" : "black") + "'s move: ");
             move = scan.next();
             lastMove = state.getMoveCount() + ((state.getActiveColor() == PieceColor.WHITE) ? ". " : "...") + move;
-        } while (!TO_QUIT[0].equals(move) && !TO_QUIT[1].equals(move));
+        } while (!TO_QUIT.contains(move));
     }
 
     /** Convenience method that calls System.out#println. */

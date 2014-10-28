@@ -25,7 +25,7 @@ public class DefaultChessboard extends BaseChessboard
     /** Create the pawns for both sides on their standard starting ranks. */
     private void createPawns()
     {
-        createPieces(Rank::getStartingPawnRank, (color, file) -> new Pawn(color));
+        createPieces(Rank::getStartingPawnRank, (color, file) -> pieceFactory.newPawn(color));
     }
 
     /** Create the major pieces for both sides on their standard starting ranks and files. */
@@ -54,31 +54,19 @@ public class DefaultChessboard extends BaseChessboard
         switch (file) {
             case A_FILE:
             case H_FILE:
-                return new Rook(color);
+                return pieceFactory.newRook(color);
             case B_FILE:
             case G_FILE:
-                return new Knight(color);
+                return pieceFactory.newKnight(color);
             case C_FILE:
             case F_FILE:
-                return new Bishop(color);
+                return pieceFactory.newBishop(color);
             case D_FILE:
-                return new Queen(color);
+                return pieceFactory.newQueen(color);
             case E_FILE:
-                return new King(color);
+                return pieceFactory.newKing(color);
             default:
                 throw new IllegalArgumentException("Invalid file: " + file.toString());
-        }
-    }
-
-    /** Update the appropriate list and map of pieces with a newly created piece. */
-    private void updatePieceLists(final Piece piece)
-    {
-        if (piece.getColor() == PieceColor.WHITE) {
-            activeWhitePieces.add(piece);
-            whitePieces.get(piece.getPieceType()).add(piece);
-        } else {
-            activeBlackPieces.add(piece);
-            blackPieces.get(piece.getPieceType()).add(piece);
         }
     }
 
