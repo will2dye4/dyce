@@ -110,7 +110,7 @@ public final class Paths
             for (int i = startIndex + 1; i < endIndex; i++)
                 clear &= squares[i].isEmpty();
         } else {    /* moving kingside => queenside */
-            for (int i = endIndex - 1; i > startIndex; i--)
+            for (int i = startIndex - 1; i > endIndex; i--)
                 clear &= squares[i].isEmpty();
         }
         return clear;
