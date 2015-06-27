@@ -151,7 +151,7 @@ public final class Paths
                 for (int i = startIndex + increment; i < endIndex; i += increment)
                     clear &= squares[i].isEmpty();
             } else {
-                for (int i = endIndex - increment; i > startIndex; i -= increment)
+                for (int i = startIndex - increment; i > endIndex; i -= increment)
                     clear &= squares[i].isEmpty();
             }
         }

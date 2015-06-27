@@ -114,7 +114,7 @@ public class PGN
             throw new IllegalMoveException();
         final File file = File.forName(fileString);
         Optional<Piece> pawn = chessboard.getActivePieces(toMove, PieceType.PAWN).stream()
-                                                                                 .filter(piece -> (piece.getSquare().getFile() == file) && piece.isLegalSquare(dest))
+                                                                                 .filter(piece -> (piece.getSquare().getFile() == file) && (piece.isLegalSquare(dest) || piece.isAttacking(dest)))
                                                                                  .findFirst();
         if (!pawn.isPresent())
             throw new IllegalMoveException();

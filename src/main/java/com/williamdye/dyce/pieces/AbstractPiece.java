@@ -121,6 +121,48 @@ public abstract class AbstractPiece implements Piece
         return pinned;
     }
 
+    public Piece getPinningPiece()
+    {
+        if (PieceType.KING == getPieceType())
+            return null;   /* king can never be pinned */
+        Piece pinningPiece = null;
+        Chessboard board = square.getBoard();
+        King king = board.getKing(color);
+        List<Piece> otherPieces = board.getActivePieces(PieceColor.oppositeOf(color));
+        Square kingSquare = king.getSquare();
+        Rank kingRank = kingSquare.getRank();
+        File kingFile = kingSquare.getFile();
+        if ((square.getRank() == kingRank) && (isPathClear(square, kingSquare))) {
+            for (Piece piece : otherPieces) {
+                PieceType pieceType = piece.getPieceType();
+                if (((PieceType.QUEEN == pieceType) || (PieceType.ROOK == pieceType)) &&
+                        (piece.getSquare().getRank() == kingRank) && (piece.isAttacking(square))) {
+                    pinningPiece = piece;
+                    break;
+                }
+            }
+        } else if ((square.getFile() == kingFile) && (isPathClear(square, kingSquare))) {
+            for (Piece piece : otherPieces) {
+                PieceType pieceType = piece.getPieceType();
+                if (((PieceType.QUEEN == pieceType) || (PieceType.ROOK == pieceType)) &&
+                        (piece.getSquare().getFile() == kingFile) && (piece.isAttacking(square))) {
+                    pinningPiece = piece;
+                    break;
+                }
+            }
+        } else if (isSameDiagonal(square, kingSquare) && isPathClear(square, kingSquare)) {
+            for (Piece piece : otherPieces) {
+                PieceType pieceType = piece.getPieceType();
+                if (((PieceType.QUEEN == pieceType) || (PieceType.BISHOP == pieceType)) &&
+                        (isSameDiagonal(piece.getSquare(), kingSquare)) && (piece.isAttacking(square))) {
+                    pinningPiece = piece;
+                    break;
+                }
+            }
+        }
+        return pinningPiece;
+    }
+
     @Override
     public boolean isLegalSquare(final Square dest)
     {
@@ -130,7 +172,7 @@ public abstract class AbstractPiece implements Piece
     @Override
     public boolean isLegalSquare(final Square dest, final boolean ignorePins)
     {
-        return ((!captured) && (ignorePins || !isPinned()) && (isPathClear(square, dest)) &&
+        return ((!captured) && (ignorePins || !isPinned() || getPinningPiece().getSquare().equals(dest)) && (isPathClear(square, dest)) &&
                 (dest.isEmpty() || (dest.getPiece().get().getColor() != color)));
     }
 
