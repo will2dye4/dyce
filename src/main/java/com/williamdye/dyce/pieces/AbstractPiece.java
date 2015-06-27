@@ -141,6 +141,12 @@ public abstract class AbstractPiece implements Piece
     }
 
     @Override
+    public boolean isAttacking(final Square dest, final boolean ignorePins)
+    {
+        return isLegalSquare(dest, ignorePins);
+    }
+
+    @Override
     public void capture()
     {
         captured = true;

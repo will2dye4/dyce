@@ -91,6 +91,15 @@ public interface Piece extends Comparable<Piece>
     public boolean isAttacking(Square dest);
 
     /**
+     * Check if the piece is attacking the specified square, optionally ignoring if the piece is pinned.
+     *
+     * @param dest The square to check
+     * @param ignorePins Whether to ignore the fact that the piece may be "pinned" to the king
+     * @return {@code true} if the piece is attacking the specified square, {@code false} otherwise
+     */
+    public boolean isAttacking(Square dest, boolean ignorePins);
+
+    /**
      * Capture the piece.
      */
     public void capture();

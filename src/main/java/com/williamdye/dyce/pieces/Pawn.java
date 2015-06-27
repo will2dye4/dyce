@@ -46,12 +46,18 @@ public class Pawn extends AbstractPiece
     @Override
     public final boolean isAttacking(final Square dest)
     {
+        return isAttacking(dest, false);
+    }
+
+    @Override
+    public final boolean isAttacking(final Square dest, final boolean ignorePins)
+    {
         /* do we need to return true only if dest is empty or occupied by an opposite color piece,
          * or should we also return true if dest is occupied by a same color piece? should this method be
          * renamed "isCovering" or similar, or should we introduce a new method "isDefending" to distinguish
          * the two situations? decisions, decisions ...
          */
-        return (!captured && !isPinned() && isAdvancingSquare(dest) && (getFileDistance(square, dest) == 1));
+        return (!captured && (ignorePins || !isPinned()) && isAdvancingSquare(dest) && (getFileDistance(square, dest) == 1) && (getRankDistance(square, dest) == 1));
     }
 
     /** Helper to check if the specified square is advancing for this pawn. */
