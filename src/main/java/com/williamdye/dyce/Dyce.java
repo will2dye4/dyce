@@ -1,5 +1,6 @@
 package com.williamdye.dyce;
 
+import java.text.ParseException;
 import java.util.*;
 
 import com.google.common.base.Splitter;
@@ -8,6 +9,7 @@ import org.slf4j.*;
 import com.williamdye.dyce.board.*;
 import com.williamdye.dyce.exception.*;
 import com.williamdye.dyce.game.*;
+import com.williamdye.dyce.notation.PGNReader;
 import com.williamdye.dyce.pieces.*;
 import com.williamdye.dyce.util.StringUtils;
 
@@ -55,7 +57,7 @@ public final class Dyce
     /** Helper to parse the program arguments and respond accordingly. */
     private static void parseArgs(final String[] args)
     {
-        if (args.length > 1)
+        if (args.length > 2)
             usage();
         else {
             switch (args[0]) {
@@ -66,6 +68,10 @@ public final class Dyce
                 case "-e":
                 case "--explore":
                     explore(new DefaultChessboard());
+                    break;
+                case "-p":
+                case "--pgn":
+                    pgn(args[1]);
                     break;
                 case "-v":
                 case "--version":
@@ -130,6 +136,20 @@ public final class Dyce
                             board.placePiece(color, type, parts.get(3));
                         }
                         break;
+                    case ":m":
+                    case "move":
+                        if (parts.size() != 2)
+                            out("You must enter a move!");
+                        else {
+                            try {
+                                board.move(parts.get(1));
+                            } catch (AmbiguousMoveException ame) {
+                                out("Ambiguous move!");
+                            } catch (IllegalMoveException ime) {
+                                out("Illegal move!");
+                            }
+                        }
+                        break;
                     case ":r":
                     case "remove":
                         if (parts.size() != 2)
@@ -188,6 +208,18 @@ public final class Dyce
             move = scan.next();
             lastMove = state.getMoveCount() + ((state.getActiveColor() == PieceColor.WHITE) ? ". " : "...") + move;
         } while (!TO_QUIT.contains(move));
+    }
+
+    private static void pgn(final String filepath)
+    {
+        try {
+            Game game = new PGNReader(filepath).read();
+            logger.info("Successfully imported game from file '{}'", filepath);
+            logger.info("Tag pairs were:");
+            game.getPGN().getTagPairs().entrySet().stream().forEach(e -> logger.info("\t{} => {}", e.getKey(), e.getValue()));
+        } catch (AmbiguousMoveException | IllegalMoveException | ParseException e) {
+            logger.warn(String.format("Failed to read file '%s'!", filepath), e);
+        }
     }
 
     /** Convenience method that calls System.out#println. */

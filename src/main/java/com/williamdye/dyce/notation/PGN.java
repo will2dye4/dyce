@@ -24,6 +24,15 @@ public class PGN
     /** The PGN representation of castling queenside. */
     public static final String CASTLING_QUEENSIDE = "O-O-O";
 
+    /** The PGN representation for denoting the end of a game won by Black. */
+    public static final String GAME_TERMINATION_BLACK_WINS = "0-1";
+
+    /** The PGN representation for denoting the end of a drawn game. */
+    public static final String GAME_TERMINATION_DRAW = "1/2-1/2";
+
+    /** The PGN representation for denoting the end of a game won by White. */
+    public static final String GAME_TERMINATION_WHITE_WINS = "1-0";
+
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(PGN.class);
 
@@ -32,6 +41,9 @@ public class PGN
 
     /** A list of parsed moves. */
     protected final List<String> moves;
+
+    /** The set of tag pairs (key-value pairs) associated with the PGN. */
+    protected final Map<String, String> tagPairs;
 
     /**
      * Construct a {@code PGN} that will parse for the specified chessboard.
@@ -44,6 +56,7 @@ public class PGN
 
         this.chessboard = board;
         this.moves = new ArrayList<>();
+        this.tagPairs = new HashMap<>();
     }
 
     /**
@@ -158,6 +171,38 @@ public class PGN
 
         logger.debug("Move '{}' parsed as normal piece move [type={}, destination={}]", move, pieceType.toString(), dest.getName());
         return new PartialMove(candidates.get(0), dest);
+    }
+
+    /**
+     * Accessor for the tag pairs defined for the PGN.
+     *
+     * @return The set of tag pairs (key-value pairs)
+     */
+    public Map<String, String> getTagPairs()
+    {
+        return tagPairs;
+    }
+
+    /**
+     * Retrieve the value of the tag pair with the specified name.
+     *
+     * @param tagName The name of the tag pair whose value to look up
+     * @return The value of the tag pair with the given name
+     */
+    public String getTagValue(final String tagName)
+    {
+        return tagPairs.get(tagName);
+    }
+
+    /**
+     * Update the value of the tag pair with the specified name.
+     *
+     * @param tagName The name of the tag pair whose value to change
+     * @param tagValue The new value for the tag pair with the given name
+     */
+    public void setTagValue(final String tagName, final String tagValue)
+    {
+        tagPairs.put(tagName, tagValue);
     }
 
 }
