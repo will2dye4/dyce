@@ -223,7 +223,7 @@ public abstract class BaseChessboard implements Chessboard
      *   - check moveType for checkmate
      *   - check halfMoveClock
      */
-    private void move(final Piece piece, final Square dest, MoveType moveType) throws IllegalMoveException
+    protected void move(final Piece piece, final Square dest, final MoveType moveType) throws IllegalMoveException
     {
         Preconditions.checkNotNull(piece, "'piece' may not be null when making a move");
         Preconditions.checkNotNull(dest, "'dest' may not be null when making a move");

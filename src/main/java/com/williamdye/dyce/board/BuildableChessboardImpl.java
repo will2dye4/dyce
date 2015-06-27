@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
+import com.williamdye.dyce.game.MoveType;
 import com.williamdye.dyce.pieces.*;
 
 /**
@@ -14,6 +15,15 @@ import com.williamdye.dyce.pieces.*;
  */
 public class BuildableChessboardImpl extends BaseChessboard implements BuildableChessboard
 {
+
+    @Override
+    public void move(final Piece piece, final Square dest, final MoveType moveType)
+    {
+        Preconditions.checkNotNull(piece, "'piece' may not be null when moving a piece");
+        Preconditions.checkNotNull(dest, "'dest' may not be null when moving a piece");
+
+        piece.move(dest);
+    }
 
     @Override
     protected void capture(final Piece piece)
