@@ -38,7 +38,9 @@ public class King extends AbstractPiece
             return false;
         List<Piece> otherPieces = square.getBoard().getActivePieces(PieceColor.oppositeOf(color));
         for (Piece piece : otherPieces) {
-            if (piece.isLegalSquare(dest, true))    /* ignore pins when checking if square is legal */
+            if (piece.getPieceType() == PieceType.KING && Paths.getFileDistance(piece.getSquare(), dest) < 2 && Paths.getRankDistance(piece.getSquare(), dest) < 2)
+                return false;
+            else if (piece.getPieceType() != PieceType.KING && piece.isAttacking(dest, true))    /* ignore pins when checking if square is legal */
                 return false;
         }
         if (square.getRank() == dest.getRank()) {
