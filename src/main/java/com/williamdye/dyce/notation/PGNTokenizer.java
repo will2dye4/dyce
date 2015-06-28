@@ -38,7 +38,7 @@ public class PGNTokenizer
         LEFT_BRACKET("["),
         /** The left parenthesis character "<code>(</code>", used to begin a Recursive Annotation Variation */
         LEFT_PAREN("("),
-        /** The left angle bracket character "<code>&gt;</code>", reserved for future use by the PGN spec */
+        /** The right angle bracket character "<code>&gt;</code>", reserved for future use by the PGN spec */
         RIGHT_ANGLE_BRACKET(">"),
         /** The right bracket character "<code>]</code>", used to end a tag pair */
         RIGHT_BRACKET("]"),
