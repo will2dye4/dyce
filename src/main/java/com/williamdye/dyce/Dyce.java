@@ -23,7 +23,7 @@ public final class Dyce
     private static final Logger logger = LoggerFactory.getLogger(Dyce.class);
 
     /** Usage message (printed on invalid invocation) */
-    private static final String USAGE = "Usage: java Dyce [-aev]";
+    private static final String USAGE = "Usage:\njava Dyce [-aev]\njava Dyce -p|--pgn input_file";
 
     /** Version message */
     private static final String VERSION_INFO = "dyce version 0.1, built October 2014";
@@ -212,11 +212,15 @@ public final class Dyce
 
     private static void pgn(final String filepath)
     {
+        logger.info("Entering PGN mode...");
+        logger.debug("Attempting to parse game from input file: {}", filepath);
+        final long start = System.currentTimeMillis();
         try {
             Game game = new PGNReader(filepath).read();
-            logger.info("Successfully imported game from file '{}'", filepath);
-            logger.info("Tag pairs were:");
-            game.getPGN().getTagPairs().entrySet().stream().forEach(e -> logger.info("\t{} => {}", e.getKey(), e.getValue()));
+            logger.debug("Successfully imported game from file in {} ms", System.currentTimeMillis() - start);
+            logger.debug("Tag pairs were:");
+            game.getPGN().getTagPairs().entrySet().stream().forEach(e -> logger.debug("\t{} => {}", e.getKey(), e.getValue()));
+            out("Game loaded.");
         } catch (AmbiguousMoveException | IllegalMoveException | ParseException e) {
             logger.warn(String.format("Failed to read file '%s'!", filepath), e);
         }
