@@ -19,7 +19,8 @@ import com.williamdye.dyce.pieces.PieceType
  * Main class for the dyce application.
  */
 @Slf4j
-final class Dyce {
+final class Dyce
+{
 
     /** Usage message (printed on invalid invocation) */
     private static final String USAGE = "Usage:\njava Dyce [-aev]\njava Dyce -p|--pgn input_file"
@@ -36,10 +37,13 @@ final class Dyce {
     {
         log.info("The application has been started with arguments [${args.join(", ")}]")
 
-        println("###########################################")
-        println("#  Welcome to dyce, the Dye chess engine  #")
-        println("#  written by William Dye                 #")
-        println("###########################################\n")
+        final String BANNER = """
+                ###########################################
+                #  Welcome to dyce, the Dye chess engine  #
+                #  written by William Dye                 #
+                ###########################################\n""".stripIndent()
+
+        println(BANNER)
 
         if (!args) {
             log.debug("No program arguments given; defaulting to explore mode")
