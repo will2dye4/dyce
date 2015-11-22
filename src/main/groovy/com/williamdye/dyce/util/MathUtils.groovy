@@ -1,11 +1,11 @@
-package com.williamdye.dyce.util;
+package com.williamdye.dyce.util
 
 /**
  * Utility class for common mathematical operations.
  *
  * @author William Dye
  */
-public final class MathUtils
+final class MathUtils
 {
 
     /** Prevent instantiation. */
@@ -19,7 +19,7 @@ public final class MathUtils
      */
     public static int signum(int value)
     {
-        return signum((long)value);
+        signum((long) value)
     }
 
     /**
@@ -30,7 +30,7 @@ public final class MathUtils
      */
     public static int signum(long value)
     {
-        return ((value > 0) ? 1 : ((value == 0) ? 0 : -1));
+        (value > 0) ? 1 : ((value == 0L) ? 0 : -1)
     }
 
 }

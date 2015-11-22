@@ -1,16 +1,11 @@
-package com.williamdye.dyce.util;
+package com.williamdye.dyce.util
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.google.common.base.Joiner;
-
-import com.williamdye.dyce.pieces.*;
+import com.williamdye.dyce.pieces.Piece
 
 /**
  * Utility class for joining lists of strings and {@code Piece}s.
  */
-public final class StringUtils
+final class StringUtils
 {
 
     /** Prevent instantiation. */
@@ -34,7 +29,7 @@ public final class StringUtils
      */
     public static String join(final String[] array, String separator)
     {
-        return join(Arrays.asList(array), separator);
+        join(array.toList(), separator)
     }
 
     /**
@@ -47,11 +42,7 @@ public final class StringUtils
      * @return A string consisting of the list joined using the separator
      */
     public static String join(final List<String> list, String separator) {
-        if (separator == null)
-            separator = "";
-
-        Joiner joiner = Joiner.on(separator).skipNulls();
-        return joiner.join(list);
+        list.findAll { it != null }.join(separator ?: "")
     }
 
     /**
@@ -75,14 +66,10 @@ public final class StringUtils
     public static String joinPieceList(final List<Piece> list, String separator, final boolean sort)
     {
         if (sort) {
-            Collections.sort(list);
-            Collections.reverse(list);
+            Collections.sort(list)
+            Collections.reverse(list)
         }
-
-        return join(list.stream()
-                        .map(Piece::getBoardRepresentation)
-                        .map(String::valueOf)
-                        .collect(Collectors.toList()), separator);
+        join(list.collect { String.valueOf(it.boardRepresentation) }, separator)
     }
 
 }
