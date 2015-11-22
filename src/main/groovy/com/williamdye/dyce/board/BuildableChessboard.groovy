@@ -1,6 +1,8 @@
-package com.williamdye.dyce.board;
+package com.williamdye.dyce.board
 
-import com.williamdye.dyce.pieces.*;
+import com.williamdye.dyce.pieces.Piece
+import com.williamdye.dyce.pieces.PieceColor
+import com.williamdye.dyce.pieces.PieceType
 
 /**
  * A chessboard that is initially empty (has no pieces) and allows clients to place pieces on arbitrary squares.
@@ -9,7 +11,7 @@ import com.williamdye.dyce.pieces.*;
  *
  * @author William Dye
  */
-public interface BuildableChessboard extends Chessboard
+interface BuildableChessboard extends Chessboard
 {
 
     /**
@@ -21,7 +23,7 @@ public interface BuildableChessboard extends Chessboard
      * @param square The name of the square on which to place the new piece
      * @return The piece that was created
      */
-    public Piece placePiece(PieceColor color, PieceType type, String square);
+    Piece placePiece(PieceColor color, PieceType type, String square)
 
     /**
      * Moves the specified piece to the specified square, capturing the square's current piece (if any). The piece
@@ -30,27 +32,27 @@ public interface BuildableChessboard extends Chessboard
      * @param piece The piece to place
      * @param square The square on which to place the piece
      */
-    public void placePiece(Piece piece, Square square);
+    void placePiece(Piece piece, Square square)
 
     /**
      * Removes the piece on the specified square, if there is one.
      *
      * @param square The name of the square from which to remove a piece
      */
-    public void removePiece(String square);
+    void removePiece(String square)
 
     /**
      * Removes the piece on the specified square, if there is one.
      *
      * @param square The square from which to remove a piece
      */
-    public void removePiece(Square square);
+    void removePiece(Square square)
 
     /**
      * Removes the specified piece from the board.
      *
      * @param piece The piece to remove
      */
-    public void removePiece(Piece piece);
+    void removePiece(Piece piece)
 
 }

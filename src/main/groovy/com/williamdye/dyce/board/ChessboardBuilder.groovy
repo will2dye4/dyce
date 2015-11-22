@@ -1,25 +1,25 @@
-package com.williamdye.dyce.board;
+package com.williamdye.dyce.board
 
-import com.williamdye.dyce.pieces.PieceColor;
-import com.williamdye.dyce.pieces.PieceType;
+import com.williamdye.dyce.pieces.PieceColor
+import com.williamdye.dyce.pieces.PieceType
 
 /**
  * Implementation of the builder pattern for {@link BuildableChessboard}s.
  *
  * @author William Dye
  */
-public class ChessboardBuilder
+class ChessboardBuilder
 {
 
     /** BuildableChessboard instance that will be built up. */
-    private BuildableChessboard chessboard;
+    private BuildableChessboard chessboard
 
     /**
      * Construct a {@code ChessboardBuilder}.
      */
     public ChessboardBuilder()
     {
-        this.chessboard = new BuildableChessboardImpl();
+        this.chessboard = new BuildableChessboardImpl()
     }
 
     /**
@@ -32,8 +32,8 @@ public class ChessboardBuilder
      */
     public ChessboardBuilder place(final PieceColor color, final PieceType type, final String square)
     {
-        chessboard.placePiece(color, type, square);
-        return this;
+        chessboard.placePiece(color, type, square)
+        this
     }
 
     /**
@@ -43,7 +43,7 @@ public class ChessboardBuilder
      */
     public BuildableChessboard build()
     {
-        return chessboard;
+        chessboard
     }
 
 }

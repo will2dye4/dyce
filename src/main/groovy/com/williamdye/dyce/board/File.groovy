@@ -1,11 +1,11 @@
-package com.williamdye.dyce.board;
+package com.williamdye.dyce.board
 
 /**
  * An enumeration of the files (vertical columns) on the chessboard.
  *
  * @author William Dye
  */
-public enum File
+enum File implements Comparable<File>
 {
     /** The A file, the file farthest to the queenside. */
     A_FILE("a", 1),
@@ -25,10 +25,10 @@ public enum File
     H_FILE("h", 8);
 
     /** The file's name (in lower case). */
-    protected String name;
+    protected String name
 
     /** The file's number, where the A file is #1, B file is #2, etc. */
-    protected int num;
+    protected int num
 
     /**
      * Construct a {@code File} with the specified name and number.
@@ -38,8 +38,8 @@ public enum File
      */
     File(String string, int number)
     {
-        this.name = string;
-        this.num = number;
+        this.name = string
+        this.num = number
     }
 
     /**
@@ -50,14 +50,7 @@ public enum File
      */
     public static File forName(final String name)
     {
-        File result = null;
-        for (File file : File.values()) {
-            if (file.toString().equals(name)) {
-                result = file;
-                break;
-            }
-        }
-        return result;
+        values().find { it.toString() == name }
     }
 
     /**
@@ -65,20 +58,25 @@ public enum File
      *
      * @return The number of the file (A = 1, B = 2, C = 3, etc.)
      */
-    public int getNumber()
+    int getNumber()
     {
-        return num;
+        num
     }
 
-    public boolean isKingside()
+    boolean isKingside()
     {
-        return (num > 4);
+        num > 4
     }
 
     @Override
-    public String toString()
+    String toString()
     {
-        return name;
+        name
+    }
+
+    int minus(File file)
+    {
+        num - file.number
     }
 
 }

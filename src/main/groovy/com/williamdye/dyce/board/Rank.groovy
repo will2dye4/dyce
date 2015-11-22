@@ -1,15 +1,15 @@
-package com.williamdye.dyce.board;
+package com.williamdye.dyce.board
 
-import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull
 
-import com.williamdye.dyce.pieces.PieceColor;
+import com.williamdye.dyce.pieces.PieceColor
 
 /**
  * Enumeration of the ranks (horizontal rows) on the chessboard.
  *
  * @author William Dye
  */
-public enum Rank
+enum Rank implements Comparable<Rank>
 {
     /** The first rank, on which white's major pieces begin the game. */
     FIRST_RANK(1),
@@ -29,10 +29,10 @@ public enum Rank
     EIGHTH_RANK(8);
 
     /** The rank's number. */
-    protected int number;
+    protected int number
 
     /** The rank's number as a string. */
-    protected String string;
+    protected String string
 
     /**
      * Construct a {@code Rank} with the specified number.
@@ -41,8 +41,8 @@ public enum Rank
      */
     Rank(Integer num)
     {
-        this.number = num;
-        this.string = num.toString();
+        this.number = num
+        this.string = num.toString()
     }
 
     /**
@@ -53,14 +53,7 @@ public enum Rank
      */
     public static Rank forNumber(final int number)
     {
-        Rank result = null;
-        for (Rank rank : values()) {
-            if (number == rank.getNumber()) {
-                result = rank;
-                break;
-            }
-        }
-        return result;
+        values().find { it.number == number }
     }
 
     /**
@@ -69,11 +62,9 @@ public enum Rank
      * @param color The target color
      * @return The starting rank for the specified color
      */
-    public static Rank getStartingRank(final PieceColor color)
+    public static Rank getStartingRank(final @Nonnull PieceColor color)
     {
-        Preconditions.checkNotNull(color, "'color' may not be null when getting the starting rank");
-
-        return ((color == PieceColor.WHITE) ? FIRST_RANK : EIGHTH_RANK);
+        (color == PieceColor.WHITE) ? FIRST_RANK : EIGHTH_RANK
     }
 
     /**
@@ -82,11 +73,9 @@ public enum Rank
      * @param color The target color
      * @return The starting rank for the pawns of the specified color
      */
-    public static Rank getStartingPawnRank(final PieceColor color)
+    public static Rank getStartingPawnRank(final @Nonnull PieceColor color)
     {
-        Preconditions.checkNotNull(color, "'color' may not be null when getting the starting pawn rank");
-
-        return ((color == PieceColor.WHITE) ? SECOND_RANK : SEVENTH_RANK);
+        (color == PieceColor.WHITE) ? SECOND_RANK : SEVENTH_RANK
     }
 
     /**
@@ -94,15 +83,20 @@ public enum Rank
      *
      * @return The rank's number
      */
-    public int getNumber()
+    int getNumber()
     {
-        return number;
+        number
     }
 
     @Override
-    public String toString()
+    String toString()
     {
-        return string;
+        string
+    }
+
+    int minus(Rank rank)
+    {
+        number - rank.number
     }
 
 }
