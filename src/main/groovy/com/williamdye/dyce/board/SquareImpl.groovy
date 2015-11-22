@@ -85,4 +85,10 @@ class SquareImpl implements Square
         !piece
     }
 
+    @Override
+    String toString()
+    {
+        name
+    }
+
 }

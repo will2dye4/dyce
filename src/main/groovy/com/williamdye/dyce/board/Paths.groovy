@@ -31,7 +31,7 @@ final class Paths
     {
         Preconditions.checkArgument(isValidPair(start, end), "Invalid squares supplied to getRankDistance")
 
-        Math.abs(start.rank.number - end.rank.number)
+        Math.abs(start.rank - end.rank)
     }
 
     /**
@@ -46,7 +46,7 @@ final class Paths
     {
         Preconditions.checkArgument(isValidPair(start, end), "Invalid squares supplied to getFileDistance")
 
-        Math.abs(start.file.number - end.file.number)
+        Math.abs(start.file - end.file)
     }
 
     /**
@@ -75,8 +75,8 @@ final class Paths
     {
         Preconditions.checkArgument(isValidPair(start, end), "Invalid squares supplied to isPathClear")
 
-        final int startIndex = ChessboardUtils.getBoardIndex(start.rank.number, start.file.number)
-        final int endIndex = ChessboardUtils.getBoardIndex(end.rank.number, end.file.number)
+        final int startIndex = ChessboardUtils.getBoardIndex(start)
+        final int endIndex = ChessboardUtils.getBoardIndex(end)
         final Square[] squares = start.board.board
 
         boolean clear = false
@@ -87,7 +87,7 @@ final class Paths
         } else if (start.file == end.file) {      /* strictly vertical (e.g., c7 => c3) */
             clear = isPathClearSameFile((start.rank < end.rank), startIndex, endIndex, squares)
         } else if (isSameDiagonal(start, end)) {      /* diagonal */
-            clear = isPathClearSameDiagonal((start.rank - end.rank), (end.file - start.file), startIndex, endIndex, squares)
+            clear = isPathClearSameDiagonal((end.rank - start.rank), (end.file - start.file), startIndex, endIndex, squares)
         }
         clear
     }

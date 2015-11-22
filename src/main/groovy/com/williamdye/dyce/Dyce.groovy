@@ -98,22 +98,21 @@ final class Dyce {
         log.info("Entering adventure mode...")
 
         final List<String> TO_QUIT = ["quit", ":q"]
+        final String INTRO_TEXT = """
+                *========[ Adventure Mode ]========================================*
+                | You may place pieces on any blank square and remove pieces       |
+                | already on the board. To place a new piece, enter "place"        |
+                | followed by the piece color (w/b), the piece type (b/k/n/p/q/r), |
+                | and the square to place the piece on (e.g., "place w q e3").     |
+                | To remove a piece from the board, enter "remove" followed by     |
+                | the square to remove the piece from (e.g., "remove c7").         |
+                | To quit, enter "${TO_QUIT[0]}" or "${TO_QUIT[1]}".                                   |
+                *==================================================================*""".stripIndent()
+
         final Scanner scan = new Scanner(System.in)
 
-        println("*========[ Adventure Mode ]========================================*")
-        println("| You may place pieces on any blank square and remove pieces       |")
-        println("| already on the board. To place a new piece, enter \"place\"        |") /* spacing is not off */
-        println("| followed by the piece color (w/b), the piece type (b/k/n/p/q/r), |")
-        println("| and the square to place the piece on (e.g., \"place w q e3\").     |")
-        println("| To remove a piece from the board, enter \"remove\" followed by     |")
-        println("| the square to remove the piece from (e.g., \"remove c7\").         |")
-        println("| To quit, enter \"" + TO_QUIT[0] + "\" or \"" + TO_QUIT[1] + "\".                                   |")
-        println("*==================================================================*")
-
-        println("Press Enter to begin...")
-        scan.useDelimiter("")
-        scan.next()
-        scan.useDelimiter("\n")
+        println(INTRO_TEXT)
+        waitForEnter(scan)
 
         String command = ""
         while (!TO_QUIT.contains(command)) {
@@ -165,20 +164,19 @@ final class Dyce {
         log.info("Entering explore mode...")
 
         final List<String> TO_QUIT = [":quit", ":q"]
+        final String INTRO_TEXT = """
+                *========[ Board Explorer ]========================================*
+                | You play both sides. At the prompt, type the next move,          |
+                | using Portable Game Notation (PGN). For example, to move         |
+                | a Knight from b1 to c3, enter "Nc3".                             |
+                | To quit, enter "${TO_QUIT[0]}" or "${TO_QUIT[1]}".                                  |
+                *==================================================================*""".stripIndent()
+
         final GameState state = board.gameState
         final Scanner scan = new Scanner(System.in)
 
-        println("*========[ Board Explorer ]========================================*")
-        println("| You play both sides. At the prompt, type the next move,          |")
-        println("| using Portable Game Notation (PGN). For example, to move         |")
-        println("| a Knight from b1 to c3, enter \"Nc3\".                             |")   /* spacing is not off */
-        println("| To quit, enter \"${TO_QUIT[0]}\" or \"${TO_QUIT[1]}\".                                  |")
-        println("*==================================================================*")
-
-        println("\nPress Enter to begin...")
-        scan.useDelimiter("")
-        scan.next()
-        scan.useDelimiter("\n")
+        println(INTRO_TEXT)
+        waitForEnter(scan)
 
         String move = "", lastMove = ""
         while (!TO_QUIT.contains(move)) {
@@ -193,8 +191,8 @@ final class Dyce {
                     println("Illegal move!")
                 }
             }
-            println("\n" + board.prettyPrint())
-            if (state.halfMoveTotal > 0) {
+            println("\n${board.prettyPrint()}")
+            if (lastMove) {
                 println("Last move: $lastMove")
             }
             print("Enter ${state.activeColor == PieceColor.WHITE ? "white" : "black"}'s move: ")
@@ -207,16 +205,26 @@ final class Dyce {
     {
         log.info("Entering PGN mode...")
         log.debug("Attempting to parse game from input file: $filepath")
+        println("Loading game from '$filepath' ...")
         final long start = System.currentTimeMillis()
         try {
-            Game game = new PGNReader(filepath).read()
+            final Game game = new PGNReader(filepath).read()
             log.debug("Successfully imported game from file in ${System.currentTimeMillis() - start} ms")
             log.debug("Tag pairs were:")
             game.PGN.tagPairs.each { k, v -> log.debug("\t$k => $v") }
             println("Game loaded.")
         } catch (AmbiguousMoveException | IllegalMoveException | ParseException e) {
             log.warn("Failed to read file '$filepath'!", e)
+            println("An error occurred while reading the file: $e.localizedMessage")
         }
+    }
+
+    private static void waitForEnter(final Scanner scan)
+    {
+        println("\nPress Enter to begin...")
+        scan.useDelimiter("")
+        scan.next()
+        scan.useDelimiter("\n")
     }
     
 }
