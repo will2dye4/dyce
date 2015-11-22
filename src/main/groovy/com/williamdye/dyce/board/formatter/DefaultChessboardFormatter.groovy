@@ -56,7 +56,7 @@ final class DefaultChessboardFormatter implements ChessboardFormatter<String>
         final StringBuilder builder = new StringBuilder(RANK_SEPARATOR)
 
         int i = 8
-        for (String rank : chessboard.FEN.FENString.split('/')) {
+        chessboard.FEN.FENString.split('/').each { rank ->
             builder.append(SPACING).append(i).append(" |")
             formatRank(rank, builder)
             formatStatusInfo(i, capturedWhitePieces, capturedBlackPieces, builder)
@@ -70,7 +70,7 @@ final class DefaultChessboardFormatter implements ChessboardFormatter<String>
     /** Helper to format one rank from a FEN string. */
     private static void formatRank(final String rank, final StringBuilder builder)
     {
-        for (char c : rank.toCharArray()) {
+        rank.toCharArray().each { c ->
             if (Character.isDigit(c)) {
                 appendBlankSpaces(c, builder)
             } else {
