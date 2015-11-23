@@ -1,11 +1,11 @@
-package com.williamdye.dyce.pieces;
+package com.williamdye.dyce.pieces
 
 /**
  * Enumeration of the possible types of chess pieces.
  *
  * @author William Dye
  */
-public enum PieceType
+enum PieceType
 {
     PAWN(   'p',   "pawn",  1),
     KNIGHT( 'n', "knight",  3),
@@ -15,13 +15,13 @@ public enum PieceType
     KING(   'k',   "king",  Integer.MAX_VALUE);
 
     /** The piece type's symbol. */
-    protected char symbol;
+    protected char symbol
 
     /** The piece type's logical name. */
-    protected String name;
+    protected String name
 
     /** The piece type's material value. */
-    protected int materialValue;
+    protected int materialValue
 
     /**
      * Construct a {@code PieceType} having the specified values.
@@ -30,11 +30,11 @@ public enum PieceType
      * @param name The piece type's logical name
      * @param materialValue The piece type's material value
      */
-    PieceType(char symbol, String name, int materialValue)
+    PieceType(final String symbol, final String name, final int materialValue)
     {
-        this.symbol = symbol;
-        this.name = name;
-        this.materialValue = materialValue;
+        this.symbol = symbol.charAt(0)
+        this.name = name
+        this.materialValue = materialValue
     }
 
     /**
@@ -45,13 +45,10 @@ public enum PieceType
      */
     public static PieceType forSymbol(char symbol)
     {
-        if (Character.isUpperCase(symbol))
-            symbol += 32;
-        for (PieceType type : values()) {
-            if (symbol == type.getSymbol())
-                return type;
+        if (Character.isUpperCase(symbol)) {
+            symbol += 32
         }
-        return null;
+        values().find { it.symbol == symbol }
     }
 
     /**
@@ -59,9 +56,9 @@ public enum PieceType
      *
      * @return The piece type's symbol
      */
-    public char getSymbol()
+    char getSymbol()
     {
-        return symbol;
+        symbol
     }
 
     /**
@@ -69,15 +66,15 @@ public enum PieceType
      *
      * @return The piece type's material value
      */
-    public int getMaterialValue()
+    int getMaterialValue()
     {
-        return materialValue;
+        materialValue
     }
 
     @Override
-    public String toString()
+    String toString()
     {
-        return name;
+        name
     }
 
 }

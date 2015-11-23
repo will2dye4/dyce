@@ -1,26 +1,26 @@
-package com.williamdye.dyce.pieces;
+package com.williamdye.dyce.pieces
 
 /**
  * Enumeration of the possible colors for chess pieces.
  *
  * @author William Dye
  */
-public enum PieceColor
+enum PieceColor
 {
     WHITE("w"),
     BLACK("b");
 
     /** The color's string (w/b). */
-    private String string;
+    private String string
 
     /**
      * Construct a {@code PieceColor} with the specified string.
      *
      * @param string The color's string
      */
-    PieceColor(String string)
+    PieceColor(final String string)
     {
-        this.string = string;
+        this.string = string
     }
 
     /**
@@ -31,7 +31,7 @@ public enum PieceColor
      */
     public static PieceColor oppositeOf(final PieceColor color)
     {
-        return ((color == WHITE) ? BLACK : WHITE);
+        (color == WHITE) ? BLACK : WHITE
     }
 
     /**
@@ -39,15 +39,15 @@ public enum PieceColor
      *
      * @return The color's name
      */
-    public String getName()
+    String getName()
     {
-        return (this == WHITE ? "white" : "black");
+        (this == WHITE) ? "white" : "black"
     }
 
     @Override
-    public String toString()
+    String toString()
     {
-        return string;
+        string
     }
 
 }
