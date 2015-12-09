@@ -1,0 +1,21 @@
+apply plugin: 'groovy'
+
+group = 'com.williamdye'
+version = '0.2-SNAPSHOT'
+
+description = "dyce is a command-line based interactive chess player and chess engine."
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2'
+    compile group: 'com.google.guava', name: 'guava', version: '18.0'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.0'
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.5'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4'
+}
