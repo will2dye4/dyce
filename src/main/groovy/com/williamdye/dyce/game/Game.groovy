@@ -1,6 +1,7 @@
 package com.williamdye.dyce.game
 
 import com.williamdye.dyce.board.Chessboard
+import com.williamdye.dyce.notation.FEN
 import com.williamdye.dyce.notation.PGN
 
 /**
@@ -13,7 +14,11 @@ interface Game
 
     Chessboard getChessboard()
 
+    GameState getState()
+
     MoveHistory getMoveHistory()
+
+    FEN getFEN()
 
     PGN getPGN()
 

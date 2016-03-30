@@ -3,6 +3,7 @@ package com.williamdye.dyce.board
 import java.util.function.BiFunction
 import java.util.function.Function
 
+import com.williamdye.dyce.game.GameImpl
 import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
 
@@ -37,11 +38,23 @@ class DefaultChessboard extends BaseChessboard
     /**
      * Construct a {@code DefaultChessboard} with the default (standard) position and no moves in the history.
      */
-    DefaultChessboard()
+    private DefaultChessboard()
     {
         super()
         createPawns()
         createMajorPieces()
+    }
+
+    /**
+     * Create a new instance of {@code DefaultChessboard} and return it.
+     *
+     * @return A new {@code DefaultChessboard} instance
+     */
+    public static DefaultChessboard newInstance()
+    {
+        DefaultChessboard chessboard = new DefaultChessboard()
+        chessboard.setGame(new GameImpl(chessboard))
+        chessboard
     }
 
     /** Create the pawns for both sides on their standard starting ranks. */

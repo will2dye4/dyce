@@ -2,6 +2,7 @@ package com.williamdye.dyce.board
 
 import javax.annotation.Nonnull
 
+import com.williamdye.dyce.game.GameImpl
 import com.williamdye.dyce.game.MoveType
 import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
@@ -14,6 +15,18 @@ import com.williamdye.dyce.pieces.PieceType
  */
 public class BuildableChessboardImpl extends BaseChessboard implements BuildableChessboard
 {
+
+    private BuildableChessboardImpl()
+    {
+        super()
+    }
+
+    public static BuildableChessboardImpl newInstance()
+    {
+        BuildableChessboardImpl chessboard = new BuildableChessboardImpl()
+        chessboard.setGame(new GameImpl(chessboard))
+        chessboard
+    }
 
     @Override
     public void move(final @Nonnull Piece piece, final @Nonnull Square dest, final MoveType moveType)

@@ -39,7 +39,7 @@ class Pawn extends AbstractPiece
             return false
         }
         if (fileDistance == 1 && rankDistance == 1) {
-            return (dest == square.board.gameState.enPassantTargetSquare || (!dest.isEmpty() && (dest.piece.get().color == PieceColor.oppositeOf(color))))
+            return (dest == square.board.game.state.enPassantTargetSquare || (!dest.isEmpty() && (dest.piece.get().color == PieceColor.oppositeOf(color))))
         }
         fileDistance == 0 && (rankDistance == 1 || square.rank == Rank.getStartingPawnRank(color))
     }

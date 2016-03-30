@@ -2,6 +2,7 @@ package com.williamdye.dyce.board
 
 import com.williamdye.dyce.exception.AmbiguousMoveException
 import com.williamdye.dyce.exception.IllegalMoveException
+import com.williamdye.dyce.game.Game
 import com.williamdye.dyce.game.GameState
 import com.williamdye.dyce.notation.FEN
 import com.williamdye.dyce.pieces.King
@@ -20,11 +21,11 @@ interface Chessboard
 {
 
     /**
-     * Accessor for a chessboard's Forsyth-Edwards Notation (FEN) object.
+     * Accessor for a reference to a chessboard's game.
      *
-     * @return The FEN for this chessboard
+     * @return The game for this chessboard
      */
-    FEN getFEN()
+    Game getGame()
 
     /**
      * Formats the chessboard as a string which can be printed to the console. The board is represented as an ASCII
@@ -41,13 +42,6 @@ interface Chessboard
      * @return The array of squares which make up this chessboard
      */
     Square[] getBoard()
-
-    /**
-     * Accessor for a chessboard's <code>GameState</code> object.
-     *
-     * @return The game state for this chessboard
-     */
-    GameState getGameState()
 
     /**
      * Accessor for a chessboard's active pieces of a certain color.

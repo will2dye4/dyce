@@ -27,8 +27,8 @@ class PGNReader
 
     Game read() throws AmbiguousMoveException, IllegalMoveException, ParseException {
         pgn_game()
-        game.getMoveHistory().rewind()
-        // TODO - reset game state
+        game.moveHistory.rewind()
+        game.state.reset()
         game
     }
 

@@ -47,7 +47,7 @@ class King extends AbstractPiece
         if (square.rank == dest.rank) {
             /* handle castling */
             if (square.rank == Rank.getStartingRank(color) && Paths.getFileDistance(square, dest) == 2) {
-                final CastlingAvailability castling = square.board.gameState.castlingAvailability
+                final CastlingAvailability castling = square.board.game.state.castlingAvailability
                 if (dest.file == File.G_FILE) {
                     return (color == PieceColor.WHITE ?
                             castling.isStatus(WHITE_CAN_CASTLE_KINGSIDE) : castling.isStatus(BLACK_CAN_CASTLE_KINGSIDE))
@@ -62,6 +62,11 @@ class King extends AbstractPiece
             return (Paths.getRankDistance(square, dest) == 1)
         }
         (Paths.getRankDistance(square, dest) == 1) && (Paths.getFileDistance(square, dest) == 1)
+    }
+
+    boolean isInCheck()
+    {
+        square.board.getActivePieces(PieceColor.oppositeOf(color)).any { it.isAttacking(square, true) }
     }
 
 }

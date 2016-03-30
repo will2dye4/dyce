@@ -56,7 +56,7 @@ final class DefaultChessboardFormatter implements ChessboardFormatter<String>
         final StringBuilder builder = new StringBuilder(RANK_SEPARATOR)
 
         int i = 8
-        chessboard.FEN.FENString.split('/').each { rank ->
+        chessboard.game.FEN.FENString.split('/').each { rank ->
             builder.append(SPACING).append(i).append(" |")
             formatRank(rank, builder)
             formatStatusInfo(i, capturedWhitePieces, capturedBlackPieces, builder)

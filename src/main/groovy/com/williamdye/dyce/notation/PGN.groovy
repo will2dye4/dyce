@@ -80,7 +80,7 @@ class PGN
 
         move = move.replaceAll("[+#]", "").replaceAll("=[BNQR]", "")
         if (move.length() < 2 || move.length() > 5) {
-            throw new IllegalMoveException()
+            throw new IllegalMoveException("Expected move fragment [$move] to look like [Bc3] or [N2d4] or [Rgd6] or [Qc8f5]")
         }
 
         Square dest = null
@@ -98,12 +98,12 @@ class PGN
     private PartialMove parseCastlingMove(final PieceColor toMove, final String move) throws IllegalMoveException
     {
         final boolean kingside = CASTLING_KINGSIDE == move
-        if (chessboard.gameState.castlingAvailability.canCastle(toMove, kingside)) {
+        if (chessboard.game.state.castlingAvailability.canCastle(toMove, kingside)) {
             final String destName = (kingside ? "g" : "c") + (PieceColor.WHITE == toMove ? 1 : 8)
             log.debug("Move '$move' parsed as castling move [kingside=$kingside, destination=$destName]")
             return new PartialMove(chessboard.getKing(toMove), chessboard.getSquareByName(destName), MoveType.CASTLING)
         }
-        throw new IllegalMoveException()
+        throw new IllegalMoveException("$toMove is not allowed to castle ${kingside ? 'king' : 'queen'}side")
     }
 
     /** Helper to parse a PGN string as a pawn move. */
@@ -111,16 +111,16 @@ class PGN
     {
         final String fileString = move.substring(0, 1)
         if (!(fileString ==~ /[a-h]/)) {
-            throw new IllegalMoveException()
+            throw new IllegalMoveException("Expected pawn move [$move] to begin with a file name (a-h)")
         }
         final Piece pawn = chessboard.getActivePieces(toMove, PieceType.PAWN).find { piece ->
             piece.square.file == File.forName(fileString) && (piece.isLegalSquare(dest) || piece.isAttacking(dest))
         }
         if (!pawn) {
-            throw new IllegalMoveException()
+            throw new IllegalMoveException("Could not find a pawn to move for [$move]")
         }
 
-        final MoveType type = (dest == chessboard.gameState.enPassantTargetSquare) ? MoveType.EN_PASSANT : MoveType.NORMAL
+        final MoveType type = (dest == chessboard.game.state.enPassantTargetSquare) ? MoveType.EN_PASSANT : MoveType.NORMAL
         log.debug("Move '$move' parsed as pawn move [destination=$dest.name, type=${type.toString()}]")
         new PartialMove(pawn, dest, type)
     }
@@ -129,7 +129,7 @@ class PGN
     private PartialMove parsePieceMove(final PieceColor toMove, final String move, Square dest) throws IllegalMoveException, AmbiguousMoveException
     {
         if (!(move.substring(0, 1) ==~ /[BKNQR]/)) {
-            throw new IllegalMoveException()
+            throw new IllegalMoveException("Expected piece move [$move] to start with B, K, N, Q, or R")
         }
         Rank rank = null
         File file = null
@@ -156,17 +156,17 @@ class PGN
                 log.debug("Move '$move' parsed as king move [destination=$dest.name]")
                 return new PartialMove(king, dest)
             }
-            throw new IllegalMoveException()
+            throw new IllegalMoveException("King is not allowed to make move [$move]")
         }
 
         final List<Piece> candidates = chessboard.getActivePieces(toMove, pieceType).findAll { piece ->
             piece.isLegalSquare(dest) && (!rank || piece.square.rank == rank) && (!file || piece.square.file == file)
         }
         if (!candidates) {
-            throw new IllegalMoveException()
+            throw new IllegalMoveException("Could not find a piece to move for [$move]")
         }
         if (candidates.size() > 1) {
-            throw new AmbiguousMoveException()
+            throw new AmbiguousMoveException(candidates)
         }
 
         log.debug("Move '$move' parsed as normal piece move [type=${pieceType.toString()}, destination=$dest.name]")

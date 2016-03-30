@@ -1,7 +1,7 @@
 package com.williamdye.dyce.game
 
 import com.williamdye.dyce.board.Chessboard
-import com.williamdye.dyce.board.DefaultChessboard
+import com.williamdye.dyce.notation.FEN
 import com.williamdye.dyce.notation.PGN
 
 /**
@@ -10,15 +10,17 @@ import com.williamdye.dyce.notation.PGN
 class GameImpl implements Game
 {
 
-    // TODO - chessboard already has history and PGN internally
     private Chessboard chessboard
+    private GameState state = new GameStateImpl()
     private MoveHistory moveHistory
+    private FEN fen
     private PGN pgn
 
-    GameImpl()
+    GameImpl(Chessboard chessboard)
     {
-        this.chessboard = new DefaultChessboard()
+        this.chessboard = chessboard
         this.moveHistory = new MoveHistoryImpl(chessboard)
+        this.fen = new FEN(chessboard)
         this.pgn = new PGN(chessboard)
     }
 
@@ -29,9 +31,21 @@ class GameImpl implements Game
     }
 
     @Override
+    GameState getState()
+    {
+        state
+    }
+
+    @Override
     MoveHistory getMoveHistory()
     {
         moveHistory
+    }
+
+    @Override
+    FEN getFEN()
+    {
+        fen
     }
 
     @Override

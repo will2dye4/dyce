@@ -26,7 +26,7 @@ final class Dyce
     private static final String USAGE = "Usage:\njava Dyce [-aev]\njava Dyce -p|--pgn input_file"
 
     /** Version message */
-    private static final String VERSION_INFO = "dyce version 0.2, built November 2015"
+    private static final String VERSION_INFO = "dyce version 0.2, built March 2016"
 
     /**
      * Entry point for the dyce application.
@@ -65,10 +65,10 @@ final class Dyce
         } else {
             switch (args[0]) {
                 case ["-a", "--adventure"]:
-                    adventure(new BuildableChessboardImpl())
+                    adventure(BuildableChessboardImpl.newInstance())
                     break
                 case ["-e", "--explore"]:
-                    explore(new DefaultChessboard())
+                    explore(DefaultChessboard.newInstance())
                     break
                 case ["-p", "--pgn"]:
                     pgn(args[1])
@@ -139,9 +139,11 @@ final class Dyce
                             try {
                                 board.move(parts[1])
                             } catch (AmbiguousMoveException ame) {
-                                println("Ambiguous move!")
+                                log.warn("Caught AmbiguousMoveException in adventure mode", ame)
+                                println("Ambiguous move: $ame.localizedMessage")
                             } catch (IllegalMoveException ime) {
-                                println("Illegal move!")
+                                log.warn("Caught IllegalMoveException in adventure mode", ime)
+                                println("Illegal move: $ime.localizedMessage")
                             }
                         }
                         break
@@ -176,7 +178,7 @@ final class Dyce
                 | To quit, enter "${TO_QUIT[0]}" or "${TO_QUIT[1]}".                                  |
                 *==================================================================*""".stripIndent()
 
-        final GameState state = board.gameState
+        final GameState state = board.game.state
         final Scanner scan = new Scanner(System.in)
 
         println(INTRO_TEXT)
@@ -188,11 +190,11 @@ final class Dyce
                 try {
                     board.move(move)
                 } catch (AmbiguousMoveException ame) {
-                    /* TODO - do more than this */
-                    println("Ambiguous move!")
+                    log.warn("Caught AmbiguousMoveException in explore mode", ame)
+                    println("Ambiguous move: $ame.localizedMessage")
                 } catch (IllegalMoveException ime) {
-                    /* TODO - do more than this */
-                    println("Illegal move!")
+                    log.warn("Caught IllegalMoveException in explore mode", ime)
+                    println("Illegal move: $ime.localizedMessage")
                 }
             }
             println("\n${board.prettyPrint()}")

@@ -2,5 +2,8 @@ package com.williamdye.dyce.exception
 
 class IllegalMoveException extends Exception
 {
-    /* empty class */
+    IllegalMoveException(String message)
+    {
+        super(message)
+    }
 }
