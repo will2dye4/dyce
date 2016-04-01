@@ -248,7 +248,7 @@ abstract class BaseChessboard implements Chessboard
     /* Cannot castle into, out of, or through check */
     private boolean isAvoidingCheck(final Piece king, final Square dest)
     {
-        getActivePieces(PieceColor.oppositeOf(king.color)).any { piece ->
+        getActivePieces(~king.color).any { piece ->
             [king.square, dest, getSquare(dest.file.kingside ? File.F_FILE : File.D_FILE, king.square.rank)].any { square ->
                 piece.isAttacking(square, true)
             }

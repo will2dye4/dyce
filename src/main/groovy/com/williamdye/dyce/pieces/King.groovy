@@ -38,7 +38,7 @@ class King extends AbstractPiece
         if (!super.isLegalSquare(dest, true)) {   /* ignore pins when checking legality (king can't be pinned) */
             return false
         }
-        if (square.board.getActivePieces(PieceColor.oppositeOf(color)).any {
+        if (square.board.getActivePieces(~color).any {
             (it.pieceType == PieceType.KING && Paths.getFileDistance(it.square, dest) < 2 && Paths.getRankDistance(it.square, dest) < 2) ||
             (it.pieceType != PieceType.KING && it.isAttacking(dest, true))
         }) {
@@ -66,7 +66,7 @@ class King extends AbstractPiece
 
     boolean isInCheck()
     {
-        square.board.getActivePieces(PieceColor.oppositeOf(color)).any { it.isAttacking(square, true) }
+        square.board.getActivePieces(~color).any { it.isAttacking(square, true) }
     }
 
 }

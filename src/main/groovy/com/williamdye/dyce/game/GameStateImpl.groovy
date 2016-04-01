@@ -68,7 +68,7 @@ class GameStateImpl implements GameState
         if (toMove == PieceColor.BLACK) {
             moveCount += 1
         }
-        toMove = PieceColor.oppositeOf(toMove)
+        toMove = ~toMove
     }
 
     @Override

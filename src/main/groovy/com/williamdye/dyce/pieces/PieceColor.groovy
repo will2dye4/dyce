@@ -50,4 +50,9 @@ enum PieceColor
         string
     }
 
+    PieceColor bitwiseNegate()
+    {
+        oppositeOf(this)
+    }
+
 }
