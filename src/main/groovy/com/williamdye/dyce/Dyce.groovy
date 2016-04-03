@@ -12,6 +12,7 @@ import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.Game
 import com.williamdye.dyce.game.GameState
 import com.williamdye.dyce.notation.PGNReader
+import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
 import com.williamdye.dyce.pieces.PieceType
 
@@ -154,6 +155,22 @@ final class Dyce
                             board.removePiece(parts[1])
                         }
                         break
+                    case [":l", "list"]:
+                        if (parts.size() != 2) {
+                            println("You must specify the square which has the piece to list legal moves for!")
+                        } else {
+                            Optional<Piece> piece = board.getSquareByName(parts[1]).piece
+                            if (piece.isPresent()) {
+                                println("Legal squares for [${piece.get()} on ${parts[1]}]: [${piece.get().legalSquares.join(", ")}]")
+                            } else {
+                                println("There is no piece on ${parts[1]}!")
+                            }
+                        }
+                        break
+                    case [":t", "toggle"]:
+                        board.game.state.toggleActiveColor()
+                        println("Active color is now ${board.game.state.activeColor.name}")
+                        break
                     default:
                         println("Invalid command!")
                 }
@@ -201,7 +218,10 @@ final class Dyce
             if (lastMove) {
                 println("Last move: $lastMove")
             }
-            print("Enter ${state.activeColor == PieceColor.WHITE ? "white" : "black"}'s move: ")
+            if (board.getKing(state.activeColor).isInCheck()) {
+                println("(Check)")
+            }
+            print("Enter ${state.activeColor.name}'s move: ")
             move = scan.next()
             lastMove = "$state.moveCount${state.activeColor == PieceColor.WHITE ? ". " : "..."}$move"
         }
