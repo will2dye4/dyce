@@ -37,6 +37,11 @@ class GameImpl implements Game
         state
     }
 
+    GameEnding getEnding()
+    {
+        ending
+    }
+
     @Override
     MoveHistory getMoveHistory()
     {

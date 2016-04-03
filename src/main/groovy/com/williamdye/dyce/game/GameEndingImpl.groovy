@@ -66,13 +66,30 @@ class GameEndingImpl implements GameEnding
     }
 
     @Override
-    GameEndingType getType() {
+    GameEndingType getType()
+    {
         type
     }
 
     @Override
-    PieceColor getWinningColor() {
+    PieceColor getWinningColor()
+    {
         winningColor
+    }
+
+    @Override
+    String toString()
+    {
+        switch (type) {
+            case GameEndingType.CHECKMATE:
+                return "checkmate for $winningColor.name"
+            case GameEndingType.RESIGNATION:
+                return "${~winningColor.name} resigned"
+            case GameEndingType.STALEMATE:
+                return "stalemate"
+            case GameEndingType.DRAW:
+                return "draw"
+        }
     }
 
 }

@@ -16,6 +16,8 @@ interface Game
 
     GameState getState()
 
+    GameEnding getEnding()
+
     MoveHistory getMoveHistory()
 
     FEN getFEN()
