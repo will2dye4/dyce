@@ -205,7 +205,9 @@ final class Dyce
         while (!TO_QUIT.contains(move)) {
             if (move) {
                 try {
+                    String nextMove = "$state.moveCount${state.activeColor == PieceColor.WHITE ? ". " : "..."}"
                     board.move(move)
+                    lastMove = nextMove + move
                 } catch (AmbiguousMoveException ame) {
                     log.warn("Caught AmbiguousMoveException in explore mode", ame)
                     println("Ambiguous move: $ame.localizedMessage")
@@ -215,6 +217,9 @@ final class Dyce
                 }
             }
             println("\n${board.prettyPrint()}")
+            if (board.game.isFinished()) {
+                break
+            }
             if (lastMove) {
                 println("Last move: $lastMove")
             }
@@ -223,7 +228,9 @@ final class Dyce
             }
             print("Enter ${state.activeColor.name}'s move: ")
             move = scan.next()
-            lastMove = "$state.moveCount${state.activeColor == PieceColor.WHITE ? ". " : "..."}$move"
+        }
+        if (board.game.isFinished()) {
+            println("Game over: ${board.game.ending.toString()}")
         }
     }
 
