@@ -44,7 +44,7 @@ class Pawn extends AbstractPiece
         if (fileDistance == 1 && rankDistance == 1) {
             return (dest == square.board.game.state.enPassantTargetSquare || (!dest.isEmpty() && (dest.piece.get().color == ~color)))
         }
-        fileDistance == 0 && (rankDistance == 1 || square.rank == Rank.getStartingPawnRank(color))
+        fileDistance == 0 && dest.isEmpty() && (rankDistance == 1 || square.rank == Rank.getStartingPawnRank(color))
     }
 
     @Override
