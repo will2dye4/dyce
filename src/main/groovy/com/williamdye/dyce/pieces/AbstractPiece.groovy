@@ -145,6 +145,12 @@ abstract class AbstractPiece implements Piece
     }
 
     @Override
+    List<Square> getLegalSquares()
+    {
+        captured ? [] : square.board.board.findAll { isLegalSquare(it) }
+    }
+
+    @Override
     void capture()
     {
         captured = true
