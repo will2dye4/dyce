@@ -199,6 +199,19 @@ abstract class BaseChessboard implements Chessboard
             throw new IllegalMoveException("Piece [$piece on $piece.square] is not allowed to move to square [$dest]")
         }
 
+        if (isIgnoringCheck(piece, dest)) {
+            throw new IllegalMoveException("${state.activeColor.name} must move out of check!")
+        }
+
+        // These two checks should be covered by the check for piece.isLegalSquare above - remove them?
+        if (isMovingIntoCheck(piece, dest)) {
+            throw new IllegalMoveException("${state.activeColor.name} may not move into check!")
+        }
+
+        if (moveWouldResultInCheck(piece, dest)) {
+            throw new IllegalMoveException("Move would result in check for ${state.activeColor.name}!")
+        }
+
         handleCastling(piece, dest, moveType)
         handleEnPassant(piece, dest, moveType)
 
@@ -214,11 +227,30 @@ abstract class BaseChessboard implements Chessboard
         game.moveHistory.add(new MoveImpl(piece, capturedPiece.orElse(null), piece.lastSquare, dest, null, state.moveCount))
         state.incrementHalfMoveTotal()
 
+        if (getKing(~state.activeColor).isInCheck()) {
+            log.debug("${(~state.activeColor).name} king is in check")
+        }
+
         if (moveType == MoveType.CHECKMATE) {
             log.info("Checkmate for {}", state.activeColor)
         } else {
             state.toggleActiveColor()
         }
+    }
+
+    private boolean isIgnoringCheck(final Piece piece, final Square dest)
+    {
+        getKing(state.activeColor).isInCheck() && new ExploratoryChessboard(this).then(piece, dest).getKing(state.activeColor).isInCheck()
+    }
+
+    private boolean isMovingIntoCheck(final Piece piece, final Square dest)
+    {
+        piece.pieceType == PieceType.KING && getActivePieces(~state.activeColor).any { it.isAttacking(dest) }
+    }
+
+    private boolean moveWouldResultInCheck(final Piece piece, final Square dest)
+    {
+        new ExploratoryChessboard(this).then(piece, dest).getKing(state.activeColor).isInCheck()
     }
 
     private void handleCastling(final Piece piece, final Square dest, final MoveType moveType) throws IllegalMoveException
