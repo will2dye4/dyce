@@ -22,4 +22,8 @@ interface Game
 
     PGN getPGN()
 
+    void finishGame(GameEndingType type)
+
+    boolean isFinished()
+
 }
