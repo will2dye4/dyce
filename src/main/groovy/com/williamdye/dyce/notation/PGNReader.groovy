@@ -2,6 +2,7 @@ package com.williamdye.dyce.notation
 
 import java.text.ParseException
 
+import com.williamdye.dyce.board.DefaultChessboard
 import com.williamdye.dyce.exception.AmbiguousMoveException
 import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.Game
@@ -21,7 +22,7 @@ class PGNReader
 
     PGNReader(final String filepath) {
         this.tokenizer = new PGNTokenizer(new File(filepath))
-        this.game = new GameImpl()
+        this.game = new GameImpl(DefaultChessboard.newInstance())
         this.depth = 0
     }
 
