@@ -11,16 +11,19 @@ import com.williamdye.dyce.exception.AmbiguousMoveException
 import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.CastlingAvailability
 import com.williamdye.dyce.game.Game
+import com.williamdye.dyce.game.GameEndingType
 import com.williamdye.dyce.game.GameState
 import com.williamdye.dyce.game.MoveImpl
 import com.williamdye.dyce.game.MoveType
 import com.williamdye.dyce.game.PartialMove
 import com.williamdye.dyce.pieces.King
+import com.williamdye.dyce.pieces.Pawn
 import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
 import com.williamdye.dyce.pieces.PieceFactory
 import com.williamdye.dyce.pieces.PieceFactoryImpl
 import com.williamdye.dyce.pieces.PieceType
+import com.williamdye.dyce.pieces.PromotedPawn
 import com.williamdye.dyce.util.ChessboardUtils
 
 /**
@@ -193,7 +196,7 @@ abstract class BaseChessboard implements Chessboard
         move(partial.movedPiece, partial.endSquare, partial.moveType)
     }
 
-    protected void move(final @Nonnull Piece piece, final @Nonnull Square dest, final MoveType moveType) throws IllegalMoveException
+    protected void move(@Nonnull Piece piece, final @Nonnull Square dest, MoveType moveType) throws IllegalMoveException
     {
         if (!piece.isLegalSquare(dest)) {
             throw new IllegalMoveException("Piece [$piece on $piece.square] is not allowed to move to square [$dest]")
@@ -214,6 +217,7 @@ abstract class BaseChessboard implements Chessboard
 
         handleCastling(piece, dest, moveType)
         handleEnPassant(piece, dest, moveType)
+        piece = handlePawnPromotion(piece, dest)
 
         Optional<Piece> capturedPiece = piece.move(dest)
         capturedPiece.ifPresent { capture(it) }
@@ -227,13 +231,22 @@ abstract class BaseChessboard implements Chessboard
         game.moveHistory.add(new MoveImpl(piece, capturedPiece.orElse(null), piece.lastSquare, dest, null, state.moveCount))
         state.incrementHalfMoveTotal()
 
-        if (getKing(~state.activeColor).isInCheck()) {
-            log.debug("${(~state.activeColor).name} king is in check")
+        final PieceColor opposingColor = ~state.activeColor
+        final King opposingKing = getKing(opposingColor)
+        if (opposingKing.isInCheck()) {
+            log.debug("{} king is in check", opposingColor.name)
+            Map<Piece, List<Square>> moves = getActivePieces(opposingColor).collectEntries { [it, it.legalSquares] }
+            if (!moves.any { it.value.any { sq -> !new ExploratoryChessboard(this).then(it.key, sq).getKing(opposingColor).isInCheck() } }) {
+                log.info("Checkmate for {}", state.activeColor.name)
+                moveType = MoveType.CHECKMATE
+                game.finishGame(GameEndingType.CHECKMATE)
+            }
+        } else if (!getActivePieces(opposingColor)*.legalSquares.flatten()) {
+            log.info("Stalemate - no moves for {}", opposingColor.name)
+            game.finishGame(GameEndingType.STALEMATE)
         }
 
-        if (moveType == MoveType.CHECKMATE) {
-            log.info("Checkmate for {}", state.activeColor)
-        } else {
+        if (moveType != MoveType.CHECKMATE) {
             state.toggleActiveColor()
         }
     }
@@ -304,6 +317,24 @@ abstract class BaseChessboard implements Chessboard
         }
 
         state.setEnPassantTargetSquare(newEnPassantTarget)
+    }
+
+    private Piece handlePawnPromotion(Piece piece, final Square dest)
+    {
+        final Rank promotingRank = piece.color == PieceColor.WHITE ? Rank.EIGHTH_RANK : Rank.FIRST_RANK
+        Piece newPiece = piece
+        if (dest.rank == promotingRank) {
+            if (piece instanceof Pawn) {
+                log.debug("Pawn must be promoted - assuming promotion to queen")
+                piece = new PromotedPawn(piece as Pawn, PieceType.QUEEN)
+            }
+            if (piece instanceof PromotedPawn) {
+                log.info("Promoting ${piece.color.name} pawn to ${piece.pieceType.toString()} on $dest")
+                newPiece = pieceFactory.newPiece(piece.color, piece.pieceType)
+                (piece as PromotedPawn).pawn.promote(newPiece)
+            }
+        }
+        newPiece
     }
 
     /** Capture the specified piece, updating the internal data structures appropriately. */

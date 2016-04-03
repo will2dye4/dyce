@@ -1,5 +1,6 @@
 package com.williamdye.dyce.pieces
 
+import com.williamdye.dyce.board.ExploratoryChessboard
 import com.williamdye.dyce.board.File
 import com.williamdye.dyce.board.Paths
 import com.williamdye.dyce.board.Rank
@@ -42,6 +43,9 @@ class King extends AbstractPiece
             (it.pieceType == PieceType.KING && Paths.getFileDistance(it.square, dest) < 2 && Paths.getRankDistance(it.square, dest) < 2) ||
             (it.pieceType != PieceType.KING && it.isAttacking(dest, true))
         }) {
+            return false
+        }
+        if (new ExploratoryChessboard(square.board).then(this, dest).getKing(color).isInCheck()) {
             return false
         }
         if (square.rank == dest.rank) {

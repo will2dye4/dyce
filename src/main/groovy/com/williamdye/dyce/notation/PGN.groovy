@@ -11,9 +11,11 @@ import com.williamdye.dyce.exception.AmbiguousMoveException
 import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.MoveType
 import com.williamdye.dyce.game.PartialMove
+import com.williamdye.dyce.pieces.Pawn
 import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
 import com.williamdye.dyce.pieces.PieceType
+import com.williamdye.dyce.pieces.PromotedPawn
 
 /**
  * The {@code PGN} class is capable of parsing moves in Portable Game Notation (PGN).
@@ -78,9 +80,9 @@ class PGN
             return parseCastlingMove(toMove, move)
         }
 
-        move = move.replaceAll("[+#]", "").replaceAll("=[BNQR]", "")
-        if (move.length() < 2 || move.length() > 5) {
-            throw new IllegalMoveException("Expected move fragment [$move] to look like [Bc3] or [N2d4] or [Rgd6] or [Qc8f5]")
+        String trimmedMove = move.replaceAll("[+#]", "").replaceAll("=[BNQR]", "")
+        if (trimmedMove.length() < 2 || trimmedMove.length() > 5) {
+            throw new IllegalMoveException("Expected move fragment [$trimmedMove] to look like [Bc3] or [N2d4] or [Rgd6] or [Qc8f5]")
         }
 
         Square dest = null
@@ -91,7 +93,7 @@ class PGN
             dest = chessboard.getSquareByName(move.substring(0, 2))
         }
 
-        Character.isLowerCase(move.charAt(0)) ? parsePawnMove(toMove, move, dest) : parsePieceMove(toMove, move, dest)
+        Character.isLowerCase(move.charAt(0)) ? parsePawnMove(toMove, move, dest) : parsePieceMove(toMove, trimmedMove, dest)
     }
 
     /** Helper to parse a PGN string as a castling move. */
@@ -113,11 +115,23 @@ class PGN
         if (!(fileString ==~ /[a-h]/)) {
             throw new IllegalMoveException("Expected pawn move [$move] to begin with a file name (a-h)")
         }
-        final Piece pawn = chessboard.getActivePieces(toMove, PieceType.PAWN).find { piece ->
+        Piece pawn = chessboard.getActivePieces(toMove, PieceType.PAWN).find { piece ->
             piece.square.file == File.forName(fileString) && (piece.isLegalSquare(dest) || piece.isAttacking(dest))
         }
         if (!pawn) {
             throw new IllegalMoveException("Could not find a pawn to move for [$move]")
+        }
+
+        if (dest.rank == (pawn.color == PieceColor.WHITE ? Rank.EIGHTH_RANK : Rank.FIRST_RANK)) {
+            PieceType promotedPieceType
+            if (move ==~ /.+=[BNQR].*/) {
+                promotedPieceType = PieceType.forSymbol(move.charAt(move.indexOf('=') + 1))
+                log.debug("Pawn is being promoted to ${promotedPieceType.toString()}")
+            } else {
+                promotedPieceType = PieceType.QUEEN
+                log.debug("Pawn is being automatically promoted to queen")
+            }
+            pawn = new PromotedPawn(pawn as Pawn, promotedPieceType)
         }
 
         final MoveType type = (dest == chessboard.game.state.enPassantTargetSquare) ? MoveType.EN_PASSANT : MoveType.NORMAL
