@@ -1,7 +1,6 @@
 package com.williamdye.dyce.board
 
 import com.williamdye.dyce.pieces.Piece
-import com.williamdye.dyce.pieces.PieceType
 
 class ExploratoryChessboard extends BaseChessboard
 {
@@ -9,6 +8,7 @@ class ExploratoryChessboard extends BaseChessboard
     ExploratoryChessboard(Chessboard source)
     {
         super()
+        this.game = source.game
         source.board.eachWithIndex { square, i ->
             if (!square.isEmpty()) {
                 Piece piece = pieceFactory.newPiece(square.piece.get().color, square.piece.get().pieceType)

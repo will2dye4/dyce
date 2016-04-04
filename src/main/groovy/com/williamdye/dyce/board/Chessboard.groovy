@@ -3,8 +3,6 @@ package com.williamdye.dyce.board
 import com.williamdye.dyce.exception.AmbiguousMoveException
 import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.Game
-import com.williamdye.dyce.game.GameState
-import com.williamdye.dyce.notation.FEN
 import com.williamdye.dyce.pieces.King
 import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor

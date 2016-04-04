@@ -319,7 +319,7 @@ abstract class BaseChessboard implements Chessboard
         state.setEnPassantTargetSquare(newEnPassantTarget)
     }
 
-    private Piece handlePawnPromotion(Piece piece, final Square dest)
+    private Piece handlePawnPromotion(Piece piece, final Square dest) throws IllegalMoveException
     {
         final Rank promotingRank = piece.color == PieceColor.WHITE ? Rank.EIGHTH_RANK : Rank.FIRST_RANK
         Piece newPiece = piece
@@ -329,6 +329,9 @@ abstract class BaseChessboard implements Chessboard
                 piece = new PromotedPawn(piece as Pawn, PieceType.QUEEN)
             }
             if (piece instanceof PromotedPawn) {
+                if (piece.pieceType in [PieceType.PAWN, PieceType.KING]) {
+                    throw new IllegalMoveException("Pawn may not be promoted to ${piece.pieceType.toString()}")
+                }
                 log.info("Promoting ${piece.color.name} pawn to ${piece.pieceType.toString()} on $dest")
                 newPiece = pieceFactory.newPiece(piece.color, piece.pieceType)
                 (piece as PromotedPawn).pawn.promote(newPiece)
