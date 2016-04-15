@@ -12,6 +12,7 @@ import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.Game
 import com.williamdye.dyce.game.GameState
 import com.williamdye.dyce.notation.PGNReader
+import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
 import com.williamdye.dyce.pieces.PieceType
 
@@ -26,7 +27,7 @@ final class Dyce
     private static final String USAGE = "Usage:\njava Dyce [-aev]\njava Dyce -p|--pgn input_file"
 
     /** Version message */
-    private static final String VERSION_INFO = "dyce version 0.2, built November 2015"
+    private static final String VERSION_INFO = "dyce version 0.2, built March 2016"
 
     /**
      * Entry point for the dyce application.
@@ -65,10 +66,10 @@ final class Dyce
         } else {
             switch (args[0]) {
                 case ["-a", "--adventure"]:
-                    adventure(new BuildableChessboardImpl())
+                    adventure(BuildableChessboardImpl.newInstance())
                     break
                 case ["-e", "--explore"]:
-                    explore(new DefaultChessboard())
+                    explore(DefaultChessboard.newInstance())
                     break
                 case ["-p", "--pgn"]:
                     pgn(args[1])
@@ -139,9 +140,11 @@ final class Dyce
                             try {
                                 board.move(parts[1])
                             } catch (AmbiguousMoveException ame) {
-                                println("Ambiguous move!")
+                                log.warn("Caught AmbiguousMoveException in adventure mode", ame)
+                                println("Ambiguous move: $ame.localizedMessage")
                             } catch (IllegalMoveException ime) {
-                                println("Illegal move!")
+                                log.warn("Caught IllegalMoveException in adventure mode", ime)
+                                println("Illegal move: $ime.localizedMessage")
                             }
                         }
                         break
@@ -151,6 +154,22 @@ final class Dyce
                         } else {
                             board.removePiece(parts[1])
                         }
+                        break
+                    case [":l", "list"]:
+                        if (parts.size() != 2) {
+                            println("You must specify the square which has the piece to list legal moves for!")
+                        } else {
+                            Optional<Piece> piece = board.getSquareByName(parts[1]).piece
+                            if (piece.isPresent()) {
+                                println("Legal squares for [${piece.get()} on ${parts[1]}]: [${piece.get().legalSquares.join(", ")}]")
+                            } else {
+                                println("There is no piece on ${parts[1]}!")
+                            }
+                        }
+                        break
+                    case [":t", "toggle"]:
+                        board.game.state.toggleActiveColor()
+                        println("Active color is now ${board.game.state.activeColor.name}")
                         break
                     default:
                         println("Invalid command!")
@@ -176,7 +195,7 @@ final class Dyce
                 | To quit, enter "${TO_QUIT[0]}" or "${TO_QUIT[1]}".                                  |
                 *==================================================================*""".stripIndent()
 
-        final GameState state = board.gameState
+        final GameState state = board.game.state
         final Scanner scan = new Scanner(System.in)
 
         println(INTRO_TEXT)
@@ -186,22 +205,32 @@ final class Dyce
         while (!TO_QUIT.contains(move)) {
             if (move) {
                 try {
+                    String nextMove = "$state.moveCount${state.activeColor == PieceColor.WHITE ? ". " : "..."}"
                     board.move(move)
+                    lastMove = nextMove + move
                 } catch (AmbiguousMoveException ame) {
-                    /* TODO - do more than this */
-                    println("Ambiguous move!")
+                    log.warn("Caught AmbiguousMoveException in explore mode", ame)
+                    println("Ambiguous move: $ame.localizedMessage")
                 } catch (IllegalMoveException ime) {
-                    /* TODO - do more than this */
-                    println("Illegal move!")
+                    log.warn("Caught IllegalMoveException in explore mode", ime)
+                    println("Illegal move: $ime.localizedMessage")
                 }
             }
             println("\n${board.prettyPrint()}")
+            if (board.game.isFinished()) {
+                break
+            }
             if (lastMove) {
                 println("Last move: $lastMove")
             }
-            print("Enter ${state.activeColor == PieceColor.WHITE ? "white" : "black"}'s move: ")
+            if (board.getKing(state.activeColor).isInCheck()) {
+                println("(Check)")
+            }
+            print("Enter ${state.activeColor.name}'s move: ")
             move = scan.next()
-            lastMove = "$state.moveCount${state.activeColor == PieceColor.WHITE ? ". " : "..."}$move"
+        }
+        if (board.game.isFinished()) {
+            println("Game over: ${board.game.ending.toString()}")
         }
     }
 

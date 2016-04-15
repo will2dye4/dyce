@@ -98,6 +98,13 @@ interface Piece extends Comparable<Piece>
     boolean isAttacking(Square dest, boolean ignorePins)
 
     /**
+     * Get a list of squares that the piece may legally move to.
+     *
+     * @return List of legal squares for the piece
+     */
+    List<Square> getLegalSquares()
+
+    /**
      * Capture the piece.
      */
     void capture()

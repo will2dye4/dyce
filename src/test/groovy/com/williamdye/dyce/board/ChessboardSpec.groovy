@@ -13,13 +13,13 @@ class ChessboardSpec extends Specification
 
     public static final int PIECES_PER_SIDE = 16
 
-    def board = new DefaultChessboard()
+    def board = DefaultChessboard.newInstance()
 
     def "new board has properly initialized fields"()
     {
         expect:
-        board.FEN != null
-        board.gameState != null
+        board.game.FEN != null
+        board.game.state != null
         board.board != null
     }
 

@@ -120,4 +120,9 @@ interface GameState
      */
     void setHalfMoveTotal(int total)
 
+    /**
+     * Reset the game state to initial values.
+     */
+    void reset()
+
 }

@@ -126,6 +126,7 @@ class FEN
         final String[] ranks = new String[NUM_RANKS]
         final StringBuilder builder = new StringBuilder()
         int consecutiveEmpties = 0
+        int j = 0
         board.board.eachWithIndex { square, i ->
             if (square.isEmpty()) {
                 consecutiveEmpties++
@@ -141,7 +142,7 @@ class FEN
                     builder.append(String.valueOf(consecutiveEmpties))
                     consecutiveEmpties = 0
                 }
-                ranks[i] = builder.toString()
+                ranks[j++] = builder.toString()
                 builder.setLength(0)
             }
         }

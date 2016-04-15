@@ -14,6 +14,8 @@ import static com.williamdye.dyce.board.Paths.getRankDistance
 class Pawn extends AbstractPiece
 {
 
+    private boolean promoted
+
     /**
      * Construct a {@code Pawn} of the specified color.
      *
@@ -22,6 +24,7 @@ class Pawn extends AbstractPiece
     Pawn(PieceColor color)
     {
         super(color)
+        this.promoted = false
     }
 
     @Override
@@ -35,13 +38,13 @@ class Pawn extends AbstractPiece
     {
         int rankDistance = getRankDistance(square, dest)
         int fileDistance = getFileDistance(square, dest)
-        if (!super.isLegalSquare(dest, ignorePins) || !isAdvancingSquare(dest) || rankDistance > 2 || rankDistance < 1 || fileDistance > 1) {
+        if (promoted || !super.isLegalSquare(dest, ignorePins) || !isAdvancingSquare(dest) || rankDistance > 2 || rankDistance < 1 || fileDistance > 1) {
             return false
         }
         if (fileDistance == 1 && rankDistance == 1) {
-            return (dest == square.board.gameState.enPassantTargetSquare || (!dest.isEmpty() && (dest.piece.get().color == PieceColor.oppositeOf(color))))
+            return (dest == square.board.game.state.enPassantTargetSquare || (!dest.isEmpty() && (dest.piece.get().color == ~color)))
         }
-        fileDistance == 0 && (rankDistance == 1 || square.rank == Rank.getStartingPawnRank(color))
+        fileDistance == 0 && dest.isEmpty() && (rankDistance == 1 || square.rank == Rank.getStartingPawnRank(color))
     }
 
     @Override
@@ -59,6 +62,18 @@ class Pawn extends AbstractPiece
          * the two situations? decisions, decisions ...
          */
         (!captured) && (ignorePins || !pinned) && isAdvancingSquare(dest) && (getFileDistance(square, dest) == 1) && (getRankDistance(square, dest) == 1)
+    }
+
+    void promote(Piece newPiece)
+    {
+        square.board.getActivePieces(color) << newPiece
+        square.board.getActivePieces(color, newPiece.pieceType) << newPiece
+        square.board.getActivePieces(color).remove(this)
+        square.board.getActivePieces(color, pieceType).remove(this)
+
+        square.setPiece(newPiece)
+        square = null
+        promoted = true
     }
 
     /** Helper to check if the specified square is advancing for this pawn. */

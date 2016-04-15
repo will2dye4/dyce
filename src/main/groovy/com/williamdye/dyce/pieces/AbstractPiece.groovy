@@ -84,7 +84,7 @@ abstract class AbstractPiece implements Piece
             return false   /* king can never be pinned */
         }
         final Square king = square.board.getKing(color).square
-        final List<Piece> otherPieces = square.board.getActivePieces(PieceColor.oppositeOf(color))
+        final List<Piece> otherPieces = square.board.getActivePieces(~color)
 
         (square.rank == king.rank && isPathClear(square, king) && otherPieces.any {
             [PieceType.QUEEN, PieceType.ROOK].contains(it.pieceType) && it.square.rank == king.rank && it.isAttacking(square)
@@ -102,7 +102,7 @@ abstract class AbstractPiece implements Piece
         }
         Piece pinningPiece = null
         final Square king = square.board.getKing(color).square
-        final List<Piece> otherPieces = square.board.getActivePieces(PieceColor.oppositeOf(color))
+        final List<Piece> otherPieces = square.board.getActivePieces(~color)
         if (square.rank == king.rank && isPathClear(square, king)) {
             pinningPiece = otherPieces.find {
                 [PieceType.QUEEN, PieceType.ROOK].contains(it.pieceType) && it.square.rank == king.rank && it.isAttacking(square)
@@ -142,6 +142,12 @@ abstract class AbstractPiece implements Piece
     boolean isAttacking(final Square dest, final boolean ignorePins)
     {
         isLegalSquare(dest, ignorePins)
+    }
+
+    @Override
+    List<Square> getLegalSquares()
+    {
+        captured ? [] : square.board.board.findAll { isLegalSquare(it) }
     }
 
     @Override

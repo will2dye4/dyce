@@ -2,10 +2,10 @@ package com.williamdye.dyce.notation
 
 import java.text.ParseException
 
+import com.williamdye.dyce.board.DefaultChessboard
 import com.williamdye.dyce.exception.AmbiguousMoveException
 import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.Game
-import com.williamdye.dyce.game.GameImpl
 
 import static com.williamdye.dyce.notation.PGNTokenizer.TokenType
 
@@ -21,14 +21,14 @@ class PGNReader
 
     PGNReader(final String filepath) {
         this.tokenizer = new PGNTokenizer(new File(filepath))
-        this.game = new GameImpl()
+        this.game = DefaultChessboard.newInstance().game
         this.depth = 0
     }
 
     Game read() throws AmbiguousMoveException, IllegalMoveException, ParseException {
         pgn_game()
-        game.getMoveHistory().rewind()
-        // TODO - reset game state
+        game.moveHistory.rewind()
+        game.state.reset()
         game
     }
 

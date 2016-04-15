@@ -34,7 +34,7 @@ class GameStateImpl implements GameState
      */
     GameStateImpl()
     {
-        this(PieceColor.WHITE, null, new CastlingAvailability(), 1, 0)
+        reset()
     }
 
     /**
@@ -68,7 +68,7 @@ class GameStateImpl implements GameState
         if (toMove == PieceColor.BLACK) {
             moveCount += 1
         }
-        toMove = PieceColor.oppositeOf(toMove)
+        toMove = ~toMove
     }
 
     @Override
@@ -159,6 +159,17 @@ class GameStateImpl implements GameState
     String getCastlingString()
     {
         castling.toString()
+    }
+
+    @Override
+    void reset()
+    {
+        toMove = PieceColor.WHITE
+        enPassantTarget = null
+        castling = new CastlingAvailability()
+        moveCount = 1
+        halfMoveClock = 0
+        halfMoveTotal = 0
     }
 
     @Override

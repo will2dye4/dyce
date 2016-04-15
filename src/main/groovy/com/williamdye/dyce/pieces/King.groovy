@@ -1,5 +1,6 @@
 package com.williamdye.dyce.pieces
 
+import com.williamdye.dyce.board.ExploratoryChessboard
 import com.williamdye.dyce.board.File
 import com.williamdye.dyce.board.Paths
 import com.williamdye.dyce.board.Rank
@@ -38,16 +39,19 @@ class King extends AbstractPiece
         if (!super.isLegalSquare(dest, true)) {   /* ignore pins when checking legality (king can't be pinned) */
             return false
         }
-        if (square.board.getActivePieces(PieceColor.oppositeOf(color)).any {
+        if (square.board.getActivePieces(~color).any {
             (it.pieceType == PieceType.KING && Paths.getFileDistance(it.square, dest) < 2 && Paths.getRankDistance(it.square, dest) < 2) ||
             (it.pieceType != PieceType.KING && it.isAttacking(dest, true))
         }) {
             return false
         }
+        if (new ExploratoryChessboard(square.board).then(this, dest).getKing(color).isInCheck()) {
+            return false
+        }
         if (square.rank == dest.rank) {
             /* handle castling */
             if (square.rank == Rank.getStartingRank(color) && Paths.getFileDistance(square, dest) == 2) {
-                final CastlingAvailability castling = square.board.gameState.castlingAvailability
+                final CastlingAvailability castling = square.board.game.state.castlingAvailability
                 if (dest.file == File.G_FILE) {
                     return (color == PieceColor.WHITE ?
                             castling.isStatus(WHITE_CAN_CASTLE_KINGSIDE) : castling.isStatus(BLACK_CAN_CASTLE_KINGSIDE))
@@ -62,6 +66,11 @@ class King extends AbstractPiece
             return (Paths.getRankDistance(square, dest) == 1)
         }
         (Paths.getRankDistance(square, dest) == 1) && (Paths.getFileDistance(square, dest) == 1)
+    }
+
+    boolean isInCheck()
+    {
+        square.board.getActivePieces(~color).any { it.isAttacking(square, true) }
     }
 
 }
