@@ -88,4 +88,16 @@ class PartialMove implements Move
         0
     }
 
+    @Override
+    boolean isPawnPromotion()
+    {
+        false
+    }
+
+    @Override
+    GameState getState()
+    {
+        null
+    }
+
 }

@@ -240,8 +240,9 @@ final class Dyce
         log.debug("Attempting to parse game from input file: $filepath")
         println("Loading game from '$filepath' ...")
         final long start = System.currentTimeMillis()
+        final Game game
         try {
-            final Game game = new PGNReader(filepath).read()
+            game = new PGNReader(filepath).read()
             log.debug("Successfully imported game from file in ${System.currentTimeMillis() - start} ms")
             log.debug("Tag pairs were:")
             game.PGN.tagPairs.each { k, v -> log.debug("\t$k => $v") }
@@ -249,6 +250,40 @@ final class Dyce
         } catch (AmbiguousMoveException | IllegalMoveException | ParseException e) {
             log.warn("Failed to read file '$filepath'!", e)
             println("An error occurred while reading the file: $e.localizedMessage")
+            return
+        }
+
+        final List<String> TO_QUIT = ["quit", ":q"]
+
+        final Scanner scan = new Scanner(System.in)
+        scan.useDelimiter("\n")
+
+        String command = ""
+        while (!TO_QUIT.contains(command)) {
+            if (command) {
+                List<String> parts = command.split(" ").toList()
+                switch (parts.first()) {
+                    case ["b", ":b", "back"]:
+                        int count = parts.size() == 1 ? 1 : parts[1].toInteger()
+                        game.moveHistory.back(count)
+                        break
+                    case ["f", ":f", "forward"]:
+                        int count = parts.size() == 1 ? 1 : parts[1].toInteger()
+                        game.moveHistory.forward(count)
+                        break
+                    case [":ff", "fast-forward"]:
+                        game.moveHistory.fastForward()
+                        break
+                    case [":fb", ":r", "rewind"]:
+                        game.moveHistory.rewind()
+                        break
+                    default:
+                        println("Invalid command!")
+                }
+            }
+            println("\n${game.chessboard.prettyPrint()}")
+            print("> ")
+            command = scan.next()
         }
     }
 

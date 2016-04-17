@@ -125,4 +125,11 @@ interface GameState
      */
     void reset()
 
+    /**
+     * Overrides {@link Object#clone} to return {@code GameState}.
+     *
+     * @return A cloned {@code GameState} instance
+     */
+    GameState clone()
+
 }

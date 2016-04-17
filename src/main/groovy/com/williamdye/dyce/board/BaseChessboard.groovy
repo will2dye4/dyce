@@ -71,6 +71,9 @@ abstract class BaseChessboard implements Chessboard
     /** A list of all captured white pieces. */
     protected final List<Piece> capturedWhitePieces
 
+    /** A list of all promoted white pawns. */
+    protected final List<Pawn> promotedWhitePawns
+
     /** A map relating piece types to lists of active black pieces. */
     protected final Map<PieceType, List<Piece>> blackPieces
 
@@ -79,6 +82,9 @@ abstract class BaseChessboard implements Chessboard
 
     /** A list of all captured black pieces. */
     protected final List<Piece> capturedBlackPieces
+
+    /** A list of all promoted black pawns. */
+    protected final List<Pawn> promotedBlackPawns
 
     /** A piece factory (for creating the board's pieces). */
     protected final PieceFactory pieceFactory
@@ -91,9 +97,11 @@ abstract class BaseChessboard implements Chessboard
         this.whitePieces = new LinkedHashMap<>().withDefault { k -> new LinkedList<>() }
         this.activeWhitePieces = new LinkedList<>()
         this.capturedWhitePieces = new LinkedList<>()
+        this.promotedWhitePawns = new LinkedList<>()
         this.blackPieces = new LinkedHashMap<>().withDefault { k -> new LinkedList<>() }
         this.activeBlackPieces = new LinkedList<>()
         this.capturedBlackPieces = new LinkedList<>()
+        this.promotedBlackPawns = new LinkedList<>()
         this.pieceFactory = new PieceFactoryImpl()
         createSquares()
     }
@@ -159,6 +167,12 @@ abstract class BaseChessboard implements Chessboard
     }
 
     @Override
+    public List<Pawn> getPromotedPawns(final @Nonnull PieceColor color)
+    {
+        (color == PieceColor.WHITE) ? promotedWhitePawns : promotedBlackPawns
+    }
+
+    @Override
     public King getKing(final @Nonnull PieceColor color)
     {
         final Map<PieceType, List<Piece>> map = (color == PieceColor.WHITE ? whitePieces : blackPieces)
@@ -193,10 +207,21 @@ abstract class BaseChessboard implements Chessboard
     {
         PartialMove partial = game.PGN.parseMove(state.activeColor, pgnString)
         log.info("${state.activeColor.name} played $pgnString")
-        move(partial.movedPiece, partial.endSquare, partial.moveType)
+        move(partial.movedPiece, partial.endSquare, partial.moveType, pgnString)
     }
 
     protected void move(@Nonnull Piece piece, final @Nonnull Square dest, MoveType moveType) throws IllegalMoveException
+    {
+        move(piece, dest, moveType, null)
+    }
+
+    protected void move(@Nonnull Piece piece, final @Nonnull Square dest, MoveType moveType, final String pgn) throws IllegalMoveException
+    {
+        move(piece, dest, moveType, pgn, true)
+    }
+
+    @Override
+    public void move(@Nonnull Piece piece, final @Nonnull Square dest, MoveType moveType, final String pgn, final boolean updateHistory) throws IllegalMoveException
     {
         if (!piece.isLegalSquare(dest)) {
             throw new IllegalMoveException("Piece [$piece on $piece.square] is not allowed to move to square [$dest]")
@@ -217,19 +242,17 @@ abstract class BaseChessboard implements Chessboard
 
         handleCastling(piece, dest, moveType)
         handleEnPassant(piece, dest, moveType)
-        piece = handlePawnPromotion(piece, dest)
+        Piece newPiece = handlePawnPromotion(piece, dest)
+        boolean isPawnPromotion = newPiece != piece
 
-        Optional<Piece> capturedPiece = piece.move(dest)
+        Optional<Piece> capturedPiece = newPiece.move(dest)
         capturedPiece.ifPresent { capture(it) }
 
-        if (capturedPiece.present || piece.pieceType == PieceType.PAWN) {
+        if (capturedPiece.present || newPiece.pieceType == PieceType.PAWN) {
             state.resetHalfMoveClock()
         } else {
             state.incrementHalfMoveClock()
         }
-
-        game.moveHistory.add(new MoveImpl(piece, capturedPiece.orElse(null), piece.lastSquare, dest, null, state.moveCount))
-        state.incrementHalfMoveTotal()
 
         final PieceColor opposingColor = ~state.activeColor
         final King opposingKing = getKing(opposingColor)
@@ -246,8 +269,14 @@ abstract class BaseChessboard implements Chessboard
             game.finishGame(GameEndingType.STALEMATE)
         }
 
-        if (moveType != MoveType.CHECKMATE) {
-            state.toggleActiveColor()
+        state.toggleActiveColor()
+        if (updateHistory) {
+            game.moveHistory.add(new MoveImpl(newPiece, capturedPiece.orElse(null), newPiece.lastSquare, dest, moveType, isPawnPromotion, pgn, state.moveCount))
+        }
+
+        state.incrementHalfMoveTotal()
+        if (state.activeColor == PieceColor.WHITE && state.halfMoveTotal > 0) {
+            state.incrementMoveCount()
         }
     }
 
@@ -335,6 +364,7 @@ abstract class BaseChessboard implements Chessboard
                 log.info("Promoting ${piece.color.name} pawn to ${piece.pieceType.toString()} on $dest")
                 newPiece = pieceFactory.newPiece(piece.color, piece.pieceType)
                 (piece as PromotedPawn).pawn.promote(newPiece)
+                getPromotedPawns(piece.color) << (piece as PromotedPawn).pawn
             }
         }
         newPiece

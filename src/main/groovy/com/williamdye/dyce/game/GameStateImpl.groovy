@@ -65,9 +65,6 @@ class GameStateImpl implements GameState
     @Override
     void toggleActiveColor()
     {
-        if (toMove == PieceColor.BLACK) {
-            moveCount += 1
-        }
         toMove = ~toMove
     }
 
@@ -176,6 +173,14 @@ class GameStateImpl implements GameState
     String toString()
     {
         "${toMove.toString()} ${castling.toString()} ${enPassantTarget?.toString() ?: "-"} $halfMoveClock $moveCount"
+    }
+
+    @Override
+    GameState clone()
+    {
+        final GameState clone = new GameStateImpl(activeColor, enPassantTarget, castling, moveCount, halfMoveClock)
+        clone.halfMoveTotal = halfMoveTotal
+        clone
     }
 
 }

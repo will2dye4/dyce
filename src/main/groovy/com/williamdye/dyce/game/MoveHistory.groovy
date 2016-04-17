@@ -93,4 +93,26 @@ interface MoveHistory
      */
     void clear()
 
+    /**
+     * Move back one move in the history.
+     */
+    void back()
+
+    /**
+     * Move back {@code n} moves in the history.
+     * @param n Number of moves to go back
+     */
+    void back(int n)
+
+    /**
+     * Move forward one move in the history.
+     */
+    void forward()
+
+    /**
+     * Move forward {@code n} moves in the history.
+     * @param n Number of moves to go forward
+     */
+    void forward(int n)
+
 }

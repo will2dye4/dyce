@@ -3,7 +3,9 @@ package com.williamdye.dyce.board
 import com.williamdye.dyce.exception.AmbiguousMoveException
 import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.Game
+import com.williamdye.dyce.game.MoveType
 import com.williamdye.dyce.pieces.King
+import com.williamdye.dyce.pieces.Pawn
 import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
 import com.williamdye.dyce.pieces.PieceType
@@ -70,6 +72,14 @@ interface Chessboard
     List<Piece> getCapturedPieces(PieceColor color)
 
     /**
+     * Accessor for a chessboard's promoted pawns of a certain color.
+     *
+     * @param color The target color for the returned pieces
+     * @return A list of the promoted pawns of the specified color
+     */
+    List<Pawn> getPromotedPawns(PieceColor color)
+
+    /**
      * Accessor for a chessboard's king of a certain color.
      *
      * @param color the color of the king to return
@@ -104,6 +114,18 @@ interface Chessboard
      * @throws IllegalMoveException if the piece may not legally move to {@code dest}
      */
     void move(Piece piece, Square dest) throws IllegalMoveException
+
+    /**
+     * Moves a certain piece to a certain square, provided that the square is legal for the piece.
+     *
+     * @param piece The piece to move
+     * @param dest The square to which the piece should move
+     * @param moveType The type of move (normal, castling, etc.)
+     * @param pgnString PGN string corresponding to the move
+     * @param updateHistory If {@code true}, the move will automatically be added to the game's move history
+     * @throws IllegalMoveException if the piece may not legally move to {@code dest}
+     */
+    void move(Piece piece, Square dest, MoveType moveType, String pgnString, boolean updateHistory) throws IllegalMoveException
 
     /**
      * Makes a move corresponding to a Portable Game Notation (PGN) string, provided that the move is legal

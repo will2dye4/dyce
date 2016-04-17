@@ -110,6 +110,16 @@ interface Piece extends Comparable<Piece>
     void capture()
 
     /**
+     * Remove the piece from the board without capturing it.
+     */
+    void remove()
+
+    /**
+     * Uncapture the piece.
+     */
+    void uncapture()
+
+    /**
      * Move the piece to the specified square, returning the piece that was captured as a result of the move (if any).
      *
      * @param dest The square to which to move the piece

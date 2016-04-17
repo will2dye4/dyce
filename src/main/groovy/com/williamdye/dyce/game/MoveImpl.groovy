@@ -33,8 +33,14 @@ class MoveImpl implements Move
     /** A string representing the move in PGN. */
     protected final String pgnString
 
+    /** Whether the move was a pawn promotion. */
+    protected final boolean isPawnPromotion
+
     /** The move's number in the game. */
     protected final int moveNumber
+
+    /** A snapshot of the game's state at the time of the move. */
+    protected final GameState state
 
     /**
      * Construct a {@code MoveImpl} with the specified values and defaulting to {@code MoveType.NORMAL}.
@@ -63,7 +69,7 @@ class MoveImpl implements Move
      * @param number The move's number
      */
     MoveImpl(final @Nonnull Piece moved, final Piece captured, final @Nonnull Square start, final @Nonnull Square end,
-             final @Nonnull MoveType type, String pgn, int number)
+             final @Nonnull MoveType type, final boolean isPawnPromotion, String pgn, int number)
     {
         Preconditions.checkArgument(number >= 1, "Invalid move number")
         Preconditions.checkArgument(start.board == end.board, "Incompatible squares")
@@ -75,6 +81,8 @@ class MoveImpl implements Move
         this.pgnString = pgn
         this.moveNumber = number
         this.moveType = type
+        this.isPawnPromotion = isPawnPromotion
+        this.state = start.board.game.state.clone()
     }
 
     @Override
@@ -117,6 +125,18 @@ class MoveImpl implements Move
     int getMoveNumber()
     {
         moveNumber
+    }
+
+    @Override
+    boolean isPawnPromotion()
+    {
+        isPawnPromotion
+    }
+
+    @Override
+    GameState getState()
+    {
+        state
     }
 
     @Override

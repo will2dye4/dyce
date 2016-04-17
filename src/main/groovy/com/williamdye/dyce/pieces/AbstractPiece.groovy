@@ -154,8 +154,25 @@ abstract class AbstractPiece implements Piece
     void capture()
     {
         captured = true
+        remove()
+    }
+
+    @Override
+    void remove()
+    {
         lastSquare = square
         square = null
+    }
+
+    @Override
+    void uncapture()
+    {
+        captured = false
+        square = lastSquare
+        square.piece = this
+        square.board.getCapturedPieces(color).remove(this)
+        square.board.getActivePieces(color) << this
+        square.board.getActivePieces(color, pieceType) << this
     }
 
     @Override

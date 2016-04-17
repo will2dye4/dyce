@@ -74,6 +74,7 @@ class Pawn extends AbstractPiece
         square.setPiece(newPiece)
         square = null
         promoted = true
+        captured = false
     }
 
     /** Helper to check if the specified square is advancing for this pawn. */

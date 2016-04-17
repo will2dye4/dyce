@@ -60,4 +60,18 @@ interface Move
      */
     int getMoveNumber()
 
+    /**
+     * Whether or not the move is a pawn promotion.
+     *
+     * @return {@code true} if the move is a pawn promotion, {@code false} otherwise
+     */
+    boolean isPawnPromotion()
+
+    /**
+     * Accessor for the state of the game after the move has been made.
+     *
+     * @return A {@code GameState} instance representing the state associated with the move
+     */
+    GameState getState()
+
 }
