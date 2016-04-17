@@ -5,4 +5,5 @@ log/
 out/
 
 *.iml
+*.iml.orig
 *.class
