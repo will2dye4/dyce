@@ -5,7 +5,6 @@ import com.williamdye.dyce.exception.IllegalMoveException
 import com.williamdye.dyce.game.Game
 import com.williamdye.dyce.game.MoveType
 import com.williamdye.dyce.pieces.King
-import com.williamdye.dyce.pieces.Pawn
 import com.williamdye.dyce.pieces.Piece
 import com.williamdye.dyce.pieces.PieceColor
 import com.williamdye.dyce.pieces.PieceType
@@ -70,14 +69,6 @@ interface Chessboard
      * @return A list of the captured pieces of the specified color
      */
     List<Piece> getCapturedPieces(PieceColor color)
-
-    /**
-     * Accessor for a chessboard's promoted pawns of a certain color.
-     *
-     * @param color The target color for the returned pieces
-     * @return A list of the promoted pawns of the specified color
-     */
-    List<Pawn> getPromotedPawns(PieceColor color)
 
     /**
      * Accessor for a chessboard's king of a certain color.

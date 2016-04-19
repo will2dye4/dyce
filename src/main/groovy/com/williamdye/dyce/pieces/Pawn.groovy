@@ -64,19 +64,6 @@ class Pawn extends AbstractPiece
         (!captured) && (ignorePins || !pinned) && isAdvancingSquare(dest) && (getFileDistance(square, dest) == 1) && (getRankDistance(square, dest) == 1)
     }
 
-    void promote(Piece newPiece)
-    {
-        square.board.getActivePieces(color) << newPiece
-        square.board.getActivePieces(color, newPiece.pieceType) << newPiece
-        square.board.getActivePieces(color).remove(this)
-        square.board.getActivePieces(color, pieceType).remove(this)
-
-        square.setPiece(newPiece)
-        square = null
-        promoted = true
-        captured = false
-    }
-
     /** Helper to check if the specified square is advancing for this pawn. */
     private boolean isAdvancingSquare(final Square dest)
     {

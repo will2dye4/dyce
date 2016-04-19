@@ -71,9 +71,6 @@ abstract class BaseChessboard implements Chessboard
     /** A list of all captured white pieces. */
     protected final List<Piece> capturedWhitePieces
 
-    /** A list of all promoted white pawns. */
-    protected final List<Pawn> promotedWhitePawns
-
     /** A map relating piece types to lists of active black pieces. */
     protected final Map<PieceType, List<Piece>> blackPieces
 
@@ -82,9 +79,6 @@ abstract class BaseChessboard implements Chessboard
 
     /** A list of all captured black pieces. */
     protected final List<Piece> capturedBlackPieces
-
-    /** A list of all promoted black pawns. */
-    protected final List<Pawn> promotedBlackPawns
 
     /** A piece factory (for creating the board's pieces). */
     protected final PieceFactory pieceFactory
@@ -97,11 +91,9 @@ abstract class BaseChessboard implements Chessboard
         this.whitePieces = new LinkedHashMap<>().withDefault { k -> new LinkedList<>() }
         this.activeWhitePieces = new LinkedList<>()
         this.capturedWhitePieces = new LinkedList<>()
-        this.promotedWhitePawns = new LinkedList<>()
         this.blackPieces = new LinkedHashMap<>().withDefault { k -> new LinkedList<>() }
         this.activeBlackPieces = new LinkedList<>()
         this.capturedBlackPieces = new LinkedList<>()
-        this.promotedBlackPawns = new LinkedList<>()
         this.pieceFactory = new PieceFactoryImpl()
         createSquares()
     }
@@ -164,12 +156,6 @@ abstract class BaseChessboard implements Chessboard
     public List<Piece> getCapturedPieces(final @Nonnull PieceColor color)
     {
         (color == PieceColor.WHITE) ? capturedWhitePieces : capturedBlackPieces
-    }
-
-    @Override
-    public List<Pawn> getPromotedPawns(final @Nonnull PieceColor color)
-    {
-        (color == PieceColor.WHITE) ? promotedWhitePawns : promotedBlackPawns
     }
 
     @Override
@@ -243,7 +229,6 @@ abstract class BaseChessboard implements Chessboard
         handleCastling(piece, dest, moveType)
         handleEnPassant(piece, dest, moveType)
         Piece newPiece = handlePawnPromotion(piece, dest)
-        boolean isPawnPromotion = newPiece != piece
 
         Optional<Piece> capturedPiece = newPiece.move(dest)
         capturedPiece.ifPresent { capture(it) }
@@ -271,7 +256,9 @@ abstract class BaseChessboard implements Chessboard
 
         state.toggleActiveColor()
         if (updateHistory) {
-            game.moveHistory.add(new MoveImpl(newPiece, capturedPiece.orElse(null), newPiece.lastSquare, dest, moveType, isPawnPromotion, pgn, state.moveCount))
+            final boolean isPawnPromotion = newPiece instanceof PromotedPawn
+            final Square start = (isPawnPromotion ? (newPiece as PromotedPawn).pawn.lastSquare : newPiece.lastSquare)
+            game.moveHistory.add(new MoveImpl(newPiece, capturedPiece.orElse(null), start, dest, moveType, isPawnPromotion, pgn, state.moveCount))
         }
 
         state.incrementHalfMoveTotal()
@@ -348,7 +335,7 @@ abstract class BaseChessboard implements Chessboard
         state.setEnPassantTargetSquare(newEnPassantTarget)
     }
 
-    private Piece handlePawnPromotion(Piece piece, final Square dest) throws IllegalMoveException
+    private static Piece handlePawnPromotion(Piece piece, final Square dest) throws IllegalMoveException
     {
         final Rank promotingRank = piece.color == PieceColor.WHITE ? Rank.EIGHTH_RANK : Rank.FIRST_RANK
         Piece newPiece = piece
@@ -358,13 +345,8 @@ abstract class BaseChessboard implements Chessboard
                 piece = new PromotedPawn(piece as Pawn, PieceType.QUEEN)
             }
             if (piece instanceof PromotedPawn) {
-                if (piece.pieceType in [PieceType.PAWN, PieceType.KING]) {
-                    throw new IllegalMoveException("Pawn may not be promoted to ${piece.pieceType.toString()}")
-                }
-                log.info("Promoting ${piece.color.name} pawn to ${piece.pieceType.toString()} on $dest")
-                newPiece = pieceFactory.newPiece(piece.color, piece.pieceType)
-                (piece as PromotedPawn).pawn.promote(newPiece)
-                getPromotedPawns(piece.color) << (piece as PromotedPawn).pawn
+                log.info("Promoting ${piece.color.name} pawn to ${piece.promotedPiece.pieceType.toString()} on $dest")
+                (piece as PromotedPawn).promote()
             }
         }
         newPiece

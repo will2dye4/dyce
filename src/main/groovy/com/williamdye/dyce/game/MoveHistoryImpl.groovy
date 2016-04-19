@@ -174,22 +174,7 @@ class MoveHistoryImpl implements MoveHistory
             }
         }
         if (previousMove.isPawnPromotion()) {
-            final Piece promotedPiece = previousMove.movedPiece
-            final PieceColor activeColor = promotedPiece.color
-            previousMove.endSquare.piece = null
-            promotedPiece.remove()
-            chessboard.getActivePieces(activeColor).remove(promotedPiece)
-            chessboard.getActivePieces(activeColor, promotedPiece.pieceType).remove(promotedPiece)
-            final Pawn pawn = chessboard.getPromotedPawns(activeColor).find { it.lastSquare.file == previousMove.startSquare.file }
-            if (pawn) {
-                pawn.promoted = false
-                previousMove.startSquare.piece = pawn
-                chessboard.getActivePieces(activeColor) << pawn
-                chessboard.getActivePieces(activeColor, PieceType.PAWN) << pawn
-                chessboard.getPromotedPawns(activeColor).remove(pawn)
-            } else {
-                log.warn("Failed to find promoted pawn!")
-            }
+            (previousMove.movedPiece as PromotedPawn).demote()
         }
         states.pop()
         updateState(states.peek())
@@ -212,14 +197,7 @@ class MoveHistoryImpl implements MoveHistory
 
         Move nextMove = getNext()
         log.debug("Redoing move [$nextMove.PGNString] [${nextMove.toString()}]")
-        Piece movedPiece = nextMove.movedPiece
-        if (nextMove.isPawnPromotion()) {
-            movedPiece = new PromotedPawn(
-                    chessboard.getActivePieces(movedPiece.color, PieceType.PAWN).find { it.square.file == nextMove.startSquare.file } as Pawn,
-                    nextMove.movedPiece.pieceType
-            )
-        }
-        chessboard.move(movedPiece, nextMove.endSquare, nextMove.moveType, null, false)
+        chessboard.move(nextMove.movedPiece, nextMove.endSquare, nextMove.moveType, null, false)
         states.push(nextMove.state)
         updateState(nextMove.state)
     }
