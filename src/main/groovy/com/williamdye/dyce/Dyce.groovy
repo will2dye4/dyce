@@ -28,7 +28,7 @@ final class Dyce
     private static final String USAGE = "Usage:\njava Dyce [-aev]\njava Dyce -p|--pgn input_file"
 
     /** Version message */
-    private static final String VERSION_INFO = "dyce version 0.2, built March 2016"
+    private static final String VERSION_INFO = "dyce version 0.3, built ${new Date().format('MMMM YYYY')}"
 
     /**
      * Entry point for the dyce application.

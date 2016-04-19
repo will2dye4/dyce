@@ -1,7 +1,7 @@
 apply plugin: 'groovy'
 
 group = 'com.williamdye'
-version = '0.2-SNAPSHOT'
+version = '0.3-SNAPSHOT'
 
 description = "dyce is a command-line based interactive chess player and chess engine."
 
