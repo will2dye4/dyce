@@ -227,7 +227,7 @@ abstract class BaseChessboard implements Chessboard
         }
 
         handleCastling(piece, dest, moveType)
-        handleEnPassant(piece, dest, moveType)
+        Piece pawnCapturedEnPassant = handleEnPassant(piece, dest, moveType)
         Piece newPiece = handlePawnPromotion(piece, dest)
 
         Optional<Piece> capturedPiece = newPiece.move(dest)
@@ -258,7 +258,7 @@ abstract class BaseChessboard implements Chessboard
         if (updateHistory) {
             final boolean isPawnPromotion = newPiece instanceof PromotedPawn
             final Square start = (isPawnPromotion ? (newPiece as PromotedPawn).pawn.lastSquare : newPiece.lastSquare)
-            game.moveHistory.add(new MoveImpl(newPiece, capturedPiece.orElse(null), start, dest, moveType, isPawnPromotion, pgn, state.moveCount))
+            game.moveHistory.add(new MoveImpl(newPiece, capturedPiece.orElse(pawnCapturedEnPassant), start, dest, moveType, isPawnPromotion, pgn, state.moveCount))
         }
 
         state.incrementHalfMoveTotal()
@@ -316,23 +316,26 @@ abstract class BaseChessboard implements Chessboard
         }
     }
 
-    private void handleEnPassant(final Piece piece, final Square dest, final MoveType moveType)
+    private Piece handleEnPassant(final Piece piece, final Square dest, final MoveType moveType)
     {
         final int offset = (piece.color == PieceColor.WHITE) ? -1 : 1
         Square newEnPassantTarget = null
+        Piece capturedPawn = null
 
         if (PieceType.PAWN == piece.pieceType && !piece.lastSquare && Paths.getRankDistance(piece.square, dest) == 2) {
             newEnPassantTarget = getSquare(dest.file, Rank.forNumber(dest.rank.number + offset))
             log.info("Updating en passant target square to $newEnPassantTarget.name")
         } else if (MoveType.EN_PASSANT == moveType) {
             final Square captureSquare = getSquare(dest.file, Rank.forNumber(dest.rank.number + offset))
-            final Piece pawn = captureSquare.piece.get()
-            pawn.capture()
-            capture(pawn)
-            captureSquare.setPiece(null)
+            capturedPawn = captureSquare.piece.get()
+            capturedPawn.capture()
+            capture(capturedPawn)
+            captureSquare.piece = null
         }
 
         state.setEnPassantTargetSquare(newEnPassantTarget)
+
+        capturedPawn
     }
 
     private static Piece handlePawnPromotion(Piece piece, final Square dest) throws IllegalMoveException

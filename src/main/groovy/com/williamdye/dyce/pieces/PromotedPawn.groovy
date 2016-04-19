@@ -149,7 +149,7 @@ class PromotedPawn extends AbstractPiece implements Piece
         promotedPiece.square.board.getActivePieces(promotedPiece.color).remove(promotedPiece)
         promotedPiece.square.board.getActivePieces(promotedPiece.color, promotedPiece.pieceType).remove(promotedPiece)
         promotedPiece.remove()
-        pawn.move(promotedPiece.lastSquare)
+        promotedPiece.lastSquare.piece = pawn
         pawn.square.board.getActivePieces(pawn.color) << pawn
         pawn.square.board.getActivePieces(pawn.color, PieceType.PAWN) << pawn
     }
