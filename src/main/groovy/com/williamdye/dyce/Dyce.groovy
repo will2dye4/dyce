@@ -1,5 +1,6 @@
 package com.williamdye.dyce
 
+import com.williamdye.dyce.game.Move
 import groovy.util.logging.Slf4j
 import java.text.ParseException
 
@@ -264,12 +265,20 @@ final class Dyce
                 List<String> parts = command.split(" ").toList()
                 switch (parts.first()) {
                     case ["b", ":b", "back"]:
-                        int count = parts.size() == 1 ? 1 : parts[1].toInteger()
-                        game.moveHistory.back(count)
+                        if (game.moveHistory.hasPrevious()) {
+                            int count = parts.size() == 1 ? 1 : parts[1].toInteger()
+                            game.moveHistory.back(count)
+                        } else {
+                            println("No previous moves!")
+                        }
                         break
                     case ["f", ":f", "forward"]:
-                        int count = parts.size() == 1 ? 1 : parts[1].toInteger()
-                        game.moveHistory.forward(count)
+                        if (game.moveHistory.hasNext()) {
+                            int count = parts.size() == 1 ? 1 : parts[1].toInteger()
+                            game.moveHistory.forward(count)
+                        } else {
+                            println("No further moves!")
+                        }
                         break
                     case [":ff", "fast-forward"]:
                         game.moveHistory.fastForward()
@@ -282,6 +291,10 @@ final class Dyce
                 }
             }
             println("\n${game.chessboard.prettyPrint()}")
+            if (game.moveHistory.hasPrevious()) {
+                Move lastMove = game.moveHistory.peekPrevious()
+                println("Last move: $lastMove.state.moveCount${lastMove.state.activeColor == PieceColor.BLACK ? ". " : "..."}$lastMove.PGNString")
+            }
             print("> ")
             command = scan.next()
         }
