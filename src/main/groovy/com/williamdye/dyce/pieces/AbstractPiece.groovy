@@ -161,6 +161,7 @@ abstract class AbstractPiece implements Piece
     void remove()
     {
         lastSquare = square
+        square.piece = null
         square = null
     }
 
