@@ -92,10 +92,25 @@ final class DefaultChessboardFormatter implements ChessboardFormatter<String>
         if ((rank == 7) && (capturedWhitePieces || capturedBlackPieces)) {
             builder.append(WIDE_SPACING).append("[[ Captured Pieces ]]")
         } else if ((rank == 6) && capturedWhitePieces) {
-            builder.append(WIDE_SPACING).append("W: ").append(StringUtils.joinPieceList(capturedWhitePieces, " ", true))
+            builder.append(WIDE_SPACING) \
+                    .append("W: ") \
+                    .append(StringUtils.joinPieceList(capturedWhitePieces, " ", true)) \
+                    .append(" (") \
+                    .append(getSumOfPieceValues(capturedWhitePieces)) \
+                    .append(")")
         } else if ((rank == 5) && capturedBlackPieces) {
-            builder.append(WIDE_SPACING).append("B: ").append(StringUtils.joinPieceList(capturedBlackPieces, " ", true))
-        }
+            builder.append(WIDE_SPACING) \
+                    .append("B: ") \
+                    .append(StringUtils.joinPieceList(capturedBlackPieces, " ", true)) \
+                    .append(" (") \
+                    .append(getSumOfPieceValues(capturedBlackPieces)) \
+                    .append(")")
+            }
+    }
+
+    private static int getSumOfPieceValues(List<Piece> pieces)
+    {
+        pieces.inject(0) { sum, piece -> sum + piece.pieceType.materialValue }
     }
 
 }

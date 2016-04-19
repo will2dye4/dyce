@@ -41,7 +41,7 @@ abstract class AbstractPiece implements Piece
     @Override
     int compareTo(final Piece other)
     {
-        this.pieceType.materialValue <=> other.pieceType.materialValue
+        this.pieceType.materialValue <=> other.pieceType.materialValue ?: this.pieceType.symbol <=> other.pieceType.symbol
     }
 
     @Override
