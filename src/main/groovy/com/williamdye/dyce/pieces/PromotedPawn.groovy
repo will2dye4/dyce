@@ -100,6 +100,12 @@ class PromotedPawn extends AbstractPiece implements Piece
         delegate.legalSquares
     }
 
+    @Override
+    Optional<Piece> move(final Square dest)
+    {
+        delegate.move(dest)
+    }
+
     /**
      * Accessor for the original pawn which was promoted.
      *
@@ -129,7 +135,7 @@ class PromotedPawn extends AbstractPiece implements Piece
         pawn.square.board.getActivePieces(pawn.color).remove(pawn)
         pawn.square.board.getActivePieces(pawn.color, PieceType.PAWN).remove(pawn)
         pawn.remove()
-        promotedPiece.move(pawn.lastSquare)
+        pawn.lastSquare.piece = promotedPiece
         promotedPiece.square.board.getActivePieces(promotedPiece.color) << promotedPiece
         promotedPiece.square.board.getActivePieces(promotedPiece.color, promotedPiece.pieceType) << promotedPiece
     }
