@@ -34,7 +34,17 @@ class CastlingAvailability
      */
     CastlingAvailability()
     {
-        this.state = (WHITE_CAN_CASTLE | BLACK_CAN_CASTLE)
+        this(WHITE_CAN_CASTLE | BLACK_CAN_CASTLE)
+    }
+
+    /**
+     * Construct a {@code CastlingAvailability} with the specified state.
+     *
+     * @param state The state for the new {@code CastlingAvailability} instance
+     */
+    CastlingAvailability(int state)
+    {
+        this.state = state
     }
 
     /**
@@ -161,6 +171,12 @@ class CastlingAvailability
             result = builder.toString()
         }
         result
+    }
+
+    @Override
+    CastlingAvailability clone()
+    {
+        new CastlingAvailability(state)
     }
 
 }

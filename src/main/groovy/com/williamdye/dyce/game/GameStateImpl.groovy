@@ -178,7 +178,7 @@ class GameStateImpl implements GameState
     @Override
     GameState clone()
     {
-        final GameState clone = new GameStateImpl(activeColor, enPassantTarget, castling, moveCount, halfMoveClock)
+        final GameState clone = new GameStateImpl(activeColor, enPassantTarget, castling.clone(), moveCount, halfMoveClock)
         clone.halfMoveTotal = halfMoveTotal
         clone
     }
